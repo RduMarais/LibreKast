@@ -11,8 +11,6 @@
 
  * `channels` branch
      * [ ] front : showWait()
-     * [x] poll results synchros
-     * [x] WC 
      * [ ] front : showWait and show previous question
      * [ ] back : sync notificaton from admin 
      * [ ] back : admin widget for handling question order
