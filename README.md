@@ -10,8 +10,8 @@
 ## Project state
 
  * `channels` branch
-     * [ ] front : showWait()
-     * [ ] front : showWait and show previous question
+     * [ ] front : showWait() reset front
+     * [ ] front : show previous question
      * [ ] back : sync notificaton from admin 
      * [ ] back : admin widget for handling question order
      * [ ] some failsafes in front end
