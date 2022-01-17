@@ -3,6 +3,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
+from bleach import clean
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
@@ -65,8 +66,10 @@ class QuestionConsumer(WebsocketConsumer):
 			self.send_results(question)
 		elif(message_in == "word-cloud-add"):
 			print("WS received Word Cloud update")
-			async_to_sync(self.add_word(text_data_json['word']))
-			async_to_sync(self.notify_add_word(text_data_json['word']))
+			word = clean(text_data_json['word'])
+			async_to_sync(self.add_word(word))
+			print(word)
+			async_to_sync(self.notify_add_word(word))
 		else:
 			message_out = "{'message':'error'}"
 			print(message_out)

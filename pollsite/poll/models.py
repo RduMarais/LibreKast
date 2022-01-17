@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
@@ -88,14 +89,29 @@ class Question(SortableMixin):
 	def save(self, *args, **kwargs):
 		choices = self.choice_set.all()
 		is_quizz=False
-		if(len(choices)==0):
-			self.question_type = "WC"
+		# if(len(choices)==0):
+		# 	self.question_type = "WC"
 		for choice in choices:
 			if(choice.isTrue):
 				is_quizz = True
 		if(is_quizz):
 			self.question_type = "QZ"
 		super(Question, self).save(*args, **kwargs)
+
+	def clean(self):
+		self.clean_fields()
+		choices = self.choice_set.all()
+		print(choices)
+		# if(self.question_type=='TX' and len(choices)!=0):
+		# 	raise ValidationError('Question type is `Text Only` but there are choices defined')
+		# if(self.question_type=='PL' and len(choices)<=0):
+		# 	raise ValidationError('Question type is `Poll` but there are no choices defined')
+		# if(self.question_type=='QZ' and len(choices)<=0):
+		# 	raise ValidationError('Question type is `Quizz` but there are no choices defined')
+		if(self.question_type=='QZ' and len(self.choice_set.filter(isTrue=True))==0):
+			raise ValidationError('Question type is `Quizz` but there is no correct answer defined')
+		if(self.question_type=='PL' and len(self.choice_set.filter(isTrue=True))!=0):
+			raise ValidationError('Question type is `Poll` but there are correct answers defined')
 
 	recent.admin_order_field = 'pub_date'
 	recent.boolean = True
