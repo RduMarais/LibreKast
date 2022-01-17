@@ -14,7 +14,7 @@
             </h1>
             <p class="mb-8 leading-relaxed">{{hpe.topDes}}</p>
             <div class="flex justify-center">
-                <a href="{{hpe.btn1Url}}"><button
+                <a href="{% url 'poll:index' %}"><button
                         class="inline-flex text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">{{hpe.btn1Text}}</button></a>
                 <a href="{{hpe.btn2Url}}"><button
                         class="ml-4 inline-flex text-gray-400 bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-700 hover:text-white rounded text-lg">{{hpe.btn2Text}}</button></a>
