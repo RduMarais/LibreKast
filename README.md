@@ -138,3 +138,4 @@ In order to setup LibreKast in an deployment envionment, one needs to :
  5. setup DEBUG = False
  6. create a superuser and remove the default user
  7. collect static files and migrate them in the server static folder
+ 
