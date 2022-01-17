@@ -71,6 +71,7 @@
 
 	function showWait(){
 		questionTitle.innerText = "Next Activity is about to start...";
+		//TODO : clean 
 	}
 
 	function libreKastVote(choice){
@@ -332,6 +333,8 @@
 		} else if(data['message']==='update-score'){
 			console.log('score :'+data['score']);
 			updateScore(data['score']);
+		}else if(data['message']==='question-close'){
+			showWait();
 		}
 		else if(data['message']==='notify-update-cloud'){
 			updateWordCloud(data['vote']);

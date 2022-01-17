@@ -40,13 +40,19 @@ CLIENT                                     SERVER                           GROU
   |                                         if Poll :                         |
   |                <-- results <--            |   --> notify-update-poll -->  |
 showResultsPoll                               |                           updatePoll
+  |                                        end : results                      |   TODO
+  |                <-- results <--            |    --> results -->            |
   |                                           |                               |
+  |                                     end : close                           | TODO
+  |                                           |    --> question-close -->     | TODO
   |                                           |                               |
  if Word Cloud :                              |                               |
  showWordCloud                                |                               |
   |          --> word-cloud-add -->           |                               |
   |                                        add vote                           |
   |                                           |   --> notify-update-cloud-->  |
+  |                                        end : close                        |   TODO
+  |                                           |    --> question-close -->     | TODO
   |                                           |                               |
   |                                           |                               |
   wait for results                            |                               |
