@@ -1,8 +1,10 @@
 # Compiled python modules
 *.pyc
 __pycache__
+.DS_Store
 pollsite/media/*
 pollsite/static/*
 !pollsite/static/LibreKast.png
 !pollsite/static/favicon.ico
+!pollsite/static/license
 pollsite/db.sqlite3

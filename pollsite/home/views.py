@@ -12,14 +12,7 @@ from .models import HomePage
 # In an app deployment, on the poll app is installed to your preexisting main view
 
 def index(request):
-    with open(os.path.join(settings.BASE_DIR, 'home/homePage.yaml'), 'r') as file:
-        homePageElements = yaml.full_load(file)
-
     team = TeamMember.objects.order_by('title')
     # i know some of you wll delete the homepage so i keep it permissive
     context = {'hpe': HomePage.objects.all()[0], 'team': team} 
     return render(request, 'home/index', context)
-
-# We absolutely do not need this
-def opnsrc(request):
-    return render(request, 'home/license', {})

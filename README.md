@@ -17,7 +17,7 @@
      * [ ] some failsafes in front end
  * [ ] TUTO deployment & customization
  * [ ] testing
- * [ ] home as django models (for non-technical people)
+ * [x] home as django models (for non-technical people)
  * [ ] FR translation
  * [ ] docker wrapping
  * [ ] django app wrapping
