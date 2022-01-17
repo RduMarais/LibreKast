@@ -16,7 +16,6 @@ class QuestionConsumer(WebsocketConsumer):
 
 		attendee_id = self.scope['session']['attendee_id']
 		self.attendee = Attendee.objects.get(pk=attendee_id)
-		# print("WS cnnect start : attendee = "+str(self.attendee.name))
 
 		# Join group
 		async_to_sync(self.channel_layer.group_add)(
@@ -24,7 +23,6 @@ class QuestionConsumer(WebsocketConsumer):
 			self.channel_name
 		)
 
-		# print("WS cnnect OK")
 
 		self.accept()
 
@@ -48,31 +46,24 @@ class QuestionConsumer(WebsocketConsumer):
 		message_in = text_data_json['message']  # this is the format that should be modified
 
 		if(message_in == "question-start"):
-			print('WS received question test ok')
 			question = self.meeting.current_question()
 			self.send_question(question)
 		elif(message_in == "vote"):
-			print('WS received vote')
 			async_to_sync(self.receive_vote(text_data_json))
 		elif(message_in == "debug-score"):
 			self.send(text_data=json.dumps({
 				'message':'update-score',
 				'score':self.attendee.score,
 				}))
-			print('WS received get-score')
 		elif(message_in == "debug-results"):
-			print('WS received get-results')
 			question = self.meeting.current_question()
 			self.send_results(question)
 		elif(message_in == "word-cloud-add"):
-			print("WS received Word Cloud update")
 			word = clean(text_data_json['word'])
 			async_to_sync(self.add_word(word))
-			print(word)
 			async_to_sync(self.notify_add_word(word))
 		else:
 			message_out = "{'message':'error'}"
-			print(message_out)
 			self.send(text_data=message_out)
 
 
@@ -87,7 +78,6 @@ class QuestionConsumer(WebsocketConsumer):
 			choice = question.choice_set.get(pk=text_data_json['choice'])
 			# I volontarily set the question based on user input to prevent async to sync
 			# question = Question.objects.get(pk=text_data_json['question'])
-			print('Vote : choice and question fetched')
 			if(len(get_previous_user_answers(self.attendee,question))==0):
 				vote=Vote(user=self.attendee,choice=choice)
 				vote.save()
@@ -105,7 +95,6 @@ class QuestionConsumer(WebsocketConsumer):
 					message_out = {'message':'voted'}
 					self.send(text_data=json.dumps(message_out)) #
 				elif(question.question_type =='PL'):
-					print('WS async notif update poll start')
 					self.send_results(question)
 					self.notify_update_PL(question,choice)
 			else:
@@ -118,20 +107,17 @@ class QuestionConsumer(WebsocketConsumer):
 	# sync method
 	def add_word(self,word):
 		question = self.meeting.current_question()
-		print('Vote : adding word '+word)
 		# TODO : bleach
 		word_cleaned = word
 		try:
 			existing_word = question.choice_set.get(choice_text=word_cleaned)
 			vote=Vote(user=self.attendee,choice=existing_word)
 			vote.save()
-			print('Vote : added word '+word)
 		except:
 			added_word = Choice(question=question, choice_text=word_cleaned)
 			added_word.save()
 			vote=Vote(user=self.attendee,choice=added_word) # the vote is a model to keep traces of the votes
 			vote.save()
-			print('Vote : added word '+word)
 
 
 	def send_question(self,question):
@@ -159,7 +145,6 @@ class QuestionConsumer(WebsocketConsumer):
 					'text':choice.choice_text,
 				}
 				message_out['question']['choices'].append(choice_obj)
-		print(message_out)
 		self.send(text_data=json.dumps(message_out))
 
 	def send_results(self,question):
@@ -177,11 +162,9 @@ class QuestionConsumer(WebsocketConsumer):
 				'isTrue':choice.isTrue,
 			}
 			message_out['results'].append(choice_obj)
-		print(message_out)
 		self.send(text_data=json.dumps(message_out))
 
 	def notify_add_word(self,word):
-		print('WS start notify update WC')
 		async_to_sync(self.channel_layer.group_send)(
 			self.meeting_group_name,
 			{
@@ -195,7 +178,6 @@ class QuestionConsumer(WebsocketConsumer):
 
 	# TODO remove question 
 	def notify_update_PL(self,question,choice):
-		print("WS start notify update Poll")
 		async_to_sync(self.channel_layer.group_send)(
 			self.meeting_group_name,
 			{
@@ -206,6 +188,5 @@ class QuestionConsumer(WebsocketConsumer):
 				}
 			}
 		)
-		print("group : update +choice.id")
 
 
