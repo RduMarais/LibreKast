@@ -2,12 +2,6 @@
 
 **A nice and free web app to gamify and animate your meetings, build with django channels and anychart free.**
 
-> forked from https://github.com/aahnik/django-polling-site
->
-> **BE AWARE THAT THERE IS A DEFAULT SUPERUSER CREATED ON THE ORIGINAL PROJECT**
-
-
-
 [![GitHub license](https://img.shields.io/github/license/RduMarais/LibreKast)](https://github.com/RduMarais/LibreKast/blob/master/LICENSE)
 
 
@@ -31,7 +25,7 @@
  * [ ] django app wrapping
  * [ ] dark mode with tailwind CSS
 
-## (channels branch) State diagram 
+## Current State diagram 
 
 based on current implem (not the final goal)
 ```
@@ -73,11 +67,17 @@ __pre-requisites : python(3.8 or above) and pip must be installed__
 
 
 
-**1. create and activate a virtual environment inside a new directory**
+**0. create and activate a virtual environment inside a new directory**
 
-if you are new to virtual environments read [python-3 official docs](https://docs.python.org/3/library/venv.html) 
+It is highly recommended to use virtual environments when yout set up a new project. If you are new to virtual environments read [python-3 official docs](https://docs.python.org/3/library/venv.html) 
 
-**2. clone this repo `django-polling-site` in your directory, and install the requirements**
+**1. clone this repo `django-polling-site` in your directory**
+
+```
+git clone https://github.com/RduMarais/LibreKast.git
+```
+
+**2. install the requirements**
 
 ```
 pip install -r requirements.txt
@@ -96,6 +96,7 @@ python manage.py migrate
 ```
 python manage.py createsuperuser
 ```
+A default superuser exists, named `defaultsuperuser` with password `LibreKast`.
 
 **5. Collect Static files needed**
 
@@ -103,8 +104,13 @@ python manage.py createsuperuser
 python manage.py collectstatic
 ```
 
-**6. Inside the `home` app directory , configure the homePage.yaml according to your wish**
-Inside `views.py` of same directory, put the absolute path of homePage.yaml in the place instructed. 
+**6. Run Redis in a docker container**
+
+check [here](https://www.docker.com/get-started) if you need to install docker.
+
+```
+docker run -p 6379:6379 -d redis:5
+```
 
 **7. now run the server**
 
@@ -112,15 +118,23 @@ Inside `views.py` of same directory, put the absolute path of homePage.yaml in t
 python manage.py runserver
 ```
 
-Go to  http://127.0.0.1:8000/ . This is where Django starts server by default
+> Note that this step runs an ASGI server. If you are used to deploy WSGI server, this involves a few differences !!
 
-**HOLA !! ENJOY YOU HAVE SUCCESSFULLY RUN THE SERVER**
+Go to http://127.0.0.1:8000/. This is where Django starts server by default
+
+**Enjoy**
 
 Click on Admin button on top right corner to go the the Django Administration page.
-You can add team members , change or add questions and choices
+You can add meetings, change or add questions and choices etc.
 
+## How to deploy in production
 
-*Vist DJANGO'S OFFICIAL WEBSITE FOR MORE DETAILS..*
+In order to setup LibreKast in an deployment envionment, one needs to :
 
-__you can now play around with the code your self__
-
+ 1. setup a web server (such as Apache or Nginx), 
+ 2. setup an ASGI server for delivering a django app 
+ 3. clone the repository to start the app. 
+ 4. change the default SECRET_KEY in settings
+ 5. setup DEBUG = False
+ 6. create a superuser and remove the default user
+ 7. collect static files and migrate them in the server static folder
