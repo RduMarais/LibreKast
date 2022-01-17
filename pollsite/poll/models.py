@@ -54,7 +54,7 @@ class Attendee(models.Model):
 # model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text
 class Question(SortableMixin):
 	title = models.CharField('Question', max_length=50)
-	desc = MarkdownField('Description', max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)
+	desc = MarkdownField('Description', max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)
 	# this attribute is generated automatically as markdown render of previous field
 	desc_rendered = RenderedMarkdownField()
 	pub_date = models.DateTimeField('Date Published',default=timezone.now)
