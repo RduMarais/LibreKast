@@ -1,13 +1,14 @@
-# django-polling_site
+# LibreKast
+
+**A nice and free web app to gamify and animate your meetings, build with django channels and anychart free.**
 
 > forked from https://github.com/aahnik/django-polling-site
 >
 > **BE AWARE THAT THERE IS A DEFAULT SUPERUSER CREATED ON THE ORIGINAL PROJECT**
 
-django-polling_site ( Life's First Django Project)
 
-[![GitHub license](https://img.shields.io/github/license/aahnik/django-polling_site)](https://github.com/aahnik/django-polling_site/blob/master/LICENSE)
-[![No Maintenance Intended | Archived](http://unmaintained.tech/badge.svg)](https://gitHub.com/aahnik/django-polling_site/graphs/commit-activity)
+
+[![GitHub license](https://img.shields.io/github/license/RduMarais/LibreKast)](https://github.com/RduMarais/LibreKast/blob/master/LICENSE)
 
 
 [**see screenshots**](https://github.com/aahnik/django-polling_site/tree/master/ScreenShots)

@@ -2,31 +2,39 @@
 
 <section>
     <div>
-        <h1>Open Source</h1>
-        <h3>Several fantastic pieces of free and open-source programming languages and frameworks have
-            really helped get me do what I did like this web Application.
-            As I enjoy giving credit where it's due, I included the entire list below.
-            This means you can not only see which programming language / framework / tools / libraries
-            I've been using, but the terms of the licenses too.
-            A big thanks from the depth of my heart to all the smart people behind the fantastic stuff
-            listed. Rock on!</h3>
+        <h1>Open Source License</h1>
+        <p>
+MIT License
+
+Copyright (c) 2022 Romain du Marais
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+        </p>
+        <h3>Based on</h3>
         <ul>
-            <li><a href="https://www.python.org">PYTHON LANGUAGE</a> ( world's most popular programming language in
-                2020)
+            <li><a href="https://github.com/aahnik/django-polling-site">Aahnik Daw's implementation of django polling site tutorial</a>
+            <li><a href="https://www.python.org">python language</a>
             </li>
-            <li><a href="https://www.djangoproject.com">DJANGO</a> a web framework for python djangoproject.com (
-                World's
-                No.1
-                webframework in 2020)</li>
-            <li><a href="https://www.mertjf.github.io/tailblocks">TAILBLOCKS</a>(based on Tailwind CSS )
-                mertjf.github.io/tailblocks
+            <li><a href="https://www.djangoproject.com">django</a> a web framework for python</li>
+            <li><a href="https://github.com/django/channels">Django Channels</a> websockets integration for django</li>
+            <li><a href="https://www.mertjf.github.io/tailblocks">tailblocks</a>(based on Tailwind CSS )
             </li>
         </ul>
-        <h1>A BIG THANKS TO ALL WHO DEVELOPED COMPUTERS, INTERNET AND PROTOCOLS AND SO MUCH MORE</h1>
-        <h2>we take everything for granted , IT TAKES GREAT EFFORT TO BUILD THINGS</h2>
-
-        <br>
-
-        <h4>Thanks</h4>
     </div>
 </section>
