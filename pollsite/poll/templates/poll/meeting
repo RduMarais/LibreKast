@@ -109,7 +109,6 @@
 		questionTitle.value = questionObj['id'];
 		questionTitle.classList.add('librekast-'+questionObj['type']);
 		questionDesc.innerHTML = questionObj['desc'];
-		// questionDesc.class = "leading-relaxed py-4 flex text-center"; 
 
 		if(questionObj['type'] === 'WC'){showWordCloud(questionObj);}
 		else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
@@ -122,6 +121,11 @@
 			if(choice.classList.contains('librekast-chosen')){
 				choice.classList.add('font-bold',"librekast-choice");
 				choice.classList.remove("bg-blue-500");
+				choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
+			} else if(choice.classList.contains("hover:bg-"+choiceColors[i]+"-700") && choice.classList.contains("text-white")) {
+				// if the user has not selected anything
+				choice.classList.remove("hover:bg-"+choiceColors[i]+"-700");
+				choice.classList.remove("bg-"+choiceColors[i]+"-400");
 				choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
 			} else {
 				choice.classList.remove("bg-blue-200");
