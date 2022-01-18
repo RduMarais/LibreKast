@@ -115,7 +115,7 @@
 		+ meeting_id
 		+ '/'
 	);
-	const choiceColors = ['blue','indigo','purple','pink','sky','violet'];
+	const choiceColors = ['blue','indigo','purple','pink','sky','violet','blue','indigo','purple','pink','sky','violet','blue','indigo','purple','pink','sky','violet','blue','indigo','purple','pink','sky','violet'];
 	var questionTitle = document.querySelector('#current-question-id');
 	var questionDesc = document.querySelector('#question-description');
 	var wordCloudData = [];
