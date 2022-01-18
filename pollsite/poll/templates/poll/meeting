@@ -71,7 +71,8 @@
 
 	function showWait(){
 		questionTitle.innerText = "Next Activity is about to start...";
-		//TODO : clean 
+		questionDesc.innerHTML = "";
+		document.querySelector('#question-content').remove();
 	}
 
 	function libreKastVote(choice){
