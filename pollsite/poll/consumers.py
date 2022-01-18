@@ -45,9 +45,9 @@ class QuestionConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
 
-		if(message_in == "question-start"):
+		if(message_in == "debug-question-start"):
 			question = self.meeting.current_question()
-			self.send_question(question)
+			self.send_group_question(question)
 		elif(message_in == "vote"):
 			async_to_sync(self.receive_vote(text_data_json))
 		elif(message_in == "debug-score"):
@@ -64,14 +64,41 @@ class QuestionConsumer(WebsocketConsumer):
 			async_to_sync(self.notify_add_word(word))
 		elif(message_in == "get-scoreboard"):
 			async_to_sync(self.send_scoreboard())
+		elif(message_in == "admin-get-current-question"):
+			if(self.is_user_authenticated()):
+				question = self.meeting.current_question()
+				self.send_current_question(question)
+		elif(message_in == "admin-question-start"):
+			if(self.is_user_authenticated()):
+				print('ADMIN start question')
+				question = self.meeting.current_question()
+				async_to_sync(self.send_group_question(question))
+		elif(message_in == "admin-question-results"):
+			if(self.is_user_authenticated()):
+				print('ADMIN question results')
+				pass
+		elif(message_in == "admin-question-next"):
+			if(self.is_user_authenticated()):
+				print('ADMIN question next')
+				pass
 		else:
-			message_out = "{'message':'error'}"
-			self.send(text_data=message_out)
+			message_out = {'message':'error'}
+			self.send(text_data=json.dumps(message_out))
 
 
 
 
 ###### Functional logic #####
+
+
+	# for basic access control
+	def is_user_authenticated(self):
+		if(self.scope['user'].is_anonymous):
+			return False
+		elif(self.scope['user'].is_authenticated):
+			return True
+		else:
+			return False
 
 	# sync method
 	def receive_vote(self,text_data_json):
@@ -122,7 +149,17 @@ class QuestionConsumer(WebsocketConsumer):
 			vote.save()
 
 
-	def send_question(self,question):
+	def send_current_question(self,question):
+		message_out = {
+			'message' : "current-question",
+			'question':{
+				'id': question.id,
+			},
+		}
+		self.send(text_data=json.dumps(message_out))
+
+	# send question to group
+	def send_group_question(self,question):
 		message_out = {
 			'message' : "question-go",
 			'question':{
@@ -147,7 +184,14 @@ class QuestionConsumer(WebsocketConsumer):
 					'text':choice.choice_text,
 				}
 				message_out['question']['choices'].append(choice_obj)
-		self.send(text_data=json.dumps(message_out))
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name,
+			{
+				'type': 'meeting_message',
+				'message':message_out,
+			}
+		)
+
 
 	def send_results(self,question):
 		message_out = {
@@ -166,6 +210,7 @@ class QuestionConsumer(WebsocketConsumer):
 			message_out['results'].append(choice_obj)
 		self.send(text_data=json.dumps(message_out))
 
+
 	def notify_add_word(self,word):
 		async_to_sync(self.channel_layer.group_send)(
 			self.meeting_group_name,
@@ -177,6 +222,8 @@ class QuestionConsumer(WebsocketConsumer):
 				}
 			}
 		)
+
+
 	# sync method
 	def send_scoreboard(self):
 		message_out = {

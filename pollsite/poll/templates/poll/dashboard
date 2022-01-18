@@ -27,7 +27,7 @@
 	<div class = "w-full items-center m-2 p-1">
 		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center">
 			<thead>
-				<tr class="bg-red-100">
+				<tr class="bg-red-300">
 				  <th>Question</th>
 				  <th>Type</th>
 				  <th>Status</th>
@@ -35,7 +35,7 @@
 			</thead>
 			<tbody>
 				{% for question in meeting.question_set.all %}
-				<tr>
+				<tr id="librekast-question-{{question.id}}">
 				  <td>{{ question.title }}</td>
 				  <td>
 				  	{% if question.question_type == 'WC' %}Word Cloud{%endif%}
@@ -43,11 +43,24 @@
 				  	{% if question.question_type == 'QZ' %}Quizz{%endif%}
 				  	{% if question.question_type == 'TX' %}Text Only{%endif%}
 				  </td>
-				  <td id="librekast-question-status-{{question.id}}">False</td>
+				  <td>
+				  	<span id="librekast-question-status-{{question.id}}">
+					  	{% if question.is_done %}&#9745;
+					  	{% else %}&#9723;
+					  	{%endif%}
+				  	</span>
+				  	<button id="librekast-question-go-{{question.id}}" class="bg-gray-300">&#9723;
+				  	</button>
+				  	<button id="librekast-question-results-{{question.id}}" class="bg-gray-300">&#9723;
+				  	<button id="librekast-question-next-{{question.id}}" class="bg-gray-300">&#9723;
+				  	</button>
+				  </td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+	</div>
+	<div class="text-center text-sm m-1">&#9199; to start a question, &#128202; to show the results, &#9193; to go to next question.
 	</div>
 </section>
 <section class="w-full md:w-1/4 body-font md:border md:border-green-200" name="scoreboard-section">
@@ -68,7 +81,7 @@
 	<div class = "w-full items-center m-2 p-2">
 	<table class="table-auto border-separate border border-solid border-green-900 divide-solid divide-y-2 divide-x-2 divide-green-800 mx-auto text-center">
 		<thead>
-			<tr class="bg-green-100">
+			<tr class="bg-green-300">
 			  <th>Username</th>
 			  <th>Score</th>
 			</tr>
@@ -130,17 +143,72 @@
 
 	}
 
+	function startQuestion(item){
+		console.log('started question : '+item.id);
+		id = item.id.split('-')[3];
+		// change button for stop button
+		item.onclick = null;
+		// item.removeEventListener("click",function(e) {startQuestion(e); },false);
+		item.innerHTML = "&#9723;"; // blanck icon
+		console.log('item onclick clearded');
+		
+		questionResults = document.querySelector('#librekast-question-results-'+id);
+		questionResults.innerHTML = "&#128202;" //rsults icon
+		questionResults.onclick = function(item_stop){stopQuestion(item_stop);};
+
+		dashboardSocket.send(JSON.stringify({
+			'message': "admin-question-start", //TODO
+			'question_id':id,
+		}))
+	}
+
+	function stopQuestion(item_stop){
+		id = item_stop.target.id.split('-')[3];
+		// change button for Next button
+		questionNext = document.querySelector('#librekast-question-next-'+id);
+		questionNext.innerHTML = "&#9193;"
+		item_stop.target.onclick = null;
+		questionNext.onclick = function(item_next){nextQuestion(item_next);}
+		item_stop.target.innerHTML = "&#9723;"; //blank icon
+
+		dashboardSocket.send(JSON.stringify({
+			'message': "admin-question-results", //TODO
+			'question_id':id,
+		}))
+	}
+
+	function nextQuestion(item_next){
+		id = item_next.target.id.split('-')[3];
+		item_next.target.onclick = null;
+		item_next.target.innerHTML = "&#9723;"; //blank icon
+
+		// item_next = document.querySelector('#librekast-question-go-'+id);
+		document.querySelector('#librekast-question-'+id).classList.remove('bg-red-200');
+		document.querySelector('#librekast-question-status-'+id).innerHTML = '&#9745;';
+
+		dashboardSocket.send(JSON.stringify({
+			'message': "admin-question-next", //TODO
+			'question_id':id,
+		}))
+	}
+
+	function updateMeetingPlan(questionId){
+		questionStatus = document.querySelector('#librekast-question-status-'+questionId);
+		questionStatus.innerHTML = '&#9989;';
+		document.querySelector('#librekast-question-'+questionId).classList.add('bg-red-200');
+		questionGo = document.querySelector('#librekast-question-go-'+questionId);
+		// questionGo.classList.remove('hidden');
+		questionGo.innerHTML = "&#9199;";
+		questionGo.onclick = function(item){startQuestion(questionGo);}
+		console.log('meeting plan updated');
+	}
+
 	function showQuestionText(questionObj){
 		questionTitle.textContent = questionObj['title'];
 		questionTitle.value = questionObj['id'];
 		questionTitle.classList.add('librekast-'+questionObj['type']);
 		questionDesc.innerHTML = questionObj['desc'];
-		questionStatus = document.querySelector('#librekast-question-status-'+questionObj['id']);
-		questionStatus.innerText = "ONGOING";
-
-		if(questionObj['type'] === 'WC'){
-			showWordCloud(questionObj);
-		}
+		if(questionObj['type'] === 'WC'){showWordCloud(questionObj);}
 		else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
 	}
 
@@ -250,47 +318,9 @@
 		chart.draw();
 	}
 
-	// function updateScore(score){
-	// 	document.querySelector('#my-score').innerText = score;
-	// }
-
-	// function wcSendWord(word){
-	// 	console.log('sending added choice');
-	// 	dashboardSocket.send(JSON.stringify({
-	// 		'message': "word-cloud-add", 
-	// 		'word':word,
-	// 	}));
-	// 	console.log('sent : '+word);
-	// }
-
 	function showWordCloud(questionObj){
 		// console.log('start WC');
 		wordCloudData = questionObj['choices'];
-
-		// show form 
-		// wcForm = document.createElement("div"); // not a form it's dynamic
-		// wcForm.id = "question-form";
-		// wcForm.classList.add("inline-flex","w-full","border");
-		// wcInput = document.createElement("input");
-		// wcButton = document.createElement("button");
-		// wcButton.classList.add("w-1/12","pt-2","p-1","bg-indigo-300","hover:bg-indigo-100","text-indigo-800");
-		// wcButton.innerText = "ADD";
-		// wcButton.id = "librekast-add";
-		// wcButton.onclick=function(item){
-		// 	wcSendWord(wcInput.value);
-		// }
-		// wcInput.id="librekast-input";
-		// wcInput.classList.add("w-full","px-4","py-2","focus:outline-none","focus:text-gray-600");
-		// wcInput.onkeypress = function(event){
-		// 	if(event.keyCode == 13){
-		// 		wcSendWord(wcInput.value);
-		// 	}
-		// }
-		// wcForm.appendChild(wcInput);
-		// wcForm.appendChild(wcButton);
-		// // console.log('created Form')
-
-		// document.querySelector('#question-div').appendChild(wcForm);
 
 		// show results
 		content = document.createElement("div");
@@ -334,6 +364,9 @@
 		console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
+			// updateMeetingPlan(data['question'].id)
+		} else if(data['message']==='current-question'){
+			updateMeetingPlan(data['question'].id);
 		} else if(data['message']==='results'){
 			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
 			else if(data['question_type']=='PL'){showResultsPoll(data['results'],data['total']);}
@@ -350,8 +383,6 @@
 			updateScoreboard(data['scores']);
 		}
 		
-	// 	document.querySelector('#question-message-log').textContent = (data.message + '\n');
-
 	};
 
 	dashboardSocket.onclose = function(e) {
@@ -364,7 +395,7 @@
 		const messageInputDom = document.querySelector('#question-start');
 		const message = messageInputDom.value;
 		dashboardSocket.send(JSON.stringify({
-			'message': message, 
+			'message': "admin-get-current-question", 
 		}));
 		//remove header
 		const startDivNode = document.querySelector('#start-div');

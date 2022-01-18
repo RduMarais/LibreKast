@@ -18,6 +18,8 @@ There are 4 types of question you can show in the app :
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
+You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`
+
 ## Project state
 
  * `channels` branch

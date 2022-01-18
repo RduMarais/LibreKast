@@ -19,7 +19,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pollsite.settings')
 
 application = ProtocolTypeRouter({
 	"http" : get_asgi_application(),
-	"websocket": SessionMiddlewareStack(
+	"websocket": AuthMiddlewareStack(
         URLRouter(
             poll.routing.websocket_urlpatterns
         )

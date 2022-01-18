@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet">
     <link rel="icon"href="{% static 'favicon.ico' %}">
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
@@ -48,20 +49,17 @@
 
     <footer class="text-gray-700 body-font">
         <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
-            <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
-                <span class="ml-3 text-sm">©
-                    2022 Romain du Marais</span>
+            <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-500">
+                <span class="ml-3 text-xs">©
+                    2022 <a class="ml-3 text-xs text-gray-500" href="https://pour-info.tech/">Romain du Marais<a></span>
             </a>
-            <a href="{% static 'license.html' %}">
-                <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">
-                    Open Source Licences</p>
+            <a class="items-center mx-auto" href="{% static 'license.html' %}">
+                <p class="text-xs text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">
+                    Open Source Licence</p>
             </a>
-
-
-
             <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-                <a class="text-gray-500">
-                    <a href="https://github.com/aahnik/django-polling_site">See Source Code on GitHub @RduMarais</a>
+                <a class="text-gray-500 text-xs">
+                    <a class="text-gray-500 text-xs" href="https://github.com/RduMarais/LibreKast">See Source Code on GitHub</a>
 
 
             </span>
