@@ -70,17 +70,15 @@ class QuestionConsumer(WebsocketConsumer):
 				self.send_current_question(question)
 		elif(message_in == "admin-question-start"):
 			if(self.is_user_authenticated()):
-				print('ADMIN start question')
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_question(question))
 		elif(message_in == "admin-question-results"):
 			if(self.is_user_authenticated()):
-				print('ADMIN question results')
-				pass
+				question = self.meeting.current_question()
+				async_to_sync(self.send_group_results(question))
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
-				print('ADMIN question next')
-				pass
+				async_to_sync(self.next_question())
 		else:
 			message_out = {'message':'error'}
 			self.send(text_data=json.dumps(message_out))
@@ -99,6 +97,22 @@ class QuestionConsumer(WebsocketConsumer):
 			return True
 		else:
 			return False
+
+	# sync method
+	def next_question(self):
+		# marks question as done
+		question = self.meeting.current_question()
+		question.is_done = True
+		question.save()
+		# sends new question id
+		question = self.meeting.current_question()
+		message_out = {
+			'message' : "current-question",
+			'question':{
+				'id': question.id,
+			},
+		}
+		self.send(text_data=json.dumps(message_out))
 
 	# sync method
 	def receive_vote(self,text_data_json):
@@ -189,6 +203,29 @@ class QuestionConsumer(WebsocketConsumer):
 			{
 				'type': 'meeting_message',
 				'message':message_out,
+			}
+		)
+
+	def send_group_results(self,question):
+		message_out = {
+			'message' : "results",
+			'results': [],
+			'question_type':question.question_type,
+			'total':question.participants(), #shamelessly reuse this function
+		}
+		for choice in question.choice_set.all():
+			choice_obj = {
+				'id':choice.id,
+				'text':choice.choice_text,
+				'votes':choice.votes(),
+				'isTrue':choice.isTrue,
+			}
+			message_out['results'].append(choice_obj)
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name,
+			{
+				'type': 'meeting_message',
+				'message': message_out,
 			}
 		)
 

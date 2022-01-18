@@ -123,7 +123,10 @@
 
 	function showWait(){
 		questionTitle.innerText = "Next Activity is about to start...";
+		questionDesc.innerHTML = "";
+		document.querySelector('#question-content').remove();
 		//TODO : clean 
+
 	}
 
 	function updateScoreboard(scoresArray){
@@ -144,13 +147,11 @@
 	}
 
 	function startQuestion(item){
-		console.log('started question : '+item.id);
 		id = item.id.split('-')[3];
 		// change button for stop button
 		item.onclick = null;
 		// item.removeEventListener("click",function(e) {startQuestion(e); },false);
 		item.innerHTML = "&#9723;"; // blanck icon
-		console.log('item onclick clearded');
 		
 		questionResults = document.querySelector('#librekast-question-results-'+id);
 		questionResults.innerHTML = "&#128202;" //rsults icon
@@ -190,6 +191,7 @@
 			'message': "admin-question-next", //TODO
 			'question_id':id,
 		}))
+		showWait();
 	}
 
 	function updateMeetingPlan(questionId){
@@ -200,7 +202,6 @@
 		// questionGo.classList.remove('hidden');
 		questionGo.innerHTML = "&#9199;";
 		questionGo.onclick = function(item){startQuestion(questionGo);}
-		console.log('meeting plan updated');
 	}
 
 	function showQuestionText(questionObj){
@@ -265,7 +266,6 @@
 	}
 
 	function updatePollPercentage(voteBar,totalCount){
-		// console.log(voteBar.id + "updating");
 		voteCount = parseInt(voteBar.innerText.split()[0]);
 		percent = (voteCount / totalCount) *100 ;
 		voteBar.style.width = percent+"%";
@@ -284,7 +284,6 @@
 			updatePollPercentage(item,totalCount);
 		});
 		totalCountElmt.innerText = totalCount + " votes";
-		// console.log('done update poll');
 	}
 
 	function updateWordCloud(word){
@@ -361,7 +360,7 @@
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
-		console.log('received : '+e.data);
+		// console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
 			// updateMeetingPlan(data['question'].id)
@@ -374,7 +373,6 @@
 			showWait();
 		} else if(data['message']==='notify-update-poll'){
 			updatePoll(data['vote']);
-			// console.log('notify-update-poll');
 		}else if(data['message']==='question-close'){
 			showWait();
 		} else if(data['message']==='notify-update-cloud'){
@@ -386,7 +384,6 @@
 	};
 
 	dashboardSocket.onclose = function(e) {
-		console.error('Question socket closed');
 	};
 
 
