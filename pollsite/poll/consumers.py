@@ -79,6 +79,7 @@ class QuestionConsumer(WebsocketConsumer):
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
 				async_to_sync(self.next_question())
+				async_to_sync(self.notify_next_question())
 		else:
 			message_out = {'message':'error'}
 			self.send(text_data=json.dumps(message_out))
@@ -104,15 +105,26 @@ class QuestionConsumer(WebsocketConsumer):
 		question = self.meeting.current_question()
 		question.is_done = True
 		question.save()
+
+
+	def notify_next_question(self):
 		# sends new question id
 		question = self.meeting.current_question()
+		if(not question):
+			raise ValueError('there is no question')
 		message_out = {
-			'message' : "current-question",
+			'message' : "next-question",
 			'question':{
 				'id': question.id,
 			},
 		}
-		self.send(text_data=json.dumps(message_out))
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name,
+			{
+				'type': 'meeting_message',
+				'message': message_out,
+			}
+		)
 
 	# sync method
 	def receive_vote(self,text_data_json):

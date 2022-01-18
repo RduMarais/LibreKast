@@ -124,8 +124,9 @@
 	function showWait(){
 		questionTitle.innerText = "Next Activity is about to start...";
 		questionDesc.innerHTML = "";
-		document.querySelector('#question-content').remove();
-		//TODO : clean 
+		if(document.querySelector('#question-content') != null){
+			document.querySelector('#question-content').remove();
+		}
 
 	}
 
@@ -360,10 +361,13 @@
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
-		// console.log('received : '+e.data);
+		console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
 			// updateMeetingPlan(data['question'].id)
+		} else if(data['message']==='next-question'){
+			showWait();
+			dashboardSocket.send(JSON.stringify({'message': "admin-get-current-question", }));
 		} else if(data['message']==='current-question'){
 			updateMeetingPlan(data['question'].id);
 		} else if(data['message']==='results'){
