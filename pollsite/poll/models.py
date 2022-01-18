@@ -41,7 +41,12 @@ class Meeting(models.Model):
 		return len(self.attendee_set.all())
 
 	def current_question(self):
-		return self.question_set.order_by('question_order').filter(is_done=False)[0]
+		if(self.question_set.order_by('question_order').filter(is_done=False)):
+			return self.question_set.order_by('question_order').filter(is_done=False)[0]
+		else:
+			MeetingEnd = Question(title='This meeting is over',desc="Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)",
+				question_type='TX',is_done=False,meeting=self)
+			return MeetingEnd
 
 
 # model to hold the attendee's name 

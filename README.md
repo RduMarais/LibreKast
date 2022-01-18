@@ -18,72 +18,24 @@ There are 4 types of question you can show in the app :
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
-You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`
+You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
 
 ## Project state
 
- * `channels` branch
-	 * [ ] front : showWait() reset front
-	 * [ ] front : show previous question
-	 * [ ] back : sync notificaton from admin 
-	 * [ ] back : admin widget for handling question go 
-		 * https://stackoverflow.com/questions/17919361/how-can-i-add-a-button-into-django-admin-change-list-view-page
-		 * or define a view with `from django.contrib.admin.views.decorators import staff_member_required` into `@staff_member_required`
-		 * ideally dashboard with : 
-			 * scoreboard
-			 * question list and button Next, previous, stop, results
-			 * show results in real-time
-	 * [ ] some failsafes in front end
+ * [x] home as django models (for non-technical people)
+ * [x] front : showWait() reset front
+ * [x] back : sync notificaton from admin 
+ * [x] back : admin widget for handling question go 
+ * [ ] front : sync previous question
+ * [ ] front : bug with polls appearance
+ * [ ] front : some failsafes in dashboard
  * [ ] TUTO deployment & customization
  * [ ] testing
- * [x] home as django models (for non-technical people)
  * [ ] FR translation
  * [ ] docker wrapping
  * [ ] django app wrapping
  * [ ] dark mode with tailwind CSS
 
-## Current State diagram 
-
-based on current implem (not the final goal)
-
-```
-CLIENT									 SERVER						   GROUP
-  |										   |							   |
-  |		  --> question-start -->		   |							   |
-  |									get current question				   |
-  |			 <-- question-go <--		   |							   |
- if Poll/Quizz :							  |							   |
- showQuestion								 |							   |
-  |										   |							   |
-  |		  --> vote -->					 |							   |
-  |				<-- voted <--			  |							   |
-  |										 if Poll :						 |
-  |				<-- results <--			|   --> notify-update-poll -->  |
-showResultsPoll							   |						   updatePoll
-  |										end : results					  |   TODO
-  |				<-- results <--			|	--> results -->			|
-  |										   |							   |
-  |									 end : close						   | TODO
-  |										   |	--> question-close -->	 | TODO
-  |										   |							   |
- if Word Cloud :							  |							   |
- showWordCloud								|							   |
-  |		  --> word-cloud-add -->		   |							   |
-  |										add vote						   |
-  |										   |   --> notify-update-cloud-->  |
-  |										end : close						|   TODO
-  |										   |	--> question-close -->	 | TODO
-  |										   |							   |
-  |										   |							   |
-  wait for results							|							   |
-  |		  --> debug-results  -->		   |							   |
-  |				<-- results <--			|							   |
-  |										   |							   |
- wait for score							   |							   |
-  |		  --> debug-score  -->			 |							   |
-  |		   <-- update-score <--			|							   |
-  |										   |							   |
-```
 
 ## How to run on your computer
 
@@ -151,6 +103,7 @@ Go to http://127.0.0.1:8000/. This is where Django starts server by default
 Click on Admin button on top right corner to go the the Django Administration page.
 You can add meetings, change or add questions and choices etc.
 
+
 ## How to deploy in production
 
 In order to setup LibreKast in an deployment envionment, one needs to :
@@ -163,3 +116,45 @@ In order to setup LibreKast in an deployment envionment, one needs to :
  6. create a superuser and remove the default user
  7. collect static files and migrate them in the server static folder
  
+## Current State diagram 
+
+based on current implem (not the final goal)
+
+```
+CLIENT									 SERVER						   GROUP
+  |										   |							   |
+  |		  --> question-start -->		   |							   |
+  |									get current question				   |
+  |			 <-- question-go <--		   |							   |
+ if Poll/Quizz :							  |							   |
+ showQuestion								 |							   |
+  |										   |							   |
+  |		  --> vote -->					 |							   |
+  |				<-- voted <--			  |							   |
+  |										 if Poll :						 |
+  |				<-- results <--			|   --> notify-update-poll -->  |
+showResultsPoll							   |						   updatePoll
+  |										end : results					  |   TODO
+  |				<-- results <--			|	--> results -->			|
+  |										   |							   |
+  |									 end : close						   | TODO
+  |										   |	--> question-close -->	 | TODO
+  |										   |							   |
+ if Word Cloud :							  |							   |
+ showWordCloud								|							   |
+  |		  --> word-cloud-add -->		   |							   |
+  |										add vote						   |
+  |										   |   --> notify-update-cloud-->  |
+  |										end : close						|   TODO
+  |										   |	--> question-close -->	 | TODO
+  |										   |							   |
+  |										   |							   |
+  wait for results							|							   |
+  |		  --> debug-results  -->		   |							   |
+  |				<-- results <--			|							   |
+  |										   |							   |
+ wait for score							   |							   |
+  |		  --> debug-score  -->			 |							   |
+  |		   <-- update-score <--			|							   |
+  |										   |							   |
+```

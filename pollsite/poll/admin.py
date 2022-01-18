@@ -55,7 +55,8 @@ class MeetingAdmin(NonSortableParentAdmin):
 
 	def is_ongoing(self,obj):
 		if(obj.date_start <= timezone.now() and obj.date_end >= timezone.now()):
-			return 'Ongoing Meeting'
+			link=reverse("poll:dashboard", args=[obj.id])
+			return format_html('Ongoing : <a href="%s">MEETING DASHBOARD</a>' % link)
 		elif(obj.date_end <= timezone.now()):
 			return 'Past Meeting'
 		elif(obj.date_start >= timezone.now()):

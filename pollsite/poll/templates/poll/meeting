@@ -75,6 +75,9 @@
 		if(document.querySelector('#question-content') != null){
 			document.querySelector('#question-content').remove();
 		}
+		if(document.querySelector('#question-form') != null){
+			document.querySelector('#question-form').remove();
+		}
 	}
 
 	function libreKastVote(choice){

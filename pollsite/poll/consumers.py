@@ -112,10 +112,35 @@ class QuestionConsumer(WebsocketConsumer):
 		question = self.meeting.current_question()
 		if(not question):
 			raise ValueError('there is no question')
+		else:
+			message_out = {
+				'message' : "next-question",
+				'question':{
+					'id': question.id,
+				},
+			}
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name,
+			{
+				'type': 'meeting_message',
+				'message': message_out,
+			}
+		)
+		if(question.id == None):
+			self.notify_end()
+
+
+	def notify_end(self):
 		message_out = {
-			'message' : "next-question",
+			'message' : "question-go",
 			'question':{
-				'id': question.id,
+				'title': 'Thanks for attending',
+				'desc': "This meeting is now over, thank you for using <b>LibreKast</b>."
+					+"<br><br><p class='text-xs'>Feel free to check the author's <a href='https://www.pour-info.tech/'>youtube channel</a>"
+					+"and consider subscribing, it's as free as this software.</p>",
+				'type': 'TX',
+				'id': 0,
+				'choices':[]
 			},
 		}
 		async_to_sync(self.channel_layer.group_send)(
