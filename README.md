@@ -7,22 +7,31 @@ I am not a developper, so this code is far from perfect ! Although it runs, plea
 [![GitHub license](https://img.shields.io/github/license/RduMarais/LibreKast)](https://github.com/RduMarais/LibreKast/blob/master/LICENSE)
 
 
-[**see screenshots**](https://github.com/aahnik/django-polling_site/tree/master/ScreenShots)
+## Functionnalities
+
+There are 4 types of question you can show in the app : 
+
+ * text-only
+ * word cloud : displays a chart with all submitted words
+ * poll : asks a question. on question close, shows the number of votes each choice got.
+ * Quizz : asks a question. One of the answers is marked as 'correct', all attendants that chose the correct answer receive 1 point, the first one to answer receives an additionnal point.
+
+The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
 ## Project state
 
  * `channels` branch
-     * [ ] front : showWait() reset front
-     * [ ] front : show previous question
-     * [ ] back : sync notificaton from admin 
-     * [ ] back : admin widget for handling question go 
-        * https://stackoverflow.com/questions/17919361/how-can-i-add-a-button-into-django-admin-change-list-view-page
-        * or define a view with `from django.contrib.admin.views.decorators import staff_member_required` into `@staff_member_required`
-        * ideally dashboard with : 
-           * scoreboard
-           * question list and button Next, previous, stop, results
-           * show results in real-time
-     * [ ] some failsafes in front end
+	 * [ ] front : showWait() reset front
+	 * [ ] front : show previous question
+	 * [ ] back : sync notificaton from admin 
+	 * [ ] back : admin widget for handling question go 
+		 * https://stackoverflow.com/questions/17919361/how-can-i-add-a-button-into-django-admin-change-list-view-page
+		 * or define a view with `from django.contrib.admin.views.decorators import staff_member_required` into `@staff_member_required`
+		 * ideally dashboard with : 
+			 * scoreboard
+			 * question list and button Next, previous, stop, results
+			 * show results in real-time
+	 * [ ] some failsafes in front end
  * [ ] TUTO deployment & customization
  * [ ] testing
  * [x] home as django models (for non-technical people)
@@ -36,42 +45,42 @@ I am not a developper, so this code is far from perfect ! Although it runs, plea
 based on current implem (not the final goal)
 
 ```
-CLIENT                                     SERVER                           GROUP
-  |                                           |                               |
-  |          --> question-start -->           |                               |
-  |                                    get current question                   |
-  |             <-- question-go <--           |                               |
- if Poll/Quizz :                              |                               |
- showQuestion                                 |                               |
-  |                                           |                               |
-  |          --> vote -->                     |                               |
-  |                <-- voted <--              |                               |
-  |                                         if Poll :                         |
-  |                <-- results <--            |   --> notify-update-poll -->  |
-showResultsPoll                               |                           updatePoll
-  |                                        end : results                      |   TODO
-  |                <-- results <--            |    --> results -->            |
-  |                                           |                               |
-  |                                     end : close                           | TODO
-  |                                           |    --> question-close -->     | TODO
-  |                                           |                               |
- if Word Cloud :                              |                               |
- showWordCloud                                |                               |
-  |          --> word-cloud-add -->           |                               |
-  |                                        add vote                           |
-  |                                           |   --> notify-update-cloud-->  |
-  |                                        end : close                        |   TODO
-  |                                           |    --> question-close -->     | TODO
-  |                                           |                               |
-  |                                           |                               |
-  wait for results                            |                               |
-  |          --> debug-results  -->           |                               |
-  |                <-- results <--            |                               |
-  |                                           |                               |
- wait for score                               |                               |
-  |          --> debug-score  -->             |                               |
-  |           <-- update-score <--            |                               |
-  |                                           |                               |
+CLIENT									 SERVER						   GROUP
+  |										   |							   |
+  |		  --> question-start -->		   |							   |
+  |									get current question				   |
+  |			 <-- question-go <--		   |							   |
+ if Poll/Quizz :							  |							   |
+ showQuestion								 |							   |
+  |										   |							   |
+  |		  --> vote -->					 |							   |
+  |				<-- voted <--			  |							   |
+  |										 if Poll :						 |
+  |				<-- results <--			|   --> notify-update-poll -->  |
+showResultsPoll							   |						   updatePoll
+  |										end : results					  |   TODO
+  |				<-- results <--			|	--> results -->			|
+  |										   |							   |
+  |									 end : close						   | TODO
+  |										   |	--> question-close -->	 | TODO
+  |										   |							   |
+ if Word Cloud :							  |							   |
+ showWordCloud								|							   |
+  |		  --> word-cloud-add -->		   |							   |
+  |										add vote						   |
+  |										   |   --> notify-update-cloud-->  |
+  |										end : close						|   TODO
+  |										   |	--> question-close -->	 | TODO
+  |										   |							   |
+  |										   |							   |
+  wait for results							|							   |
+  |		  --> debug-results  -->		   |							   |
+  |				<-- results <--			|							   |
+  |										   |							   |
+ wait for score							   |							   |
+  |		  --> debug-score  -->			 |							   |
+  |		   <-- update-score <--			|							   |
+  |										   |							   |
 ```
 
 ## How to run on your computer

@@ -73,7 +73,7 @@
 			  <th>Score</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="scoreboard-tbody">
 			<tr>
 			  <td>User A</td>
 			  <td>12</td>
@@ -113,33 +113,22 @@
 		//TODO : clean 
 	}
 
-	// function libreKastVote(choice){
-	// 	// console.log('clicked : '+choice.innerText);
-	// 	message_out = JSON.stringify({
-	// 		'message': "vote",
-	// 		'question':questionTitle.value,
-	// 		'choice':choice.value ,
-	// 	});
-	// 	dashboardSocket.send(message_out);
-	// 	// console.log('send : '+message_out);
+	function updateScoreboard(scoresArray){
+		tableBody = document.querySelector('#scoreboard-tbody');
+		tableBody.textContent =''; //clear previous rows
+		for(i in scoresArray){
+			let row = document.createElement('tr');
+			let username = document.createElement('td');
+			let userscore = document.createElement('td');
+			username.innerText = scoresArray[i].name;
+			userscore.innerText = scoresArray[i].score;
+			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
+			row.appendChild(username);
+			row.appendChild(userscore);
+			tableBody.appendChild(row);
+		}
 
-	// 	choice.onclick="";
-	// 	choice.classList.replace('librekast-choice','librekast-chosen'); 
-	// 	choice.className = "librekast-chosen";
-	// 	choice.classList.add("bg-blue-500","text-white");
-	// 	choice.classList.add("text-center","py-2","px-4","my-2","rounded");
-	// 	let choiceButtons = document.getElementsByClassName('librekast-choice');
-	// 	// console.log(choiceButtons.length);
-	// 	for(let a in choiceButtons){
-	// 		choiceButtons[a].className ="librekast-choice"; 
-	// 		// console.log('choice button : '+choiceButtons[a].innerText);
-	// 		choiceButtons[a].classList.add("bg-blue-200","text-blue-600");
-	// 		choiceButtons[a].classList.add("text-center","py-2","px-4","my-2","rounded");
-	// 		choiceButtons[a].onclick="";
-	// 	}
-	// 	choice.classList.add("librekast-choice");
-	// 	// in case there is need to resend vote
-	// }
+	}
 
 	function showQuestionText(questionObj){
 		questionTitle.textContent = questionObj['title'];
@@ -151,100 +140,84 @@
 
 		if(questionObj['type'] === 'WC'){
 			showWordCloud(questionObj);
-			// print buttons for admin
 		}
-		// else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
+		else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
 	}
 
 
-	// function showResultsPoll(resultsArray,total_votes){
-	// 	for(i in resultsArray){
-	// 		let choice = document.querySelector('#choice-'+resultsArray[i].id);
-	// 		if(choice.classList.contains('librekast-chosen')){
-	// 			choice.classList.add('font-bold',"librekast-choice");
-	// 			choice.classList.remove("bg-blue-500");
-	// 			choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
-	// 		} else {
-	// 			choice.classList.remove("bg-blue-200");
-	// 			choice.classList.replace("text-blue-600","text-"+choiceColors[i]+"-900");
-	// 		}
-	// 		choice.classList.add("relative","max-w-xl","overflow-hidden");
-	// 		choice.classList.remove("py-2");
-	// 		let back = document.createElement("div");
-	// 		back.id = "bar-background-"+resultsArray[i].id;
-	// 		back.className="w-full";
-	// 		back.classList.add("h-full","bg-"+choiceColors[i]+"-200","absolute");
+	function showResultsPoll(resultsArray,total_votes){
+		for(i in resultsArray){
+			let choice = document.querySelector('#choice-'+resultsArray[i].id);
+			choice.classList.remove("bg-blue-200");
+			choice.classList.replace("text-blue-600","text-"+choiceColors[i]+"-900");
+			choice.classList.add("relative","max-w-xl","overflow-hidden");
+			choice.classList.remove("py-2");
+			let back = document.createElement("div");
+			back.id = "bar-background-"+resultsArray[i].id;
+			back.className="w-full";
+			back.classList.add("h-full","bg-"+choiceColors[i]+"-200","absolute");
 			
-	// 		let bar = document.createElement("div");
-	// 		bar.id="bar-"+resultsArray[i].id;
-	// 		bar.className="h-full";
-	// 		bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar");
-	// 		percent = (resultsArray[i].votes / total_votes) *100 ;
-	// 		bar.style.width = percent + "%";
-	// 		bar.innerText = resultsArray[i].votes + " votes";
+			let bar = document.createElement("div");
+			bar.id="bar-"+resultsArray[i].id;
+			bar.className="h-full";
+			bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar");
+			percent = (resultsArray[i].votes / total_votes) *100 ;
+			bar.style.width = percent + "%";
+			bar.innerText = resultsArray[i].votes + " votes";
 			
-	// 		choice.appendChild(back);
-	// 		choice.appendChild(bar);
-	// 	}
-	// 	let p = document.createElement("p");
-	// 	p.className = "mx-4";
-	// 	p.classList.add('my-4','text-center');
-	// 	p.innerText = total_votes+" votes";
-	// 	p.id = 'total-votes';
-	// 	document.querySelector("#question-content").appendChild(p);
-	// }
+			choice.appendChild(back);
+			choice.appendChild(bar);
+		}
+		let p = document.createElement("p");
+		p.className = "mx-4";
+		p.classList.add('my-4','text-center');
+		p.innerText = total_votes+" votes";
+		p.id = 'total-votes';
+		document.querySelector("#question-content").appendChild(p);
+	}
 
-	// function showResultsQuizz(resultsArray){
-	// 	// consider that the choices are still here
-	// 	for(i in resultsArray){
-	// 		// or could use array of choice elmts
-	// 		let choice = document.querySelector('#choice-'+resultsArray[i].id);
-	// 		if(choice.classList.contains('librekast-chosen')){
-	// 			if(resultsArray[i].isTrue){
-	// 				let s = document.createElement("span");
-	// 				s.innerHTML = "Yes, the answer is <b>"+resultsArray[i].text+"</b>";
-	// 				questionDesc.appendChild(s);
-	// 				choice.classList.replace('bg-blue-500','bg-green-500');
-	// 			} else{
-	// 				choice.classList.replace('bg-blue-500','bg-red-500');
-	// 			}
-	// 		} else if(resultsArray[i].isTrue){
-	// 			let s = document.createElement("span");
-	// 			s.innerHTML = "Sorry, the answer was <b>"+resultsArray[i].text+"</b>";
-	// 			questionDesc.appendChild(s);
-	// 			choice.classList.replace('bg-blue-200','bg-green-300');
-	// 			choice.classList.replace('text-blue-600','text-green-600');
-	// 		}
-	// 		let c = document.createElement("span");
-	// 		c.className="text-xs";
-	// 		c.classList.add("px-4");
-	// 		c.innerText = resultsArray[i].votes + " votes";
-	// 		choice.appendChild(c);
-	// 	}
-	// }
+	function showResultsQuizz(resultsArray){
+		// consider that the choices are still here
+		for(i in resultsArray){
+			// or could use array of choice elmts
+			let choice = document.querySelector('#choice-'+resultsArray[i].id);
+			if(resultsArray[i].isTrue){
+				let s = document.createElement("span");
+				s.innerHTML = "The answer was <b>"+resultsArray[i].text+"</b>";
+				questionDesc.appendChild(s);
+				choice.classList.replace('bg-blue-200','bg-green-300');
+				choice.classList.replace('text-blue-600','text-green-600');
+			}
+			let c = document.createElement("span");
+			c.className="text-xs";
+			c.classList.add("px-4");
+			c.innerText = resultsArray[i].votes + " votes";
+			choice.appendChild(c);
+		}
+	}
 
-	// function updatePollPercentage(voteBar,totalCount){
-	// 	// console.log(voteBar.id + "updating");
-	// 	voteCount = parseInt(voteBar.innerText.split()[0]);
-	// 	percent = (voteCount / totalCount) *100 ;
-	// 	voteBar.style.width = percent+"%";
-	// }
+	function updatePollPercentage(voteBar,totalCount){
+		// console.log(voteBar.id + "updating");
+		voteCount = parseInt(voteBar.innerText.split()[0]);
+		percent = (voteCount / totalCount) *100 ;
+		voteBar.style.width = percent+"%";
+	}
 
-	// function updatePoll(voteId){
-	// 	let totalCountElmt = document.querySelector('#total-votes');
-	// 	let totalCount = parseInt(totalCountElmt.innerText.split()[0]);
-	// 	let voteBar = document.querySelector('#bar-'+voteId);
-	// 	voteCount = parseInt(voteBar.innerText.split()[0]);
-	// 	voteCount++;
-	// 	voteBar.innerText = voteCount + " votes";
-	// 	totalCount++;
-	// 	let choiceBars = document.getElementsByClassName('librekast-bar');
-	// 	[...document.getElementsByClassName("librekast-bar")].forEach(function(item){
-	// 		updatePollPercentage(item,totalCount);
-	// 	});
-	// 	totalCountElmt.innerText = totalCount + " votes";
-	// 	// console.log('done update poll');
-	// }
+	function updatePoll(voteId){
+		let totalCountElmt = document.querySelector('#total-votes');
+		let totalCount = parseInt(totalCountElmt.innerText.split()[0]);
+		let voteBar = document.querySelector('#bar-'+voteId);
+		voteCount = parseInt(voteBar.innerText.split()[0]);
+		voteCount++;
+		voteBar.innerText = voteCount + " votes";
+		totalCount++;
+		let choiceBars = document.getElementsByClassName('librekast-bar');
+		[...document.getElementsByClassName("librekast-bar")].forEach(function(item){
+			updatePollPercentage(item,totalCount);
+		});
+		totalCountElmt.innerText = totalCount + " votes";
+		// console.log('done update poll');
+	}
 
 	function updateWordCloud(word){
 		//updte value array
@@ -332,29 +305,28 @@
 		console.log('WC drawn');
 	}
 
-	// function showChoices(choicesArray){
-	// 	content = document.createElement("div");
-	// 	content.id = "question-content";
-	// 	content.classList.add("py-8"); 
-	// 	content.classList.add("px-2"); 
-	// 	content.style="";
+	function showChoices(choicesArray){
+		content = document.createElement("div");
+		content.id = "question-content";
+		content.classList.add("py-8"); 
+		content.classList.add("px-2"); 
+		content.style="";
 
-	// 	let l = document.createElement("ul");
-	// 	l.id="choice-table";
-	// 	content.appendChild(l);
-	// 	for(i in choicesArray){
-	// 		let c = document.createElement("li");
-	// 		c.innerText = choicesArray[i].text;
-	// 		c.id = 'choice-'+choicesArray[i].id;
-	// 		c.value = choicesArray[i].id;
-	// 		c.classList.add("bg-"+choiceColors[i]+"-400","hover:bg-"+choiceColors[i]+"-700");
-	// 		c.classList.add("text-white","text-center","py-2","px-4","my-2","rounded");
-	// 		c.classList.add("librekast-choice");
-	// 		c.onclick = function() { libreKastVote(this); };
-	// 		content.children[0].appendChild(c);
-	// 	}
-	// 	document.querySelector('#question-div').appendChild(content);
-	// }
+		let l = document.createElement("ul");
+		l.id="choice-table";
+		content.appendChild(l);
+		for(i in choicesArray){
+			let c = document.createElement("li");
+			c.innerText = choicesArray[i].text;
+			c.id = 'choice-'+choicesArray[i].id;
+			c.value = choicesArray[i].id;
+			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white");
+			c.classList.add("text-blue-600","text-center","py-2","px-4","my-2","rounded");
+			c.classList.add("librekast-choice");
+			content.children[0].appendChild(c);
+		}
+		document.querySelector('#question-div').appendChild(content);
+	}
 
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
@@ -362,24 +334,20 @@
 		console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
-		// } else if(data['message']==='results'){
-	// 		if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
-	// 		else if(data['question_type']=='PL'){showResultsPoll(data['results'],data['total']);}
-	// 		// console.log('Show results');
-	// 	} else if(data['message']==='question-ready'){
-	// 		showWait();
-	// 		// console.log('not implemented yet');
-	// 	} else if(data['message']==='notify-update-poll'){
-	// 		updatePoll(data['vote']);
-	// 		// console.log('notify-update-poll');
-	// 	} else if(data['message']==='update-score'){
-	// 		console.log('score :'+data['score']);
-	// 		updateScore(data['score']);
-	// 	}else if(data['message']==='question-close'){
-	// 		showWait();
+		} else if(data['message']==='results'){
+			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
+			else if(data['question_type']=='PL'){showResultsPoll(data['results'],data['total']);}
+		} else if(data['message']==='question-ready'){
+			showWait();
+		} else if(data['message']==='notify-update-poll'){
+			updatePoll(data['vote']);
+			// console.log('notify-update-poll');
+		}else if(data['message']==='question-close'){
+			showWait();
 		} else if(data['message']==='notify-update-cloud'){
 			updateWordCloud(data['vote']);
-			console.log('UPDATE WORD CLOUD with word : '+data['vote']);
+		}else if(data['message']==='update-scoreboard'){
+			updateScoreboard(data['scores']);
 		}
 		
 	// 	document.querySelector('#question-message-log').textContent = (data.message + '\n');
@@ -403,6 +371,12 @@
 		startDivNode.remove()
 		showWait();
 	};
+
+	document.querySelector('#update-scoreboard').onclick = function(e) {
+		dashboardSocket.send(JSON.stringify({
+			'message': 'get-scoreboard', 
+		}));
+	}
 
 </script>
 

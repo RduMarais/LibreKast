@@ -62,6 +62,8 @@ class QuestionConsumer(WebsocketConsumer):
 			word = clean(text_data_json['word'])
 			async_to_sync(self.add_word(word))
 			async_to_sync(self.notify_add_word(word))
+		elif(message_in == "get-scoreboard"):
+			async_to_sync(self.send_scoreboard())
 		else:
 			message_out = "{'message':'error'}"
 			self.send(text_data=message_out)
@@ -175,6 +177,21 @@ class QuestionConsumer(WebsocketConsumer):
 				}
 			}
 		)
+	# sync method
+	def send_scoreboard(self):
+		message_out = {
+			'message' : "update-scoreboard",
+			'scores': [],
+		}
+		for user in self.meeting.attendee_set.all().order_by('-score'):
+			score_obj = {
+				'id':user.id,
+				'name':user.name,
+				'score':user.score,
+			}
+			message_out['scores'].append(score_obj)
+		self.send(text_data=json.dumps(message_out))
+
 
 	# TODO remove question 
 	def notify_update_PL(self,question,choice):

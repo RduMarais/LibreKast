@@ -98,20 +98,20 @@ class Question(SortableMixin):
 			self.question_type = "QZ"
 		super(Question, self).save(*args, **kwargs)
 
-	def clean(self):
-		self.clean_fields()
-		choices = self.choice_set.all()
-		print(choices)
-		# if(self.question_type=='TX' and len(choices)!=0):
-		# 	raise ValidationError('Question type is `Text Only` but there are choices defined')
-		# if(self.question_type=='PL' and len(choices)<=0):
-		# 	raise ValidationError('Question type is `Poll` but there are no choices defined')
-		# if(self.question_type=='QZ' and len(choices)<=0):
-		# 	raise ValidationError('Question type is `Quizz` but there are no choices defined')
-		if(self.question_type=='QZ' and len(self.choice_set.filter(isTrue=True))==0):
-			raise ValidationError('Question type is `Quizz` but there is no correct answer defined')
-		if(self.question_type=='PL' and len(self.choice_set.filter(isTrue=True))!=0):
-			raise ValidationError('Question type is `Poll` but there are correct answers defined')
+	# def clean(self):
+	# 	self.clean_fields()
+	# 	choices = self.choice_set.all()
+	# 	print(choices)
+	# 	# if(self.question_type=='TX' and len(choices)!=0):
+	# 	# 	raise ValidationError('Question type is `Text Only` but there are choices defined')
+	# 	# if(self.question_type=='PL' and len(choices)<=0):
+	# 	# 	raise ValidationError('Question type is `Poll` but there are no choices defined')
+	# 	# if(self.question_type=='QZ' and len(choices)<=0):
+	# 	# 	raise ValidationError('Question type is `Quizz` but there are no choices defined')
+	# 	if(self.question_type=='QZ' and len(self.choice_set.filter(isTrue=True))==0):
+	# 		raise ValidationError('Question type is `Quizz` but there is no correct answer defined')
+	# 	if(self.question_type=='PL' and len(self.choice_set.filter(isTrue=True))!=0):
+	# 		raise ValidationError('Question type is `Poll` but there are correct answers defined')
 
 	recent.admin_order_field = 'pub_date'
 	recent.boolean = True
