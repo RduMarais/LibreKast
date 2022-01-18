@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.models import Q
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
 
 import datetime
 
@@ -21,6 +22,12 @@ def index(request):
 	meetings_list = Meeting.objects.filter(Q(date_start__lte=timezone.now()) & Q(date_end__gte=timezone.now()))
 	context = {'meetings':meetings_list }
 	return render(request, 'poll/index', context)
+
+@staff_member_required
+def dashboard(request,meeting_id):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	return render(request,'poll/dashboard',{'meeting':meeting})
+
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
 def meeting(request, meeting_id):

@@ -2,6 +2,8 @@
 
 **A nice and free web app to gamify and animate your meetings, build with django channels and anychart free.**
 
+I am not a developper, so this code is far from perfect ! Although it runs, please bear in mind that the design of LibreKast is driven by what I managed to do, and not really what I planned to do (in terms of design).
+
 [![GitHub license](https://img.shields.io/github/license/RduMarais/LibreKast)](https://github.com/RduMarais/LibreKast/blob/master/LICENSE)
 
 
@@ -13,7 +15,13 @@
      * [ ] front : showWait() reset front
      * [ ] front : show previous question
      * [ ] back : sync notificaton from admin 
-     * [ ] back : admin widget for handling question order
+     * [ ] back : admin widget for handling question go 
+        * https://stackoverflow.com/questions/17919361/how-can-i-add-a-button-into-django-admin-change-list-view-page
+        * or define a view with `from django.contrib.admin.views.decorators import staff_member_required` into `@staff_member_required`
+        * ideally dashboard with : 
+           * scoreboard
+           * question list and button Next, previous, stop, results
+           * show results in real-time
      * [ ] some failsafes in front end
  * [ ] TUTO deployment & customization
  * [ ] testing
@@ -26,6 +34,7 @@
 ## Current State diagram 
 
 based on current implem (not the final goal)
+
 ```
 CLIENT                                     SERVER                           GROUP
   |                                           |                               |

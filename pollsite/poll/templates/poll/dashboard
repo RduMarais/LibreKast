@@ -1,0 +1,409 @@
+{% extends "base_layout.html" %}
+
+{% block title  %}Dashboard{% endblock  %}
+
+{% block content  %}
+<section class="text-center pb-2 mb-2" name="meeting_details">
+	<h1 class="text-3xl text-center">Meeting Dashboard : {{ meeting.title }}</h1>
+</section>
+<div class="md:flex">
+<section class="w-full md:w-1/2 body-font md:border md:border-blue-200" name="current-question">
+	<div class="text-center" id="question-div">
+		<div class="text-center m-2">
+			<span id="current-question-id" class="text-2xl" name="current-question-id" value="">Current Question title</span>
+		</div>
+		<div>
+			<div id="question-description" class="">Question description</div>
+		</div>
+	</div>
+	<div class="container px-5 py-24 mx-auto text-center" id="start-div">
+		<button id="question-start" value="question-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">START</button>
+	</div>
+</section>
+<section class="w-full md:w-1/4 body-font md:border md:border-red-200" name="meeting-plan-section">
+	<div class="text-2xl text-center m-2" id="meeting-div">
+		Meeting plan
+	</div>
+	<div class = "w-full items-center m-2 p-1">
+		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center">
+			<thead>
+				<tr class="bg-red-100">
+				  <th>Question</th>
+				  <th>Type</th>
+				  <th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for question in meeting.question_set.all %}
+				<tr>
+				  <td>{{ question.title }}</td>
+				  <td>
+				  	{% if question.question_type == 'WC' %}Word Cloud{%endif%}
+				  	{% if question.question_type == 'PL' %}Poll{%endif%}
+				  	{% if question.question_type == 'QZ' %}Quizz{%endif%}
+				  	{% if question.question_type == 'TX' %}Text Only{%endif%}
+				  </td>
+				  <td id="librekast-question-status-{{question.id}}">False</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+<section class="w-full md:w-1/4 body-font md:border md:border-green-200" name="scoreboard-section">
+	<div class="text-center w-full m-2" id="scoreboard-div">
+		<div class="basis-3/4 inline">
+			<span class="text-2xl text-center p-2">Score Board</span>
+		</div>
+		<div class="basis-1/4 inline text-center">
+			<span class="p-2" id="update-scoreboard-div">
+			<button id="update-scoreboard" value="update-scoreboard" class="bg-green-600 hover:bg-green-800 text-white text-center font-bold rounded">
+				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+				</svg>
+			</button>
+			</span>
+		</div>
+	</div>
+	<div class = "w-full items-center m-2 p-2">
+	<table class="table-auto border-separate border border-solid border-green-900 divide-solid divide-y-2 divide-x-2 divide-green-800 mx-auto text-center">
+		<thead>
+			<tr class="bg-green-100">
+			  <th>Username</th>
+			  <th>Score</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+			  <td>User A</td>
+			  <td>12</td>
+			</tr>
+			<tr>
+			  <td>User B</td>
+			  <td>8</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+</section>
+</div>
+
+
+{% endblock  %}
+
+{% block javascript %}
+
+<script>
+	const meeting_id = {{ meeting.id }};
+	const dashboardSocket = new WebSocket(
+		'ws://'
+		+ window.location.host
+		+ '/ws/'
+		+ meeting_id
+		+ '/'
+	);
+	const choiceColors = ['blue','indigo','purple','pink','sky','violet'];
+	var questionTitle = document.querySelector('#current-question-id');
+	var questionDesc = document.querySelector('#question-description');
+	var wordCloudData = [];
+	var questionStatus ;
+
+	function showWait(){
+		questionTitle.innerText = "Next Activity is about to start...";
+		//TODO : clean 
+	}
+
+	// function libreKastVote(choice){
+	// 	// console.log('clicked : '+choice.innerText);
+	// 	message_out = JSON.stringify({
+	// 		'message': "vote",
+	// 		'question':questionTitle.value,
+	// 		'choice':choice.value ,
+	// 	});
+	// 	dashboardSocket.send(message_out);
+	// 	// console.log('send : '+message_out);
+
+	// 	choice.onclick="";
+	// 	choice.classList.replace('librekast-choice','librekast-chosen'); 
+	// 	choice.className = "librekast-chosen";
+	// 	choice.classList.add("bg-blue-500","text-white");
+	// 	choice.classList.add("text-center","py-2","px-4","my-2","rounded");
+	// 	let choiceButtons = document.getElementsByClassName('librekast-choice');
+	// 	// console.log(choiceButtons.length);
+	// 	for(let a in choiceButtons){
+	// 		choiceButtons[a].className ="librekast-choice"; 
+	// 		// console.log('choice button : '+choiceButtons[a].innerText);
+	// 		choiceButtons[a].classList.add("bg-blue-200","text-blue-600");
+	// 		choiceButtons[a].classList.add("text-center","py-2","px-4","my-2","rounded");
+	// 		choiceButtons[a].onclick="";
+	// 	}
+	// 	choice.classList.add("librekast-choice");
+	// 	// in case there is need to resend vote
+	// }
+
+	function showQuestionText(questionObj){
+		questionTitle.textContent = questionObj['title'];
+		questionTitle.value = questionObj['id'];
+		questionTitle.classList.add('librekast-'+questionObj['type']);
+		questionDesc.innerHTML = questionObj['desc'];
+		questionStatus = document.querySelector('#librekast-question-status-'+questionObj['id']);
+		questionStatus.innerText = "ONGOING";
+
+		if(questionObj['type'] === 'WC'){
+			showWordCloud(questionObj);
+			// print buttons for admin
+		}
+		// else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
+	}
+
+
+	// function showResultsPoll(resultsArray,total_votes){
+	// 	for(i in resultsArray){
+	// 		let choice = document.querySelector('#choice-'+resultsArray[i].id);
+	// 		if(choice.classList.contains('librekast-chosen')){
+	// 			choice.classList.add('font-bold',"librekast-choice");
+	// 			choice.classList.remove("bg-blue-500");
+	// 			choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
+	// 		} else {
+	// 			choice.classList.remove("bg-blue-200");
+	// 			choice.classList.replace("text-blue-600","text-"+choiceColors[i]+"-900");
+	// 		}
+	// 		choice.classList.add("relative","max-w-xl","overflow-hidden");
+	// 		choice.classList.remove("py-2");
+	// 		let back = document.createElement("div");
+	// 		back.id = "bar-background-"+resultsArray[i].id;
+	// 		back.className="w-full";
+	// 		back.classList.add("h-full","bg-"+choiceColors[i]+"-200","absolute");
+			
+	// 		let bar = document.createElement("div");
+	// 		bar.id="bar-"+resultsArray[i].id;
+	// 		bar.className="h-full";
+	// 		bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar");
+	// 		percent = (resultsArray[i].votes / total_votes) *100 ;
+	// 		bar.style.width = percent + "%";
+	// 		bar.innerText = resultsArray[i].votes + " votes";
+			
+	// 		choice.appendChild(back);
+	// 		choice.appendChild(bar);
+	// 	}
+	// 	let p = document.createElement("p");
+	// 	p.className = "mx-4";
+	// 	p.classList.add('my-4','text-center');
+	// 	p.innerText = total_votes+" votes";
+	// 	p.id = 'total-votes';
+	// 	document.querySelector("#question-content").appendChild(p);
+	// }
+
+	// function showResultsQuizz(resultsArray){
+	// 	// consider that the choices are still here
+	// 	for(i in resultsArray){
+	// 		// or could use array of choice elmts
+	// 		let choice = document.querySelector('#choice-'+resultsArray[i].id);
+	// 		if(choice.classList.contains('librekast-chosen')){
+	// 			if(resultsArray[i].isTrue){
+	// 				let s = document.createElement("span");
+	// 				s.innerHTML = "Yes, the answer is <b>"+resultsArray[i].text+"</b>";
+	// 				questionDesc.appendChild(s);
+	// 				choice.classList.replace('bg-blue-500','bg-green-500');
+	// 			} else{
+	// 				choice.classList.replace('bg-blue-500','bg-red-500');
+	// 			}
+	// 		} else if(resultsArray[i].isTrue){
+	// 			let s = document.createElement("span");
+	// 			s.innerHTML = "Sorry, the answer was <b>"+resultsArray[i].text+"</b>";
+	// 			questionDesc.appendChild(s);
+	// 			choice.classList.replace('bg-blue-200','bg-green-300');
+	// 			choice.classList.replace('text-blue-600','text-green-600');
+	// 		}
+	// 		let c = document.createElement("span");
+	// 		c.className="text-xs";
+	// 		c.classList.add("px-4");
+	// 		c.innerText = resultsArray[i].votes + " votes";
+	// 		choice.appendChild(c);
+	// 	}
+	// }
+
+	// function updatePollPercentage(voteBar,totalCount){
+	// 	// console.log(voteBar.id + "updating");
+	// 	voteCount = parseInt(voteBar.innerText.split()[0]);
+	// 	percent = (voteCount / totalCount) *100 ;
+	// 	voteBar.style.width = percent+"%";
+	// }
+
+	// function updatePoll(voteId){
+	// 	let totalCountElmt = document.querySelector('#total-votes');
+	// 	let totalCount = parseInt(totalCountElmt.innerText.split()[0]);
+	// 	let voteBar = document.querySelector('#bar-'+voteId);
+	// 	voteCount = parseInt(voteBar.innerText.split()[0]);
+	// 	voteCount++;
+	// 	voteBar.innerText = voteCount + " votes";
+	// 	totalCount++;
+	// 	let choiceBars = document.getElementsByClassName('librekast-bar');
+	// 	[...document.getElementsByClassName("librekast-bar")].forEach(function(item){
+	// 		updatePollPercentage(item,totalCount);
+	// 	});
+	// 	totalCountElmt.innerText = totalCount + " votes";
+	// 	// console.log('done update poll');
+	// }
+
+	function updateWordCloud(word){
+		//updte value array
+		let b = false;
+		//if word exists
+		let obj = wordCloudData.find((o, i) => {
+    		if (o.x === word) {
+        		o.value++;
+        		b = true;
+        		return true;
+    		}
+		});
+		//add word to data if non existent
+		if(!b){
+			let n = {'x':word,'value':1};
+			wordCloudData.push(n);
+		}
+
+		//remove old graph
+		ocontent = document.querySelector('#question-content');
+		ocontent.remove();
+		//show ne graph
+		ncontent = document.createElement("div");
+		ncontent.id = "question-content";
+		document.querySelector('#question-div').appendChild(ncontent);
+
+		var chart = anychart.tagCloud(wordCloudData);
+		chart.angles([0]);
+		chart.container("question-content");
+		chart.draw();
+	}
+
+	// function updateScore(score){
+	// 	document.querySelector('#my-score').innerText = score;
+	// }
+
+	// function wcSendWord(word){
+	// 	console.log('sending added choice');
+	// 	dashboardSocket.send(JSON.stringify({
+	// 		'message': "word-cloud-add", 
+	// 		'word':word,
+	// 	}));
+	// 	console.log('sent : '+word);
+	// }
+
+	function showWordCloud(questionObj){
+		// console.log('start WC');
+		wordCloudData = questionObj['choices'];
+
+		// show form 
+		// wcForm = document.createElement("div"); // not a form it's dynamic
+		// wcForm.id = "question-form";
+		// wcForm.classList.add("inline-flex","w-full","border");
+		// wcInput = document.createElement("input");
+		// wcButton = document.createElement("button");
+		// wcButton.classList.add("w-1/12","pt-2","p-1","bg-indigo-300","hover:bg-indigo-100","text-indigo-800");
+		// wcButton.innerText = "ADD";
+		// wcButton.id = "librekast-add";
+		// wcButton.onclick=function(item){
+		// 	wcSendWord(wcInput.value);
+		// }
+		// wcInput.id="librekast-input";
+		// wcInput.classList.add("w-full","px-4","py-2","focus:outline-none","focus:text-gray-600");
+		// wcInput.onkeypress = function(event){
+		// 	if(event.keyCode == 13){
+		// 		wcSendWord(wcInput.value);
+		// 	}
+		// }
+		// wcForm.appendChild(wcInput);
+		// wcForm.appendChild(wcButton);
+		// // console.log('created Form')
+
+		// document.querySelector('#question-div').appendChild(wcForm);
+
+		// show results
+		content = document.createElement("div");
+		content.id = "question-content";
+		document.querySelector('#question-div').appendChild(content);
+		console.log('created content');
+
+		var chart = anychart.tagCloud(wordCloudData);
+		chart.angles([0]);
+		chart.container("question-content");
+		chart.draw();
+		console.log('WC drawn');
+	}
+
+	// function showChoices(choicesArray){
+	// 	content = document.createElement("div");
+	// 	content.id = "question-content";
+	// 	content.classList.add("py-8"); 
+	// 	content.classList.add("px-2"); 
+	// 	content.style="";
+
+	// 	let l = document.createElement("ul");
+	// 	l.id="choice-table";
+	// 	content.appendChild(l);
+	// 	for(i in choicesArray){
+	// 		let c = document.createElement("li");
+	// 		c.innerText = choicesArray[i].text;
+	// 		c.id = 'choice-'+choicesArray[i].id;
+	// 		c.value = choicesArray[i].id;
+	// 		c.classList.add("bg-"+choiceColors[i]+"-400","hover:bg-"+choiceColors[i]+"-700");
+	// 		c.classList.add("text-white","text-center","py-2","px-4","my-2","rounded");
+	// 		c.classList.add("librekast-choice");
+	// 		c.onclick = function() { libreKastVote(this); };
+	// 		content.children[0].appendChild(c);
+	// 	}
+	// 	document.querySelector('#question-div').appendChild(content);
+	// }
+
+	// main fuction : receive messages
+	dashboardSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		console.log('received : '+e.data);
+		if(data['message']==='question-go'){
+			showQuestionText(data['question']);
+		// } else if(data['message']==='results'){
+	// 		if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
+	// 		else if(data['question_type']=='PL'){showResultsPoll(data['results'],data['total']);}
+	// 		// console.log('Show results');
+	// 	} else if(data['message']==='question-ready'){
+	// 		showWait();
+	// 		// console.log('not implemented yet');
+	// 	} else if(data['message']==='notify-update-poll'){
+	// 		updatePoll(data['vote']);
+	// 		// console.log('notify-update-poll');
+	// 	} else if(data['message']==='update-score'){
+	// 		console.log('score :'+data['score']);
+	// 		updateScore(data['score']);
+	// 	}else if(data['message']==='question-close'){
+	// 		showWait();
+		} else if(data['message']==='notify-update-cloud'){
+			updateWordCloud(data['vote']);
+			console.log('UPDATE WORD CLOUD with word : '+data['vote']);
+		}
+		
+	// 	document.querySelector('#question-message-log').textContent = (data.message + '\n');
+
+	};
+
+	dashboardSocket.onclose = function(e) {
+		console.error('Question socket closed');
+	};
+
+
+	// start function
+	document.querySelector('#question-start').onclick = function(e) {
+		const messageInputDom = document.querySelector('#question-start');
+		const message = messageInputDom.value;
+		dashboardSocket.send(JSON.stringify({
+			'message': message, 
+		}));
+		//remove header
+		const startDivNode = document.querySelector('#start-div');
+		startDivNode.remove()
+		showWait();
+	};
+
+</script>
+
+{% endblock %}

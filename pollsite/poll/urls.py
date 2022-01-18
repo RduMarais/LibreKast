@@ -9,8 +9,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('<int:meeting_id>/meeting/', views.meeting, name='meeting'),
     path('<int:meeting_id>/login/', views.login, name='login'),
+    path('<int:meeting_id>/dashboard/', views.dashboard, name='dashboard'),
     path('<int:question_id>/results/', views.results, name='results'),
-    # path('<int:question_id>/vote/', views.vote, name='vote'),
     path('<int:question_id>/cloud/', views.cloud, name='cloud'),
-    # path('<int:question_id>/added/', views.added, name='added'),
 ]

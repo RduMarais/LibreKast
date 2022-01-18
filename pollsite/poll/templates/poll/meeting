@@ -262,12 +262,14 @@
 		wcButton.id = "librekast-add";
 		wcButton.onclick=function(item){
 			wcSendWord(wcInput.value);
+			wcInput.value="";
 		}
 		wcInput.id="librekast-input";
 		wcInput.classList.add("w-full","px-4","py-2","focus:outline-none","focus:text-gray-600");
 		wcInput.onkeypress = function(event){
 			if(event.keyCode == 13){
 				wcSendWord(wcInput.value);
+				wcInput.value="";
 			}
 		}
 		wcForm.appendChild(wcInput);
@@ -341,8 +343,6 @@
 			console.log('UPDATE WORD CLOUD with word : '+data['vote']);
 		}
 		
-		document.querySelector('#question-message-log').textContent = (data.message + '\n');
-
 	};
 
 	questionSocket.onclose = function(e) {
