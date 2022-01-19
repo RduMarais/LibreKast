@@ -102,7 +102,7 @@ docker run -p 6379:6379 -d redis:5
 python manage.py runserver
 ```
 
-> Note that this step runs an ASGI server. If you are used to deploy WSGI server, this involves a few differences !!
+> Note that this step runs an ASGI server. If you are used to deploy WSGI server, this involves a few differences !! Especially when dealing with sockets, be sure to install `uvicorn[standard]` and not `uvicorn` to deal with these.gti 
 
 Go to http://127.0.0.1:8000/. This is where Django starts server by default
 
@@ -121,8 +121,10 @@ In order to setup LibreKast in an deployment envionment, one needs to :
  3. clone the repository to start the app. 
  4. change the default SECRET_KEY in settings
  5. setup DEBUG = False
- 6. create a superuser and remove the default user
+ 6. create a superuser and remove the default user (or change its password)
  7. collect static files and migrate them in the server static folder
+
+lmk if you need my redirection setup for nginx or a docker image
  
 ## Current State diagram 
 
