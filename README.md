@@ -28,15 +28,12 @@ You can connect in the admin interface with user : `defaultsuperuser` and passwo
  * [x] front : showWait() reset front
  * [x] back : sync notificaton from admin 
  * [x] back : admin widget for handling question go 
- * [ ] front : sync previous question
- * [ ] front : bug with polls appearance
+ * [x] front : sync previous question
+ * [x] front : bug with polls appearance
  * [ ] front : some failsafes in dashboard
- * [ ] TUTO deployment & customization
  * [ ] testing
  * [ ] FR translation
  * [ ] docker wrapping
- * [ ] django app wrapping
- * [ ] dark mode with tailwind CSS
 
 
 ## How to run on your computer
