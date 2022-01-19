@@ -11,10 +11,10 @@ I am not a developper, so this code is far from perfect ! Although it runs, plea
 
 There are 4 types of question you can show in the app : 
 
- * text-only
- * word cloud : displays a chart with all submitted words
- * poll : asks a question. on question close, shows the number of votes each choice got.
- * Quizz : asks a question. One of the answers is marked as 'correct', all attendants that chose the correct answer receive 1 point, the first one to answer receives an additionnal point.
+ * **Text-only** : displays only text (ideal for start and end of the meeting)
+ * **word cloud** : displays a chart with all submitted words
+ * **poll** : asks a question. on question close, shows the number of votes each choice got.
+ * **Quizz** : asks a question. One of the answers is marked as 'correct', all attendants that chose the correct answer receive 1 point, the first one to answer receives an additionnal point.
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 

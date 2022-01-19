@@ -26,7 +26,7 @@ class Meeting(models.Model):
 	reward_fastest = models.BooleanField('Reward the fastest answers',default=False)
 	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
 	date_end = models.DateTimeField('End time of the meeting',default=timezone.now()+datetime.timedelta(hours=2))
-	image = models.ImageField('Image for your meeting',null = True)
+	image = models.ImageField('Image for your meeting',null = True,blank=True)
 
 	def __str__(self):
 		return self.title
