@@ -17,6 +17,11 @@ import poll.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pollsite.settings')
 
+
+# if __name__ == '__main__':
+#     import django
+#     django.setup()
+
 application = ProtocolTypeRouter({
 	"http" : get_asgi_application(),
 	"websocket": AuthMiddlewareStack(

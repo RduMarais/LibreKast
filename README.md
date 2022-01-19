@@ -18,6 +18,8 @@ There are 4 types of question you can show in the app :
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
+To connect to a meeting, participants only need to go to Meetings > choose the meetings. A meeting code is needed to register, by default it is `Pour1nf0`.
+
 You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
 
 ## Project state
@@ -54,6 +56,8 @@ git clone https://github.com/RduMarais/LibreKast.git
 ```
 
 **2. install the requirements**
+
+The requirements listed are the versions I used to test & develop the app. Feel free to tamper with the versions, just keep in mind that different package versions have not been tested !
 
 ```
 pip install -r requirements.txt

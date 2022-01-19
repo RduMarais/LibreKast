@@ -21,7 +21,7 @@ class Meeting(models.Model):
 	title = models.CharField('Title of Meeting', max_length=50)
 	desc = MarkdownField('Description', max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
-	code = models.CharField('Security Code for joining the Meeting', default='P1F02021', max_length=50)
+	code = models.CharField('Security Code for joining the Meeting', default='Pour1nf0', max_length=50)
 	has_started = models.BooleanField('Meeting has started',default=False)
 	reward_fastest = models.BooleanField('Reward the fastest answers',default=False)
 	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
