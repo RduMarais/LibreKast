@@ -50,7 +50,7 @@ class QuestionConsumer(WebsocketConsumer):
 			self.send_group_question(question)
 		elif(message_in == "vote"):
 			async_to_sync(self.receive_vote(text_data_json))
-		elif(message_in == "debug-score"):
+		elif(message_in == "get-score"):
 			self.send(text_data=json.dumps({
 				'message':'update-score',
 				'score':self.attendee.score,

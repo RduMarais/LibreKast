@@ -78,6 +78,9 @@
 		if(document.querySelector('#question-form') != null){
 			document.querySelector('#question-form').remove();
 		}
+
+
+		questionSocket.send(JSON.stringify({'message':'get-score'}));
 	}
 
 	function libreKastVote(choice){

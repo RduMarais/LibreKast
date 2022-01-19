@@ -125,40 +125,53 @@ In order to setup LibreKast in an deployment envionment, one needs to :
 based on current implem (not the final goal)
 
 ```
-CLIENT									 SERVER						   GROUP
-  |										   |							   |
-  |		  --> question-start -->		   |							   |
-  |									get current question				   |
-  |			 <-- question-go <--		   |							   |
- if Poll/Quizz :							  |							   |
- showQuestion								 |							   |
-  |										   |							   |
-  |		  --> vote -->					 |							   |
-  |				<-- voted <--			  |							   |
-  |										 if Poll :						 |
-  |				<-- results <--			|   --> notify-update-poll -->  |
-showResultsPoll							   |						   updatePoll
-  |										end : results					  |   TODO
-  |				<-- results <--			|	--> results -->			|
-  |										   |							   |
-  |									 end : close						   | TODO
-  |										   |	--> question-close -->	 | TODO
-  |										   |							   |
- if Word Cloud :							  |							   |
- showWordCloud								|							   |
-  |		  --> word-cloud-add -->		   |							   |
-  |										add vote						   |
-  |										   |   --> notify-update-cloud-->  |
-  |										end : close						|   TODO
-  |										   |	--> question-close -->	 | TODO
-  |										   |							   |
-  |										   |							   |
-  wait for results							|							   |
-  |		  --> debug-results  -->		   |							   |
-  |				<-- results <--			|							   |
-  |										   |							   |
- wait for score							   |							   |
-  |		  --> debug-score  -->			 |							   |
-  |		   <-- update-score <--			|							   |
-  |										   |							   |
+CLIENT                                      SERVER                          GROUP
+  |                                           |                               |
+  |          --> question-start -->           |                               |
+  |                                    get current question                   |
+  |                                           |                               |
+  |          <-- question-ready <--           |                               |
+showWait                                      |                               |
+  |                                           or                              |
+  |             <-- question-go <--           |                               |
+ if Poll/Quizz :                              |                               |
+ showQuestion                                 |                               |
+  |                                           |                               |
+  |          --> vote -->                     |                               |
+  |                <-- voted <--              |                               |
+  |                                         if Poll :                         |
+  |                <-- results <--            |   --> notify-update-poll -->  |
+showResultsPoll                               |                           updatePoll
+  |                                           |                               |
+  |                                        end : results                      |   
+  |                <-- results <--            |    --> results -->            |
+  |                                           |                               |
+  |                                     end : close                           | 
+  |                                           |    --> question-close -->     | 
+  |                                           |                               |
+ if Word Cloud :                              |                               |
+ showWordCloud                                |                               |
+  |          --> word-cloud-add -->           |                               |
+  |                                        add vote                           |
+  |                                           |   --> notify-update-cloud-->  |
+  |                                           |                          updateWordCloud
+  |                                           |                               |
+  |                                        end : close                        |   
+  |                                           |    --> question-close -->     | 
+  |                                           |                             showWait
+  |                                           |                               |
+  |                                           if                              |
+  |                                           |    --> next-question -->      | 
+  |                                           |                             showWait
+  |                                           |                               |
+  |                                           |                               |
+  wait for results                            |                               |
+  |          --> debug-results  -->           |                               |
+  |                <-- results <--            |                               |
+  |                                           |                               |
+ wait for score                               |                               |
+  |          --> debug-score  -->             |                               |
+  |           <-- update-score <--            |                               |
+updateScore                                   |                               |
+  |                                           |                               |
 ```
