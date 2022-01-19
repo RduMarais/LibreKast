@@ -34,6 +34,13 @@ You can connect in the admin interface with user : `defaultsuperuser` and passwo
  * [ ] testing
  * [ ] FR translation
  * [ ] docker wrapping
+ * [ ] join during a question (and a bit of socket security)
+ * [ ] dashboard ugly when there are big titles
+ * re-test : 
+   * [ ] test update score
+   * [ ] test when already answered, poll creates 2nd row with results
+   * [ ] test previous question
+   * pip uvicorn[standard]
 
 
 ## How to run on your computer

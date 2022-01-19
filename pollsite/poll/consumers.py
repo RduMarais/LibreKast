@@ -14,6 +14,10 @@ class QuestionConsumer(WebsocketConsumer):
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
 
+		if(not self.scope['session']['attendee_id']):
+			self.send(text_data=json.dumps({'message':'error no login'}))
+			return 
+
 		attendee_id = self.scope['session']['attendee_id']
 		self.attendee = Attendee.objects.get(pk=attendee_id)
 
