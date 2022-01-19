@@ -162,12 +162,8 @@ showResultsPoll                               |                           update
   |                                           |                             showWait
   |                                           |                               |
   |                                           |                               |
-  wait for results                            |                               |
-  |          --> debug-results  -->           |                               |
-  |                <-- results <--            |                               |
-  |                                           |                               |
  wait for score                               |                               |
-  |          --> debug-score  -->             |                               |
+  |            --> get-score  -->             |                               |
   |           <-- update-score <--            |                               |
 updateScore                                   |                               |
   |                                           |                               |
