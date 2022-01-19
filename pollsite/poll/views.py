@@ -69,17 +69,6 @@ def login(request,meeting_id):
 
 
 
-# return view for word clouds 
-def cloud(request, question_id):
-	if(not 'attendee_id' in request.session):
-		form = LoginForm()
-		return render(request,'poll/login',{'meeting':meeting,'form':form})
-	else:
-		question = get_object_or_404(Question, pk=question_id)
-		form = WordForm()
-		return render(request, 'poll/cloud', {'question': question,'form':form})
-
-
 # return view for Polls and Quizz
 def results(request, question_id):
 	if(not 'attendee_id' in request.session):

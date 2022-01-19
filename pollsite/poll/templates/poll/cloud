@@ -14,7 +14,7 @@
     </div>
     <div id="question-content"></div>
 </div>
-<section>
+</section>
 
 {% endblock  %}
 

@@ -3,31 +3,48 @@
 {% block title  %}Results{% endblock  %}
 
 {% block content  %}
+<section class="text-gray-700 body-font overflow-hidden" name="current-question">
 <div class="container px-5 py-2 mx-auto" id="question-div">
         <div class="mt-2 mb-4 text-center">
-            <span id="current-question-id" class="text-2xl librekast-QZ" name="current-question-id" value="">{{ question.title }}</span>
+            <span id="current-question-id" class="text-2xl" name="current-question-id" value="">{{ question.title }}</span>
             <div id="question-description" class="leading-relaxed text-center text-center"><p>{{ question.desc_rendered | safe }}</p></div>
         </div>
+        <div id="question-content">
+
+{% if question.question_type == 'QZ' or question.question_type == 'PL' %}
+
+            <ul id="choice-table">
+        {% for choice in question.choice_set.all %}
+                <li class="{% if not choice.isTrue %}librekast-choice bg-blue-200 text-blue-600 {% endif %}{% if choice.isTrue %}librekast-chosen bg-blue-500 text-white{% endif %} text-center py-2 px-4 my-2 rounded" >
+                    {{ choice.choice_text }} <span class="text-xs px-4">{{ choice.votes }} vote{{ choice.votes|pluralize }}</span>
+                </li>
+        {% endfor %}
+            </ul>
+{% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock  %}
+
+{% block javascript %}
 
 {% if question.question_type == 'WC' %}
-
 <script>
-    document.location.href="{% url 'poll:cloud' question.id %}"; 
+    anychart.onDocumentReady(function() {
+        var data = [
+            {% for choice in question.choice_set.all %}
+            {"x": "{{ choice.choice_text}}", "value": {{ choice.votes }}},
+            {% endfor %}
+        ]
+        var chart = anychart.tagCloud(data);
+        console.log(JSON.stringify(data));
+
+        chart.angles([0]);
+        chart.container("question-content");
+        chart.draw();
+    });
 </script>
-
-{% elif question.question_type == 'QZ' or question.question_type == 'PL' %}
-
-<div id="question-content">
-<ul id="choice-table">
-    {% for choice in question.choice_set.all %}
-    <li class="{% if not choice.isTrue %}librekast-choice bg-blue-200 text-blue-600 {% endif %}{% if choice.isTrue %}librekast-chosen bg-blue-500 text-white{% endif %} text-center py-2 px-4 my-2 rounded" >
-        {{ choice.choice_text }} <span class="text-xs px-4">{{ choice.votes }} vote{{ choice.votes|pluralize }}</span>
-    </li>
-    {% endfor %}
-</ul>
-</div>
-
 {% endif %}
-
 
 {% endblock  %}
