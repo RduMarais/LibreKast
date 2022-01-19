@@ -49,18 +49,12 @@ class QuestionConsumer(WebsocketConsumer):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
 		elif(message_in == "vote"):
-			print('WS received vote '+str(text_data_json))
 			async_to_sync(self.receive_vote(text_data_json))
 		elif(message_in == "get-score"):
-			print('WS received get score')
 			self.send(text_data=json.dumps({
 				'message':'update-score',
 				'score':self.attendee.score,
 				}))
-			print('WS done get score '+str(self.attendee.score))
-		elif(message_in == "debug-results"):
-			question = self.meeting.current_question()
-			self.send_results(question)
 		elif(message_in == "word-cloud-add"):
 			word = clean(text_data_json['word'])
 			async_to_sync(self.add_word(word))
