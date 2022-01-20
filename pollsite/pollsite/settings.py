@@ -139,6 +139,9 @@ STATICFILES_DIRS = [
     BASE_DIR + "/static",
     # '/var/www/static/',
 ]
+# TODO place here the absolute path of the static files you serve
+# STATIC_ROOT = '/var/www/media/'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 
