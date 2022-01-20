@@ -22,6 +22,12 @@ To connect to a meeting, participants only need to go to Meetings > choose the m
 
 You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
 
+##### Screenshots
+
+![Dashboard screen](screenshots/dashboard.png)
+
+![Quizz example](screenshots/quizz.png | width=100)
+
 ## Project state
 
  * [x] home as django models (for non-technical people)
