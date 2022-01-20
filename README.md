@@ -24,9 +24,9 @@ You can connect in the admin interface with user : `defaultsuperuser` and passwo
 
 ##### Screenshots
 
-![Dashboard screen](screenshots/dashboard.png)
+![](screenshots/dashboard.png)
 
-![Quizz example](screenshots/quizz.png | width=100)
+![](screenshots/quizz.png)
 
 ## Project state
 
