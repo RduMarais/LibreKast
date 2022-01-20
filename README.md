@@ -22,7 +22,12 @@ To connect to a meeting, participants only need to go to Meetings > choose the m
 
 You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
 
-##### Screenshots
+#### demo
+
+ * Admin : `defaultsuperuser` : `LibreKast`
+ * Join Meeting code : `Pour1nf0`
+
+#### Screenshots
 
 ![](screenshots/dashboard.png)
 
@@ -45,11 +50,6 @@ You can find screenshots :
  * [ ] docker wrapping
  * [ ] join during a question (and a bit of socket security)
  * [ ] dashboard ugly when there are big titles
- * re-test : 
-   * [ ] test update score
-   * [ ] test when already answered, poll creates 2nd row with results
-   * [ ] test previous question
-   * pip uvicorn[standard]
 
 
 ## How to run on your computer
@@ -127,13 +127,19 @@ In order to setup LibreKast in an deployment envionment, one needs to :
 
  1. setup a web server (such as Apache or Nginx), 
  2. setup an ASGI server for delivering a django app 
+   * *please note that you have to redirect not only HTTP, but also websockets !*
  3. clone the repository to start the app. 
- 4. change the default SECRET_KEY in settings
- 5. setup DEBUG = False
- 6. create a superuser and remove the default user (or change its password)
- 7. collect static files and migrate them in the server static folder
+ 4. In pollsite/settings.py : 
+   * change the default `SECRET_KEY` in settings
+   * add a `STATIC_ROOT` variable with the **absolute path for the static files your server is serving**
+   * setup `DEBUG = False`
+   * add your server IP/hostname to the `ALLOWED_HOSTS` 
+ 5. create a superuser and remove the default user (or change its password)
+ 6. collect static files and migrate them in the server static folder
+ 7. start the ASGI
+   * *you may need to export `DJANGO_SETTINGS_MODULE`*
 
-lmk if you need my redirection setup for nginx or a docker image
+> lmk if you need my redirection setup for nginx or a docker image
  
 ## Current State diagram 
 

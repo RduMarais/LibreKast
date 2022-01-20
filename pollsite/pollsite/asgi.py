@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/asgi/
 
 import os
 
+from django.core.asgi import get_asgi_application
+
+django_asgi_application = get_asgi_application()
+
 from channels.auth import AuthMiddlewareStack
 from channels.sessions import SessionMiddlewareStack
-from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 import poll.routing
 
@@ -23,7 +26,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pollsite.settings')
 #     django.setup()
 
 application = ProtocolTypeRouter({
-	"http" : get_asgi_application(),
+	"http" : django_asgi_application,
 	"websocket": AuthMiddlewareStack(
         URLRouter(
             poll.routing.websocket_urlpatterns
