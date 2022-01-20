@@ -26,7 +26,10 @@ You can connect in the admin interface with user : `defaultsuperuser` and passwo
 
 ![](screenshots/dashboard.png)
 
-![](screenshots/quizz.png)
+You can find screenshots : 
+
+ * [of quizz correction](screenshots/quizz.png)
+ * [of home page](screenshots/home.png)
 
 ## Project state
 
