@@ -45,14 +45,31 @@ You can find screenshots :
  * [x] front : sync previous question
  * [x] front : bug with polls appearance
  * [ ] front : some failsafes in dashboard
- * [ ] testing
  * [ ] FR translation
- * [ ] docker wrapping
+ * [x] docker wrapping
  * [ ] join during a question (and a bit of socket security)
  * [ ] dashboard ugly when there are big titles
 
+## How to deploy with docker
 
-## How to run on your computer
+Copy all the files by cloning the repo with : 
+
+```
+git clone https://github.com/RduMarais/LibreKast.git --depth 1
+```
+
+Simply run : 
+
+```
+cd Librekast
+docker-compose up
+```
+
+
+> Please note that as of today, the server in docker is the development sever. Next push will be gunicorn/uvicorn.
+
+
+## How to deploy for developpment
 
 __pre-requisites : python(3.8 or above) and pip must be installed__ 
 
