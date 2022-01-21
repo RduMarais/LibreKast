@@ -19,13 +19,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+# for docker deployment :
+isDocker = os.getenv('IS_DOCKER')
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 # TODO when deploying
-SECRET_KEY = '3zaz_n48y63wv5xl(s9=zfrkixc-p10p1g^thb=eqs*=c3t0gp'
+SECRET_KEY = os.environ.get("SECRET_KEY", default='3zaz_n48y63wv5xl(s9=zfrkixc-p10p1g^thb=eqs*=c3t0gp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # TODO when deploying
-DEBUG = True
+DEBUG = os.environ.get("DEBUG",default=True)
 
 # TODO when deploying add your hostname
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -35,6 +39,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # For channels deploymment
 ASGI_APPLICATION = 'pollsite.asgi.application'
+
 
 
 # Application definition
@@ -140,7 +145,8 @@ STATICFILES_DIRS = [
     # '/var/www/static/',
 ]
 # TODO place here the absolute path of the static files you serve
-# STATIC_ROOT = '/var/www/media/'
+if(isDocker):
+    STATIC_ROOT = './static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
@@ -150,11 +156,17 @@ MEDIA_ROOT = 'media/'
 SITE_URL = "http://localhost"
 
 # Channels configuration
+if(isDocker):
+    channel_host = ('app-redis', 6379)
+else:
+    channel_host = ('127.0.0.1', 6379)
+
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [channel_host],
         },
     },
 }
