@@ -1,18 +1,15 @@
 version: '3.8' # Docker compose version
 services:
   webapp:
-    build:
-      context: .
-    working_dir: ''
+    build: .
     links:
       - app-redis
-    # ENV configuration
     env_file:
       - ./deploy.env
     ports:
-      - '8000:8000'
-    command: 'python ./pollsite/manage.py runserver 0.0.0.0:8000'
-    #command: 'gunicorn pollsite.asgi -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file -'
+      - '8000:8010'
+    # command: 'python ./pollsite/manage.py runserver 0.0.0.0:8000'
+    command: 'gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file -'
   app-redis:
     image: redis:5
     ports:
