@@ -7,9 +7,12 @@ services:
     env_file:
       - ./deploy.env
     ports:
-      - '8000:8010'
-    # command: 'python ./pollsite/manage.py runserver 0.0.0.0:8000'
-    command: 'gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file -'
+      - '8000:8000'
+    expose:
+    - "8000"
+    command: 'python ./pollsite/manage.py runserver 0.0.0.0:8000'
+    # command: 'export DJANGO_SETTINGS_MODULE=pollsite.settings ; gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file -'
+    # command: 'gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file - -e DJANGO_SETTINGS_MODULE=pollsite.settings'
   app-redis:
     image: redis:5
     ports:

@@ -18,4 +18,4 @@ RUN python -c 'from django.core.management.utils import get_random_secret_key; p
 RUN python ./pollsite/manage.py makemigrations && python ./pollsite/manage.py migrate
 
 
-CMD ["gunicorn","pollsite.asgi","-b","127.0.0.1:8000","-w","2","-k","uvicorn.workers.UvicornWorker","--chdir","./pollsite/","--log-file","-"]
+CMD ["gunicorn","pollsite.asgi","-b","127.0.0.1:8000","-w","2","-k","uvicorn.workers.UvicornWorker","--chdir","./pollsite/","--log-file","-","-e","DJANGO_SETTINGS_MODULE=pollsite.settings"]

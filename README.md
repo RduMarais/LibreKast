@@ -48,9 +48,21 @@ You can find screenshots :
  * [ ] FR translation
  * [x] docker wrapping
  * [ ] join during a question (and a bit of socket security)
- * [ ] dashboard ugly when there are big titles
+ * [ ] dashboard look with big titles
 
-## How to deploy with docker
+#### code architecture
+
+The code is a django project named 'pollsite', made with 2 apps : 
+
+ * `home` : hosts all the appearance of the home page as models.
+ * `polls` : hosts all the core functionalities of the app.
+
+In `polls` app, the different URLs are handled in the `views.py` file. All websockets communications are handled (synchronously) in the `consumers.py` file.
+The difference between question types is handled using a `question_type` attribute, which can be `TO`, `QZ`, `QZ` or `WC`.
+
+## How to deploy test instance with docker
+
+> Please note that the docker version only uses developpement server and is not ready for production environment !
 
 Copy all the files by cloning the repo with : 
 
@@ -153,8 +165,15 @@ In order to setup LibreKast in an deployment envionment, one needs to :
    * add your server IP/hostname to the `ALLOWED_HOSTS` 
  5. create a superuser and remove the default user (or change its password)
  6. collect static files and migrate them in the server static folder
- 7. start the ASGI
+ 7. start the ASGI server
    * *you may need to export `DJANGO_SETTINGS_MODULE`*
+
+With Gunicorn/uvicorn, the last step is the following : 
+
+```bash
+export DJANGO_SETTINGS_MODULE=pollsite.settings
+gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file librekast.log
+```
 
 > lmk if you need my redirection setup for nginx or a docker image
  
