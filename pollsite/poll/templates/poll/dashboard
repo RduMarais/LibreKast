@@ -157,7 +157,7 @@
 	}
 
 	function startQuestion(item){
-		console.log(item.innerHTML);
+		// console.log(item.innerHTML);
 		id = item.id.split('-')[3];
 		// change button for stop button
 		item.onclick = null;
@@ -179,7 +179,7 @@
 	}
 
 	function stopQuestion(item_stop){
-		console.log(item_stop.innerHTML);
+		// console.log(item_stop.innerHTML);
 		id = item_stop.id.split('-')[3];
 		// change button for Next button
 		item_stop.onclick = null;
@@ -357,20 +357,20 @@
 	}
 
 	function showWordCloud(questionObj){
-		// console.log('start WC');
+		console.log('start WC');
 		wordCloudData = questionObj['choices'];
 
 		// show results
 		content = document.createElement("div");
 		content.id = "question-content";
 		document.querySelector('#question-div').appendChild(content);
-		console.log('created content');
+		// console.log('created content');
 
 		var chart = anychart.tagCloud(wordCloudData);
 		chart.angles([0]);
 		chart.container("question-content");
 		chart.draw();
-		console.log('WC drawn');
+		// console.log('WC drawn');
 	}
 
 	function showChoices(choicesArray){
@@ -399,7 +399,7 @@
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
-		console.log('received : '+e.data);
+		// console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
 			// updateMeetingPlan(data['question'].id)
