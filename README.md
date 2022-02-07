@@ -44,10 +44,12 @@ You can find screenshots :
  * [x] back : admin widget for handling question go 
  * [x] front : sync previous question
  * [x] front : bug with polls appearance
- * [ ] front : some failsafes in dashboard
+ * [ ] front : trigger front changes on websockets events in dashboard
+ * [x] front : widgets un dashboard
+ * [ ] back: join during a question
  * [ ] FR translation
  * [x] docker wrapping
- * [ ] join during a question (and a bit of socket security)
+ * [ ] Image slides
  * [ ] dashboard look with big titles
 
 #### code architecture

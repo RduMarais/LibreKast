@@ -65,8 +65,10 @@ class QuestionConsumer(WebsocketConsumer):
 			async_to_sync(self.notify_add_word(word))
 		elif(message_in == "get-scoreboard"):
 			async_to_sync(self.send_scoreboard())
-		elif(message_in == "admin-get-current-question"):
+		elif(message_in == "admin-send-scoreboard"):
 			if(self.is_user_authenticated()):
+				async_to_sync(self.send_group_scoreboard())
+		elif(message_in == "admin-get-current-question"):
 				question = self.meeting.current_question()
 				self.send_current_question(question)
 		elif(message_in == "admin-question-start"):
@@ -267,6 +269,27 @@ class QuestionConsumer(WebsocketConsumer):
 			}
 		)
 
+
+	def send_group_scoreboard(self):
+		message_out = {
+			'message' : "update-scoreboard",
+			'scores': [],
+		}
+		for user in self.meeting.attendee_set.all().order_by('-score'):
+			score_obj = {
+				'id':user.id,
+				'name':user.name,
+				'score':user.score,
+			}
+			message_out['scores'].append(score_obj)
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name,
+			{
+				'type': 'meeting_message',
+				'message': message_out,
+			}
+		)
+		# self.send(text_data=json.dumps(message_out))
 
 	def send_results(self,question):
 		message_out = {

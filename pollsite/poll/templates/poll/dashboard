@@ -20,11 +20,19 @@
 		<button id="question-start" value="question-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">START</button>
 	</div>
 </section>
+
 <section class="w-full md:w-1/4 body-font md:border md:border-red-200" name="meeting-plan-section">
-	<div class="text-2xl text-center m-2" id="meeting-div">
+	<div class="text-2xl text-center mt-2 mx-2" id="meeting-div">
 		Meeting plan
 	</div>
 	<div class = "w-full items-center m-2 p-1">
+		<div id="meeting-controls" class="items-center text-center mb-2">
+			<button id="meeting-start" value="meeting-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">start meeting</button>
+			<button id="meeting-question-go" value="meeting-question-go" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9199; start activity</button>
+			<button id="meeting-question-results" value="meeting-question-results" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#128202; show results</button>
+			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#127942; show scoreboard</button>
+			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9193; next activity</button>
+		</div>
 		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center">
 			<thead>
 				<tr class="bg-red-300">
@@ -63,6 +71,7 @@
 	<div class="text-center text-sm m-1">&#9199; to start a question, &#128202; to show the results, &#9193; to go to next question.
 	</div>
 </section>
+
 <section class="w-full md:w-1/4 body-font md:border md:border-green-200" name="scoreboard-section">
 	<div class="text-center w-full m-2" id="scoreboard-div">
 		<div class="basis-3/4 inline">
@@ -87,14 +96,14 @@
 			</tr>
 		</thead>
 		<tbody id="scoreboard-tbody">
+			{% if attendees %}
+			{% for attendee in attendees %}
 			<tr>
-			  <td>User A</td>
-			  <td>12</td>
+			  <td>{{attendee.name}}</td>
+			  <td>{{attendee.score}}</td>
 			</tr>
-			<tr>
-			  <td>User B</td>
-			  <td>8</td>
-			</tr>
+			{% endfor %}
+			{% endif %}
 		</tbody>
 	</table>
 	</div>
@@ -148,51 +157,77 @@
 	}
 
 	function startQuestion(item){
+		console.log(item.innerHTML);
 		id = item.id.split('-')[3];
 		// change button for stop button
 		item.onclick = null;
-		// item.removeEventListener("click",function(e) {startQuestion(e); },false);
-		item.innerHTML = "&#9723;"; // blanck icon
-		
 		questionResults = document.querySelector('#librekast-question-results-'+id);
 		questionResults.innerHTML = "&#128202;" //rsults icon
-		questionResults.onclick = function(item_stop){stopQuestion(item_stop);};
+		questionResults.onclick = function(item_stop){stopQuestion(questionResults);};
+		item.innerHTML = "&#9723;"; // blanck icon
+
+		// change button 
+		document.querySelector("#meeting-question-go").classList.add('hidden');
+		buttonResults = document.querySelector('#meeting-question-results');
+		buttonResults.classList.remove('hidden');
+		buttonResults.onclick = function(item){stopQuestion(questionResults);};
 
 		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-start", //TODO
+			'message': "admin-question-start",
 			'question_id':id,
 		}))
 	}
 
 	function stopQuestion(item_stop){
-		id = item_stop.target.id.split('-')[3];
+		console.log(item_stop.innerHTML);
+		id = item_stop.id.split('-')[3];
 		// change button for Next button
+		item_stop.onclick = null;
 		questionNext = document.querySelector('#librekast-question-next-'+id);
 		questionNext.innerHTML = "&#9193;"
-		item_stop.target.onclick = null;
-		questionNext.onclick = function(item_next){nextQuestion(item_next);}
-		item_stop.target.innerHTML = "&#9723;"; //blank icon
+		questionNext.onclick = function(item){nextQuestion(questionNext);}
+		item_stop.innerHTML = "&#9723;"; //blank icon
+
+		// change button 
+		document.querySelector("#meeting-question-results").classList.add('hidden');
+		buttonNext = document.querySelector('#meeting-question-next');
+		buttonNext.classList.remove('hidden');
+		buttonNext.onclick = function(item){nextQuestion(questionNext);};
+
+		buttonScores = document.querySelector('#meeting-question-scores');
+		buttonScores.classList.remove('hidden');
+		buttonScores.onclick = function(item){sendScores(item);}; //TODO
+
 
 		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-results", //TODO
+			'message': "admin-question-results",
 			'question_id':id,
 		}))
 	}
 
 	function nextQuestion(item_next){
-		id = item_next.target.id.split('-')[3];
-		item_next.target.onclick = null;
-		item_next.target.innerHTML = "&#9723;"; //blank icon
+		id = item_next.id.split('-')[3];
+		item_next.onclick = null;
+		item_next.innerHTML = "&#9723;"; //blank icon
 
-		// item_next = document.querySelector('#librekast-question-go-'+id);
 		document.querySelector('#librekast-question-'+id).classList.remove('bg-red-200');
 		document.querySelector('#librekast-question-status-'+id).innerHTML = '&#9745;';
 
+		// change button 
+		document.querySelector("#meeting-question-next").classList.add('hidden');
+		document.querySelector("#meeting-question-scores").classList.add('hidden');
+
 		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-next", //TODO
+			'message': "admin-question-next", 
 			'question_id':id,
 		}))
 		showWait();
+	}
+
+	function sendScores(item) {
+		dashboardSocket.send(JSON.stringify({
+			'message': "admin-send-scoreboard",
+		}))
 	}
 
 	function updateMeetingPlan(questionId){
@@ -203,6 +238,9 @@
 		// questionGo.classList.remove('hidden');
 		questionGo.innerHTML = "&#9199;";
 		questionGo.onclick = function(item){startQuestion(questionGo);}
+		buttonGo = document.querySelector("#meeting-question-go");
+		buttonGo.classList.remove('hidden');
+		buttonGo.onclick = function(item){startQuestion(questionGo);}
 	}
 
 	function showQuestionText(questionObj){
@@ -400,7 +438,24 @@
 		}));
 		//remove header
 		const startDivNode = document.querySelector('#start-div');
+		startDivNode.remove();
+		const startMeetingNode = document.querySelector('#meeting-start');
+		startMeetingNode.remove();
+		showWait();
+	};
+
+	// start function
+	document.querySelector('#meeting-start').onclick = function(e) {
+		const messageInputDom = document.querySelector('#question-start');
+		const message = messageInputDom.value;
+		dashboardSocket.send(JSON.stringify({
+			'message': "admin-get-current-question", 
+		}));
+		//remove header
+		const startDivNode = document.querySelector('#start-div');
 		startDivNode.remove()
+		const startMeetingNode = document.querySelector('#meeting-start');
+		startMeetingNode.remove();
 		showWait();
 	};
 

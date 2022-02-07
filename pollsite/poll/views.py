@@ -26,7 +26,8 @@ def index(request):
 @staff_member_required
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	return render(request,'poll/dashboard',{'meeting':meeting})
+	attendees = meeting.attendee_set.all().order_by('-score')
+	return render(request,'poll/dashboard',{'meeting':meeting,'attendees':attendees})
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results

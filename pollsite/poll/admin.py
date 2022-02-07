@@ -39,16 +39,17 @@ class QuestionsOrder(SortableStackedInline):
 	fields = (('is_done','question_type'))
 	readonly_fields = ['question_type']
 	show_change_link = True
+	classes = ['collapse']
 
 
 # Meeting admin panel
 class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
-		(None, {'fields': ['has_started','participants','date_start','date_end']}),
+		(None, {'fields': ['is_ongoing','participants','date_start','date_end']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
 		('Parameters',{'fields':['code','reward_fastest']})
 	]
-	readonly_fields =['participants']
+	readonly_fields =['participants','is_ongoing']
 	inlines = [QuestionsOrder]
 	list_display = ('title', 'activities','participants','is_ongoing')
 	search_fields = ['title','description']
@@ -56,7 +57,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 	def is_ongoing(self,obj):
 		if(obj.date_start <= timezone.now() and obj.date_end >= timezone.now()):
 			link=reverse("poll:dashboard", args=[obj.id])
-			return format_html('Ongoing : <a href="%s">MEETING DASHBOARD</a>' % link)
+			return format_html('Ongoing | <button type="submit" formaction="%s">MEETING DASHBOARD</button>' % link)
 		elif(obj.date_end <= timezone.now()):
 			return 'Past Meeting'
 		elif(obj.date_start >= timezone.now()):
@@ -65,7 +66,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 			return 'Schedule Error'
 
 # Attendee score table
-class LeaderBoard(admin.ModelAdmin):
+class ScoreBoard(admin.ModelAdmin):
 	# name = 'Leader Board'
 	# verbose_name = 'Score Table'
 	list_display = ('name', 'score','get_meeting') 
@@ -90,6 +91,6 @@ class VoteAdmin(admin.ModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Meeting, MeetingAdmin)
-admin.site.register(Attendee, LeaderBoard)
+admin.site.register(Attendee, ScoreBoard)
 if(settings.DEBUG):
 	admin.site.register(Vote, VoteAdmin) # for debug

@@ -124,6 +124,36 @@
 		// in case there is need to resend vote
 	}
 
+	function updateScoreboard(scoresArray){
+		questionTitle.textContent = 'Score Board';
+		questionTitle.setAttribute("question-id",'scoreboard');
+		questionTitle.classList.add('librekast-scoreboard');
+
+
+		scoretable = document.createElement('table');
+		scoretable.classList.add('table-auto','border-separate','border','border-solid','border-green-900','divide-solid','divide-y-2','divide-x-2','divide-green-800','mx-auto','text-center');
+		tableHead = document.createElement('thead');
+		tableHead.innerHTML = '<tr class="bg-green-300"><th>Username</th><th>Score</th></tr>';
+		tableBody = document.createElement('tbody');
+		tableBody.textContent ='';
+		for(i in scoresArray){
+			let row = document.createElement('tr');
+			let username = document.createElement('td');
+			let userscore = document.createElement('td');
+			username.innerText = scoresArray[i].name;
+			userscore.innerText = scoresArray[i].score;
+			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
+			row.appendChild(username);
+			row.appendChild(userscore);
+			tableBody.appendChild(row);
+		}
+		scoretable.appendChild(tableHead);
+		scoretable.appendChild(tableBody);
+
+		questionDesc.innerHTML = '';
+		questionDesc.appendChild(scoretable);
+	}
+
 	function showQuestionText(questionObj){
 		questionTitle.textContent = questionObj['title'];
 		questionTitle.setAttribute("question-id",questionObj['id']);
@@ -358,6 +388,8 @@
 			showWait();
 		} else if(data['message']==='notify-update-cloud'){
 			updateWordCloud(data['vote']);
+		} else if(data['message']==='update-scoreboard'){
+			updateScoreboard(data['scores']);
 		}
 		
 	};
