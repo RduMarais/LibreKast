@@ -4,6 +4,8 @@ __pycache__
 .DS_Store
 pollsite/media/*
 pollsite/static/*
+pollsite/poll/migrations/*
+pollsite/home/migrations/*
 !pollsite/static/LibreKast.png
 !pollsite/static/favicon.ico
 !pollsite/static/license

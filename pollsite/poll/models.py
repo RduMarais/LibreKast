@@ -15,18 +15,26 @@ QUESTION_TYPES = (
 		('QZ', 'Quizz'),          # For questions that do have a correct answer
 		('WC', 'Word Cloud'),     # For requesting inputs from attendees to make a word cloud diagram
 	)
+LIVE_TYPE = (
+		('IRL','Physical Meeting'), 	# beekast-like meeting type
+		('YT','Youtube Live Stream'), 	# Work in progress
+		('TW','Twitch live'),			# TODO
+	)
+
 
 # represents an occurence of a presentation. 
 class Meeting(models.Model):
 	title = models.CharField('Title of Meeting', max_length=50)
+	platform = models.CharField('Type of Meeting : IRL or live stream',max_length=3,choices=LIVE_TYPE,default='IRL')
 	desc = MarkdownField('Description', max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
 	code = models.CharField('Security Code for joining the Meeting', default='Pour1nf0', max_length=50)
 	has_started = models.BooleanField('Meeting has started',default=False)
 	reward_fastest = models.BooleanField('Reward the fastest answers',default=False)
 	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
-	date_end = models.DateTimeField('End time of the meeting',default=timezone.now()+datetime.timedelta(hours=2))
+	date_end = models.DateTimeField('End time of the meeting',default=timezone.now)
 	image = models.ImageField('Image for your meeting',null = True,blank=True)
+	stream_url = models.URLField('URL for Youtube live stream',null=True,blank=True)
 
 	def __str__(self):
 		return self.title
@@ -57,7 +65,8 @@ class Attendee(models.Model):
 	score = models.IntegerField('Score',default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
 	
-# model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text
+# model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text.
+# The different question types are defined as an attribute (question_type), and the relevant attributes are optional.
 class Question(SortableMixin):
 	title = models.CharField('Question', max_length=50)
 	desc = MarkdownField('Description', max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)

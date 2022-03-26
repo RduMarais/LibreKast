@@ -18,6 +18,12 @@ There are 4 types of question you can show in the app :
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
+There are 3 types of meetings : 
+
+ * IRL meetings : those are beekast-like meetings. You need to register as explained below to join the meeting.
+ * Youtube Live Stream : the chat is automatically fetched by Youtube
+ * Twitch live Stream : currently under development
+
 To connect to a meeting, participants only need to go to Meetings > choose the meetings. A meeting code is needed to register, by default it is `Pour1nf0`.
 
 You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
@@ -51,6 +57,11 @@ You can find screenshots :
  * [x] docker wrapping
  * [ ] Image slides
  * [ ] dashboard look with big titles
+ * [ ] reward_fastest
+ * [ ] Youtube : fetch live streams chat
+ * [ ] Youtube : poll with chat
+ * [ ] Youtube : word cloud with chat
+ * [ ] Youtube : 
 
 #### code architecture
 
@@ -61,6 +72,8 @@ The code is a django project named 'pollsite', made with 2 apps :
 
 In `polls` app, the different URLs are handled in the `views.py` file. All websockets communications are handled (synchronously) in the `consumers.py` file.
 The difference between question types is handled using a `question_type` attribute, which can be `TO`, `QZ`, `QZ` or `WC`.
+
+For the meeting types, I went with optional fields instead of a complex heritage model, in order to get quickly something worrking. Yes it's lame, but hey - it works.
 
 ## How to deploy test instance with docker
 

@@ -20,3 +20,6 @@ uvicorn[standard]==0.16.0
 # for channels
 channels==3.0.4
 channels-redis==3.3.1
+
+# for Youtube Streams
+pytchat==0.5.5

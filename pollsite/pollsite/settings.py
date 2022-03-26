@@ -29,10 +29,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default='3zaz_n48y63wv5xl(s9=zfrkixc-p
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # TODO when deploying
-DEBUG = os.environ.get("DEBUG",default=True)
+DEBUG = os.environ.get("DEBUG",default=False)
 
 # TODO when deploying add your hostname
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# TODO ADD this variable to your env vars (ex : 'librekast.pour-info.tech')
+if(os.environ.get("ALLOWED_HOSTS_LOCAL")):
+    ALLOWED_HOSTS.append(os.environ.get("ALLOWED_HOSTS_LOCAL"))
 
 # migration to django > 3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -142,17 +145,24 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR + "/static",
-    # '/var/www/static/',
+    # os.path.join(BASE_DIR, '/static'),
+    # '/Users/romain/Stratus/info/server/tests_beekast/LibreKast/pollsite/static/',
 ]
+
+# for testing only, can be omitted for deployment
+if(DEBUG):
+    STATIC_ROOT = '/Users/romain/Stratus/info/server/tests_beekast/LibreKast/pollsite/static/'
+
 # TODO place here the absolute path of the static files you serve
 if(isDocker):
     STATIC_ROOT = './static/'
 
+# media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 
 # For Markdown formatting
-# TODO before deployment
+# TODO if need to change before deployment
 SITE_URL = "http://localhost"
 
 # Channels configuration
