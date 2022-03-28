@@ -50,18 +50,18 @@ You can find screenshots :
  * [x] back : admin widget for handling question go 
  * [x] front : sync previous question
  * [x] front : bug with polls appearance
- * [ ] front : trigger front changes on websockets events in dashboard
  * [x] front : widgets un dashboard
+ * [x] reward_fastest
+ * [ ] docker wrapping
+ * [ ] front : trigger front changes on websockets events in dashboard
  * [ ] back: join during a question
  * [ ] FR translation
- * [x] docker wrapping
  * [ ] Image slides
  * [ ] dashboard look with big titles
- * [ ] reward_fastest
  * [ ] Youtube : fetch live streams chat
+ * [ ] Youtube : verify there is a valid URL
  * [ ] Youtube : poll with chat
  * [ ] Youtube : word cloud with chat
- * [ ] Youtube : 
 
 #### code architecture
 

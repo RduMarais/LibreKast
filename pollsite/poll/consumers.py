@@ -4,16 +4,21 @@ from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from bleach import clean
+from django.conf import settings
+import threading
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
+from .youtube_handler import YoutubeHandler
 
 class QuestionConsumer(WebsocketConsumer):
+
 	def connect(self):
 		meeting_id = self.scope['url_route']['kwargs']['meeting_id']  
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
 
+		print('debug : '+str(self.scope['session']))
 		if(not self.scope['session']['attendee_id']):
 			self.send(text_data=json.dumps({'message':'error no login'}))
 			return 
@@ -26,7 +31,6 @@ class QuestionConsumer(WebsocketConsumer):
 			self.meeting_group_name,
 			self.channel_name
 		)
-
 
 		self.accept()
 
@@ -48,6 +52,8 @@ class QuestionConsumer(WebsocketConsumer):
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
+		if(settings.DEBUG):
+			print('RECV : '+message_in)
 
 		if(message_in == "debug-question-start"):
 			question = self.meeting.current_question()
@@ -75,10 +81,22 @@ class QuestionConsumer(WebsocketConsumer):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_question(question))
+				if(self.meeting.platform == 'YT' and question.question_type != 'TX'):
+					self.start_yt_polling(question)
+		elif(message_in == "admin-live-start"):
+			if(self.is_user_authenticated()):
+				question = self.meeting.current_question()
+				async_to_sync(self.start_livestream_poll()) # TODO
+		elif(message_in == "admin-live-stop"):
+			if(self.is_user_authenticated()):
+				question = self.meeting.current_question()
+				async_to_sync(self.stop_livestream_poll()) # TODO
 		elif(message_in == "admin-question-results"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_results(question))
+				if(self.meeting.platform == 'YT' and question.question_type != 'TX'):
+					self.stop_yt_polling(question)
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
 				async_to_sync(self.next_question())
@@ -107,7 +125,7 @@ class QuestionConsumer(WebsocketConsumer):
 		# marks question as done
 		question = self.meeting.current_question()
 		question.is_done = True
-		question.save()
+		question.save() 
 
 
 	def notify_next_question(self):
@@ -350,5 +368,20 @@ class QuestionConsumer(WebsocketConsumer):
 				}
 			}
 		)
+
+# Youtube Live compatibility
+
+	def start_yt_polling(self,question):
+		print('debug : this is a Youtube meeting (thread init called)')
+		self.ytHandler = YoutubeHandler('36YnV9STBqc','testType') # TODO prevent 2ble instantiation
+		self.ytHandler.questionConsumer = self
+		# the polling process is defined in another class for threading purposes
+		self.ytHandler.start()
+
+	def stop_yt_polling(self,question):
+		if(not self.ytHandler):
+			raise KeyError('There should be a YoutubeHandler object')
+		self.ytHandler.terminate()
+		# self.ytHandler = None # to delete the thread ?
 
 

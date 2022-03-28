@@ -34,7 +34,7 @@ class Meeting(models.Model):
 	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
 	date_end = models.DateTimeField('End time of the meeting',default=timezone.now)
 	image = models.ImageField('Image for your meeting',null = True,blank=True)
-	stream_url = models.URLField('URL for Youtube live stream (only if platform is Youtube)',null=True,blank=True)
+	stream_url = models.URLField('video ID for Youtube live stream (only if platform is Youtube)',null=True,blank=True)
 
 	def __str__(self):
 		return self.title

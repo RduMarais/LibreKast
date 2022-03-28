@@ -1,5 +1,7 @@
 {% extends "base_layout.html" %}
 
+{% load static %}
+
 {% block title  %}Meetings{% endblock  %}
 
 {% block content  %}
@@ -12,7 +14,12 @@
             {% for meeting in meetings %}
             <div class="py-8 flex flex-wrap md:flex-no-wrap">
                 <div class="md:w-64 md:mb-0 mb-6 fle x-shrink-0 flex flex-col">
+                    {% if meeting.image %}
                     <img src="{{ meeting.image.url }}" style="margin-right:20px">
+                    {% else %}
+                    <img src="{% static 'Librekast.png' %}" style="margin-right:20px">
+                    {% endif %}
+
                 </div>
                 <div class="md:flex-grow">
 

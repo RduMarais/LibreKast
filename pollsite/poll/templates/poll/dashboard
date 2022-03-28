@@ -399,7 +399,7 @@
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
-		// console.log('received : '+e.data);
+		console.log('received : '+e.data);
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
 			// updateMeetingPlan(data['question'].id)
