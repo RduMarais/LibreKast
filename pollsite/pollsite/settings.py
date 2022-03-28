@@ -144,7 +144,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR + "/static",
+    # BASE_DIR + "/static",
     # os.path.join(BASE_DIR, '/static'),
     # '/Users/romain/Stratus/info/server/tests_beekast/LibreKast/pollsite/static/',
 ]

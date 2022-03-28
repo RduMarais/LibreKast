@@ -45,10 +45,12 @@ class QuestionsOrder(SortableStackedInline):
 # Meeting admin panel
 class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
-		(None, {'fields': ['is_ongoing','participants','date_start','date_end']}),
+		(None, {'fields': ['is_ongoing','participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
-		('Parameters',{'fields':['code','reward_fastest']})
+		('Parameters',{'fields':['code','reward_fastest','stream_url']})
 	]
+	# if(obj.platform == 'YT'):
+	# 	fieldsets[2][1]['fields'].append('stream_url')
 	readonly_fields =['participants','is_ongoing']
 	inlines = [QuestionsOrder]
 	list_display = ('title', 'activities','participants','is_ongoing')

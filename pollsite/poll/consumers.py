@@ -166,10 +166,10 @@ class QuestionConsumer(WebsocketConsumer):
 				vote.save()
 
 				if(choice.isTrue and question.question_type =='QZ'):
-					if(question.first_correct_answer):
+					if(question.first_correct_answer and self.meeting.reward_fastest):
 						question.first_correct_answer = False
 						question.save()
-						self.attendee.score +=1
+						self.attendee.score +=2
 					self.attendee.score +=1
 					self.attendee.save()
 

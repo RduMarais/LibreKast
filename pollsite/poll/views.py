@@ -23,6 +23,7 @@ def index(request):
 	context = {'meetings':meetings_list }
 	return render(request, 'poll/index', context)
 
+# custom view to manage current meetings
 @staff_member_required
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)

@@ -69,6 +69,8 @@ The code is a django project named 'pollsite', made with 2 apps :
 
  * `home` : hosts all the appearance of the home page as models.
  * `polls` : hosts all the core functionalities of the app.
+ * `static`
+ * `templates`
 
 In `polls` app, the different URLs are handled in the `views.py` file. All websockets communications are handled (synchronously) in the `consumers.py` file.
 The difference between question types is handled using a `question_type` attribute, which can be `TO`, `QZ`, `QZ` or `WC`.
@@ -87,7 +89,7 @@ git clone https://github.com/RduMarais/LibreKast.git --depth 1
 
 Simply run : 
 
-```
+```bash
 cd Librekast
 docker-compose up
 ```
@@ -108,7 +110,7 @@ It is highly recommended to use virtual environments when yout set up a new proj
 
 **1. clone this repo `django-polling-site` in your directory**
 
-```
+```bash
 git clone https://github.com/RduMarais/LibreKast.git
 ```
 
@@ -116,13 +118,13 @@ git clone https://github.com/RduMarais/LibreKast.git
 
 The requirements listed are the versions I used to test & develop the app. Feel free to tamper with the versions, just keep in mind that different package versions have not been tested !
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 **3. move inside the `pollsite` directory and make migrationS**
 
-```
+```bash
 python manage.py makemigrations home
 python manage.py makemigrations poll
 python manage.py migrate
@@ -130,14 +132,14 @@ python manage.py migrate
 
 **4. create a superuser , with your own username and password**
 
-```
+```bash
 python manage.py createsuperuser
 ```
 A default superuser exists, named `defaultsuperuser` with password `LibreKast`.
 
 **5. Collect Static files needed**
 
-```
+```bash
 python manage.py collectstatic
 ```
 
@@ -145,17 +147,23 @@ python manage.py collectstatic
 
 check [here](https://www.docker.com/get-started) if you need to install docker.
 
-```
+```bash
 docker run -p 6379:6379 -d redis:5
 ```
 
-**7. now run the server**
+**7. Setup env variables**
 
+```bash
+export DEBUG=True
 ```
+
+**8. now run the server**
+
+```bash
 python manage.py runserver
 ```
 
-> Note that this step runs an ASGI server. If you are used to deploy WSGI server, this involves a few differences !! Especially when dealing with sockets, be sure to install `uvicorn[standard]` and not `uvicorn` to deal with these.gti 
+> Note that this step runs an ASGI server. If you are used to deploy WSGI server, this involves a few differences !! Especially when dealing with sockets, be sure to install `uvicorn[standard]` and not `uvicorn` to deal with these.
 
 Go to http://127.0.0.1:8000/. This is where Django starts server by default
 
@@ -176,7 +184,7 @@ In order to setup LibreKast in an deployment envionment, one needs to :
  4. In pollsite/settings.py : 
    * change the default `SECRET_KEY` in settings
    * add a `STATIC_ROOT` variable with the **absolute path for the static files your server is serving**
-   * setup `DEBUG = False`
+   * setup `DEBUG = False` 
    * add your server IP/hostname to the `ALLOWED_HOSTS` 
  5. create a superuser and remove the default user (or change its password)
  6. collect static files and migrate them in the server static folder
@@ -187,7 +195,7 @@ With Gunicorn/uvicorn, the last step is the following :
 
 ```bash
 export DJANGO_SETTINGS_MODULE=pollsite.settings
-gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ --log-file librekast.log
+gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ -e DJANGO_SETTINGS_MODULE=pollsite.settings --log-file librekast.log
 ```
 
 > lmk if you need my redirection setup for nginx or a docker image
