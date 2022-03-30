@@ -47,13 +47,13 @@ class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
 		(None, {'fields': ['participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
-		('Parameters',{'fields':['code','reward_fastest','stream_url']})
+		('Parameters',{'fields':['code','reward_fastest','stream_id']})
 	]
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
 	readonly_fields =['participants','is_ongoing']
 	inlines = [QuestionsOrder]
-	list_display = ('title', 'activities','participants','is_ongoing')
+	list_display = ('title', 'activities','participants','is_ongoing','platform')
 	search_fields = ['title','description']
 
 	def is_ongoing(self,obj):
@@ -71,10 +71,10 @@ class MeetingAdmin(NonSortableParentAdmin):
 class ScoreBoard(admin.ModelAdmin):
 	# name = 'Leader Board'
 	# verbose_name = 'Score Table'
-	list_display = ('name', 'score','get_meeting') 
+	list_display = ('name', 'score','get_meeting','is_subscriber') 
 	fields = ['name','score']
-	readonly_fields =['name', 'score','meeting']
-	list_filter=('meeting',)
+	readonly_fields =['name', 'score','meeting','is_subscriber']
+	list_filter=('meeting','is_subscriber')
 	ordering = ('-score',)
 
 	def __str__(self):

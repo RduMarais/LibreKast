@@ -43,8 +43,17 @@ class YoutubeHandler(threading.Thread):
 			self.questionConsumer.add_word(chat.message[1:],attendee) # TODO add attendee
 			self.questionConsumer.notify_add_word(chat.message[1:])
 			print('debug : WordCloud added message '+chat.message[1:])
-		elif(self.question_type == 'PL'):
-			self.questionConsumer.receive_vote("{'choice':'c.message'}")
+		elif(self.question_type == 'PL' or self.question_type == 'QZ'):
+			print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
+			choiceset = self.questionConsumer.meeting.current_question().choice_set.filter(slug=chat.message[1:])
+			print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
+
+			if(choiceset):
+				message = {'choice': choiceset[0].id} # this gets choice ID
+				self.questionConsumer.receive_vote(message,attendee)
+			else : 
+				print('debug : no poll choice for vote '+chat.message[1:]+ ' from user '+chat.author.name)
+
 		# elif(self.question_type == 'QZ'):
 
 
@@ -57,5 +66,5 @@ class YoutubeHandler(threading.Thread):
 			for c in self.chat.get().sync_items():
 				if(c.message.startswith(INTERACTION_CHAR)):
 					self.parse_message(c)
-					# print(f"debug : parse message [{c.author.name}]- {c.message}")
+					print(f"debug : parse message [{c.author.name}]- {c.message}")
 

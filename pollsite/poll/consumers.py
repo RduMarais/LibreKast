@@ -48,6 +48,7 @@ class QuestionConsumer(WebsocketConsumer):
 
 
 	# receive message from client
+	# This is the API
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
@@ -58,6 +59,7 @@ class QuestionConsumer(WebsocketConsumer):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
 		elif(message_in == "vote"):
+			print('debug : json data : '+str(text_data_json))
 			async_to_sync(self.receive_vote(text_data_json,self.attendee))
 		elif(message_in == "get-score"):
 			self.send(text_data=json.dumps({
@@ -80,7 +82,7 @@ class QuestionConsumer(WebsocketConsumer):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_question(question))
-				if(self.meeting.platform == 'YT' and question.question_type != 'TX'):
+				if(self.meeting.platform == 'YT' and question.question_type != 'TX'): # FOR Live cases
 					self.start_yt_polling(question)
 		elif(message_in == "admin-live-start"):
 			if(self.is_user_authenticated()):
@@ -172,6 +174,7 @@ class QuestionConsumer(WebsocketConsumer):
 		)
 
 	# sync method
+	# expects a json object like {'message': 'vote', 'question': '4', 'choice': 15}
 	def receive_vote(self,text_data_json,attendee):
 		try:
 			question = self.meeting.current_question()
@@ -189,6 +192,11 @@ class QuestionConsumer(WebsocketConsumer):
 						attendee.score +=2
 					attendee.score +=1
 					attendee.save()
+					# ADD +1 pt for subscribers in the case of a Youtube Live
+					# if(self.meeting.platform == 'YT'):
+					# 	if(attendee.isSubscriber)
+					# 	attendee.score +=1
+					# 	attendee.save()
 
 				
 				if(question.question_type =='QZ'):
@@ -373,9 +381,10 @@ class QuestionConsumer(WebsocketConsumer):
 	def start_yt_polling(self,question):
 		if settings.DEBUG:
 			print('debug : Youtube meeting thread init called')
-		self.ytHandler = YoutubeHandler('36YnV9STBqc',question.question_type) 
+		self.ytHandler = YoutubeHandler(self.meeting.stream_id,question.question_type) 
 		self.ytHandler.questionConsumer = self
-		# the polling process is defined in another class for clarity of threading purposes
+		# the polling process is defined in another class for clarity of threading
+		# but it calls the methods from this class receive_vote() and add_word() for each message
 		self.ytHandler.start()
 
 	def stop_yt_polling(self,question):

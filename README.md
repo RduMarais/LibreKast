@@ -51,18 +51,20 @@ You can find screenshots :
  * [x] front : sync previous question
  * [x] front : bug with polls appearance
  * [x] front : widgets un dashboard
+ * [ ] front : live poll results on dashboard
  * [x] reward_fastest
  * [ ] docker wrapping
  * [ ] front : trigger front changes on websockets events in dashboard
  * [ ] back: join during a question
  * [ ] FR translation
  * [ ] Image slides
- * [ ] dashboard look with big titles
  * [x] Youtube : fetch live streams chat
- * [ ] Youtube : poll with chat
+ * [x] Youtube : poll with chat
+ * [x] Youtube : meeting ID instead of URL
+ * [ ] Youtube : add attendee is subscriber attribute in dashboard
  * [x] Youtube : word cloud with chat
- * [ ] Youtube : change attendee mangement to be function-oriented instead of object-oriented
- * [ ] Youtube : solve issue with votes counted 3 times
+ * [x] Youtube : change attendee mangement to be function-oriented instead of object-oriented
+ * [ ] Youtube : solve issue with votes counted 3 times ??
 
 #### code architecture
 

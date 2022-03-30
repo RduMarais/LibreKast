@@ -34,7 +34,7 @@ class Meeting(models.Model):
 	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
 	date_end = models.DateTimeField('End time of the meeting',default=timezone.now)
 	image = models.ImageField('Image for your meeting',null = True,blank=True)
-	stream_url = models.URLField('video ID for Youtube live stream (only if platform is Youtube)',null=True,blank=True)
+	stream_id = models.CharField('video ID for Youtube live stream (only if platform is Youtube)',max_length=15, null=True,blank=True)
 
 	def __str__(self):
 		return self.title
@@ -64,6 +64,7 @@ class Attendee(models.Model):
 	name = models.CharField('Your Name', max_length=50, default='Anonymous')
 	score = models.IntegerField('Score',default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+	is_subscriber = models.BooleanField('(YouTube live only) is set to True if the user is subscriber',default=False)
 	
 # model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text.
 # The different question types are defined as an attribute (question_type), and the relevant attributes are optional.
@@ -112,21 +113,6 @@ class Question(SortableMixin):
 			self.question_type = "QZ"
 		super(Question, self).save(*args, **kwargs)
 
-	# def clean(self):
-	# 	self.clean_fields()
-	# 	choices = self.choice_set.all()
-	# 	print(choices)
-	# 	# if(self.question_type=='TX' and len(choices)!=0):
-	# 	# 	raise ValidationError('Question type is `Text Only` but there are choices defined')
-	# 	# if(self.question_type=='PL' and len(choices)<=0):
-	# 	# 	raise ValidationError('Question type is `Poll` but there are no choices defined')
-	# 	# if(self.question_type=='QZ' and len(choices)<=0):
-	# 	# 	raise ValidationError('Question type is `Quizz` but there are no choices defined')
-	# 	if(self.question_type=='QZ' and len(self.choice_set.filter(isTrue=True))==0):
-	# 		raise ValidationError('Question type is `Quizz` but there is no correct answer defined')
-	# 	if(self.question_type=='PL' and len(self.choice_set.filter(isTrue=True))!=0):
-	# 		raise ValidationError('Question type is `Poll` but there are correct answers defined')
-
 	recent.admin_order_field = 'pub_date'
 	recent.boolean = True
 
@@ -136,6 +122,7 @@ class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	choice_text = models.CharField(max_length=100)
 	# votes = models.IntegerField(default=0)
+	slug = models.CharField('(For Youtube live) shorter text the participants can type to vote',max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
 
 	def __str__(self):
