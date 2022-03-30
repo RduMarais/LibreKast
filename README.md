@@ -58,10 +58,11 @@ You can find screenshots :
  * [ ] FR translation
  * [ ] Image slides
  * [ ] dashboard look with big titles
- * [ ] Youtube : fetch live streams chat
- * [ ] Youtube : verify there is a valid URL
+ * [x] Youtube : fetch live streams chat
  * [ ] Youtube : poll with chat
- * [ ] Youtube : word cloud with chat
+ * [x] Youtube : word cloud with chat
+ * [ ] Youtube : change attendee mangement to be function-oriented instead of object-oriented
+ * [ ] Youtube : solve issue with votes counted 3 times
 
 #### code architecture
 

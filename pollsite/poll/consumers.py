@@ -18,7 +18,6 @@ class QuestionConsumer(WebsocketConsumer):
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
 
-		print('debug : '+str(self.scope['session']))
 		if(not self.scope['session']['attendee_id']):
 			self.send(text_data=json.dumps({'message':'error no login'}))
 			return 
@@ -59,7 +58,7 @@ class QuestionConsumer(WebsocketConsumer):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
 		elif(message_in == "vote"):
-			async_to_sync(self.receive_vote(text_data_json))
+			async_to_sync(self.receive_vote(text_data_json,self.attendee))
 		elif(message_in == "get-score"):
 			self.send(text_data=json.dumps({
 				'message':'update-score',
@@ -67,7 +66,7 @@ class QuestionConsumer(WebsocketConsumer):
 				}))
 		elif(message_in == "word-cloud-add"):
 			word = clean(text_data_json['word'])
-			async_to_sync(self.add_word(word))
+			async_to_sync(self.add_word(word,self.attendee))
 			async_to_sync(self.notify_add_word(word))
 		elif(message_in == "get-scoreboard"):
 			async_to_sync(self.send_scoreboard())
@@ -173,23 +172,23 @@ class QuestionConsumer(WebsocketConsumer):
 		)
 
 	# sync method
-	def receive_vote(self,text_data_json):
+	def receive_vote(self,text_data_json,attendee):
 		try:
 			question = self.meeting.current_question()
 			choice = question.choice_set.get(pk=text_data_json['choice'])
 			# I volontarily set the question based on user input to prevent async to sync
 			# question = Question.objects.get(pk=text_data_json['question'])
-			if(len(get_previous_user_answers(self.attendee,question))==0):
-				vote=Vote(user=self.attendee,choice=choice)
+			if(len(get_previous_user_answers(attendee,question))==0):
+				vote=Vote(user=attendee,choice=choice)
 				vote.save()
 
 				if(choice.isTrue and question.question_type =='QZ'):
 					if(question.first_correct_answer and self.meeting.reward_fastest):
 						question.first_correct_answer = False
 						question.save()
-						self.attendee.score +=2
-					self.attendee.score +=1
-					self.attendee.save()
+						attendee.score +=2
+					attendee.score +=1
+					attendee.save()
 
 				
 				if(question.question_type =='QZ'):
@@ -206,18 +205,18 @@ class QuestionConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps(message_out)) #
 
 	# sync method
-	def add_word(self,word):
+	def add_word(self,word,attendee):
 		question = self.meeting.current_question()
 		# TODO : bleach
 		word_cleaned = word
 		try:
 			existing_word = question.choice_set.get(choice_text=word_cleaned)
-			vote=Vote(user=self.attendee,choice=existing_word)
+			vote=Vote(user=attendee,choice=existing_word)
 			vote.save()
 		except:
 			added_word = Choice(question=question, choice_text=word_cleaned)
 			added_word.save()
-			vote=Vote(user=self.attendee,choice=added_word) # the vote is a model to keep traces of the votes
+			vote=Vote(user=attendee,choice=added_word) # the vote is a model to keep traces of the votes
 			vote.save()
 
 
@@ -372,10 +371,11 @@ class QuestionConsumer(WebsocketConsumer):
 # Youtube Live compatibility
 
 	def start_yt_polling(self,question):
-		print('debug : this is a Youtube meeting (thread init called)')
-		self.ytHandler = YoutubeHandler('36YnV9STBqc','testType') # TODO prevent 2ble instantiation
+		if settings.DEBUG:
+			print('debug : Youtube meeting thread init called')
+		self.ytHandler = YoutubeHandler('36YnV9STBqc',question.question_type) 
 		self.ytHandler.questionConsumer = self
-		# the polling process is defined in another class for threading purposes
+		# the polling process is defined in another class for clarity of threading purposes
 		self.ytHandler.start()
 
 	def stop_yt_polling(self,question):
