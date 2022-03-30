@@ -21,14 +21,14 @@ def index(request):
 	# Gets all meetings happening now (defined with Start time and End Time)
 	meetings_list = Meeting.objects.filter(Q(date_start__lte=timezone.now()) & Q(date_end__gte=timezone.now()))
 	context = {'meetings':meetings_list }
-	return render(request, 'poll/index', context)
+	return render(request, 'poll/index.html', context)
 
 # custom view to manage current meetings
 @staff_member_required
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	attendees = meeting.attendee_set.all().order_by('-score')
-	return render(request,'poll/dashboard',{'meeting':meeting,'attendees':attendees})
+	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
@@ -36,7 +36,7 @@ def meeting(request, meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	if(not 'attendee_id' in request.session): # if attendee is not logged in yet
 		form = LoginForm()
-		return render(request,'poll/login',{'meeting':meeting,'form':form})
+		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 	else:
 		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 		context = {
@@ -45,7 +45,7 @@ def meeting(request, meeting_id):
 			'current_question': meeting.current_question(),
 			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order') 
 		}
-		return render(request, 'poll/meeting', context)
+		return render(request, 'poll/meeting.html', context)
 
 def login(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
@@ -60,12 +60,12 @@ def login(request,meeting_id):
 					return HttpResponseRedirect(reverse('poll:meeting', args=(meeting.id,)))
 				else:
 					context = {'meeting':meeting,'error':"The meeting code is not valid",'form':LoginForm()}
-					return render(request,'poll/login',context)
+					return render(request,'poll/login.html',context)
 			else:
 				context = {'meeting':meeting,'error':"Something went wrong",'form':LoginForm()}
-				return render(request,'poll/login',context)
+				return render(request,'poll/login.html',context)
 		else:
-			return render(request,'poll/login',{'meeting':meeting})
+			return render(request,'poll/login.html',{'meeting':meeting})
 	else:
 		return HttpResponseRedirect(reverse('poll:meeting', args=(meeting.id,)))
 
@@ -75,10 +75,10 @@ def login(request,meeting_id):
 def results(request, question_id):
 	if(not 'attendee_id' in request.session):
 		form = LoginForm()
-		return render(request,'poll/login',{'meeting':meeting,'form':form})
+		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 	else:
 		question = get_object_or_404(Question, pk=question_id)
 		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
-		return render(request, 'poll/results', {'question': question})
+		return render(request, 'poll/results.html', {'question': question})
 
 

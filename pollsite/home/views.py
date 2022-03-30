@@ -15,4 +15,4 @@ def index(request):
     team = TeamMember.objects.order_by('title')
     # i know some of you wll delete the homepage so i keep it permissive
     context = {'hpe': HomePage.objects.all()[0], 'team': team} 
-    return render(request, 'home/index', context)
+    return render(request, 'home/index.html', context)

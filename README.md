@@ -45,26 +45,25 @@ You can find screenshots :
 ## Project state
 
  * [x] home as django models (for non-technical people)
- * [x] front : showWait() reset front
  * [x] back : sync notificaton from admin 
  * [x] back : admin widget for handling question go 
+ * [x] back : reward_fastest
+ * [x] front : showWait() reset front
  * [x] front : sync previous question
  * [x] front : bug with polls appearance
  * [x] front : widgets un dashboard
- * [ ] front : live poll results on dashboard
- * [x] reward_fastest
- * [ ] docker wrapping
- * [ ] front : trigger front changes on websockets events in dashboard
- * [ ] back: join during a question
- * [ ] FR translation
- * [ ] Image slides
  * [x] Youtube : fetch live streams chat
  * [x] Youtube : poll with chat
- * [x] Youtube : meeting ID instead of URL
- * [ ] Youtube : add attendee is subscriber attribute in dashboard
  * [x] Youtube : word cloud with chat
+ * [x] Youtube : meeting ID instead of URL
  * [x] Youtube : change attendee mangement to be function-oriented instead of object-oriented
+ * [ ] front & Youtube : add attendee is subscriber attribute in dashboard
+ * [ ] front : change front for a dark mode
+ * [ ] FR translation
+ * [ ] Image slides
+ * [ ] back: join during a question
  * [ ] Youtube : solve issue with votes counted 3 times ??
+ * [ ] docker wrapping
 
 #### code architecture
 
