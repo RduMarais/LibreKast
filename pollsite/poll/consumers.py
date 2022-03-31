@@ -372,6 +372,7 @@ class QuestionConsumer(WebsocketConsumer):
 				'message': {
 					'message':'notify-update-poll',
 					'vote': choice.id,
+					# 'text': choice.choice_text,
 				}
 			}
 		)

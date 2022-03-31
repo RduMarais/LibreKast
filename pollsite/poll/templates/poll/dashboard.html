@@ -1,7 +1,9 @@
 {% extends "base_layout.html" %}
 
 {% block scripts %}
-<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js" type="text/javascript"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-pie.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock  %}
 
 {% block title %}Dashboard{% endblock  %}
@@ -140,6 +142,7 @@
 		if(document.querySelector('#question-content') != null){
 			document.querySelector('#question-content').remove();
 		}
+		// global vars reset ?
 
 	}
 
@@ -378,11 +381,27 @@
 	}
 
 	function showChoices(choicesArray){
+		console.log("choices array : "+choicesArray);
 		content = document.createElement("div");
 		content.id = "question-content";
 		content.classList.add("py-8"); 
 		content.classList.add("px-2"); 
 		content.style="";
+		document.querySelector('#question-div').appendChild(content);
+
+		// TODO :
+		// problem 1. I can not update this based onthe data I recceive from the server
+		// problem 2. Quizz votes do not notify 
+		// var chart = anychart.pie();
+		// var chartData = [];
+		// for(i in choicesArray){
+		// 	console.log(choicesArray[i]);
+		// 	// TODO : problème : prends pas en compte les votes dans la db
+		// 	chartData.push([[choicesArray[i].text,0]]);
+		// }
+		// console.log("chartdata : "+chartData);
+		// chart.container("question-content");
+		// chart.data(chartData);
 
 		let l = document.createElement("ul");
 		l.id="choice-table";
@@ -397,7 +416,8 @@
 			c.classList.add("librekast-choice");
 			content.children[0].appendChild(c);
 		}
-		document.querySelector('#question-div').appendChild(content);
+
+		// chart.draw();
 	}
 
 	// main fuction : receive messages
@@ -448,7 +468,7 @@
 		showWait();
 	};
 
-	// start function
+	// start function (similar to previous button)
 	document.querySelector('#meeting-start').onclick = function(e) {
 		const messageInputDom = document.querySelector('#question-start');
 		const message = messageInputDom.value;
