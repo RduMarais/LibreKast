@@ -67,6 +67,7 @@ You can find screenshots :
  * [ ] back: join during a question
  * [ ] Youtube : solve issue with votes counted 3 times ??
  * [ ] docker wrapping
+ * [ ] Twitch : Twitch
 
 #### code architecture
 

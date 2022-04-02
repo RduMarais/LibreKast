@@ -261,34 +261,19 @@
 
 
 	function showResultsPoll(resultsArray,total_votes){
+		document.querySelector("#question-content").innerText = '';
+
+		var chart = anychart.pie();
+		let chartData = [];
 		for(i in resultsArray){
-			let choice = document.querySelector('#choice-'+resultsArray[i].id);
-			choice.classList.remove("bg-blue-200");
-			choice.classList.replace("text-blue-600","text-"+choiceColors[i]+"-900");
-			choice.classList.add("relative","max-w-xl","overflow-hidden");
-			choice.classList.remove("py-2");
-			let back = document.createElement("div");
-			back.id = "bar-background-"+resultsArray[i].id;
-			back.className="w-full";
-			back.classList.add("h-full","bg-"+choiceColors[i]+"-200","absolute");
-			
-			let bar = document.createElement("div");
-			bar.id="bar-"+resultsArray[i].id;
-			bar.className="h-full";
-			bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar");
-			percent = (resultsArray[i].votes / total_votes) *100 ;
-			bar.style.width = percent + "%";
-			bar.innerText = resultsArray[i].votes + " votes";
-			
-			choice.appendChild(back);
-			choice.appendChild(bar);
+			a = [resultsArray[i].text,resultsArray[i].votes];
+			chartData.push(a);
 		}
-		let p = document.createElement("p");
-		p.className = "mx-4";
-		p.classList.add('my-4','text-center');
-		p.innerText = total_votes+" votes";
-		p.id = 'total-votes';
-		document.querySelector("#question-content").appendChild(p);
+		chart.data(chartData);
+		chart.container("question-content");
+
+		chart.draw();
+		document.querySelector('.anychart-ui-support').height.baseVal.valueAsString = "300";
 	}
 
 	function showResultsQuizz(resultsArray){
@@ -434,7 +419,9 @@
 			updateMeetingPlan(data['question'].id);
 		} else if(data['message']==='results'){
 			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
-			else if(data['question_type']=='PL'){showResultsPoll(data['results'],data['total']);}
+			else if(data['question_type']=='PL'){
+				showResultsPoll(data['results'],data['total']);
+			}
 		} else if(data['message']==='question-ready'){
 			showWait();
 		} else if(data['message']==='notify-update-poll'){
