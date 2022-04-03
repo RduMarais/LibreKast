@@ -183,3 +183,5 @@ CHANNEL_LAYERS = {
     },
 }
 
+SOCKET_ENCRYPTION = os.environ.get("SOCKET_ENCRYPTION",default=True)
+

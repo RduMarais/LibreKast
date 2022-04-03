@@ -29,8 +29,8 @@ def index(request):
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	attendees = meeting.attendee_set.all().order_by('-score')
-	debug=settings.DEBUG
-	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees,'debug':debug})
+	wss=settings.SOCKET_ENCRYPTION
+	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees,'wss':wss})
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
@@ -46,7 +46,7 @@ def meeting(request, meeting_id):
 			'attendee':attendee,
 			'current_question': meeting.current_question(),
 			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order'),
-			'debug':settings.DEBUG 
+			'wss':settings.SOCKET_ENCRYPTION 
 		}
 		return render(request, 'poll/meeting.html', context)
 

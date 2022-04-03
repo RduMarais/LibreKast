@@ -42,17 +42,21 @@ class YoutubeHandler(threading.Thread):
 		if(self.question_type == 'WC'):
 			self.questionConsumer.add_word(chat.message[1:],attendee) # TODO add attendee
 			self.questionConsumer.notify_add_word(chat.message[1:])
-			print('debug : WordCloud added message '+chat.message[1:])
+			if(settings.DEBUG):
+				print('debug : WordCloud added message '+chat.message[1:])
 		elif(self.question_type == 'PL' or self.question_type == 'QZ'):
-			print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
+			if(settings.DEBUG):
+				print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
 			choiceset = self.questionConsumer.meeting.current_question().choice_set.filter(slug=chat.message[1:])
-			print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
+			if(settings.DEBUG):
+				print('debug : Poll/Quizz adding vote '+chat.message[1:]+ ' from user '+chat.author.name)
 
 			if(choiceset):
 				message = {'choice': choiceset[0].id} # this gets choice ID
 				self.questionConsumer.receive_vote(message,attendee)
 			else : 
-				print('debug : no poll choice for vote '+chat.message[1:]+ ' from user '+chat.author.name)
+				if(settings.DEBUG):
+					print('debug : no poll choice for vote '+chat.message[1:]+ ' from user '+chat.author.name)
 
 		# elif(self.question_type == 'QZ'):
 
@@ -61,10 +65,7 @@ class YoutubeHandler(threading.Thread):
 	def run(self):
 		# self._running = True # else it will not allow 2 starts in a meeting
 		while(self._running and self.chat.is_alive()):
-			# print(f'debug : chat is running')
-			# time.sleep(2)
 			for c in self.chat.get().sync_items():
 				if(c.message.startswith(INTERACTION_CHAR)):
 					self.parse_message(c)
-					print(f"debug : parse message [{c.author.name}]- {c.message}")
 

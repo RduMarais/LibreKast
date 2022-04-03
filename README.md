@@ -63,7 +63,8 @@ V1 :
  * [x] front & back : have dashboard showing pie chart during the vote
  * [x] Youtube : add sponsor attribute in scoreboard
  * [ ] front : change front for a dark mode
- * [ ] Youtube : solve issue with votes counted 3 times ??
+ * [ ] BUG : solve issue with votes counted 3 times ??
+ * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
 
 V2 : 
 
@@ -182,6 +183,8 @@ export DJANGO_SETTINGS_MODULE="pollsite.settings"
 
 # only if this is for debugging
 export DEBUG=True
+# is your wss has a valid certificate (some browser will throw errors if this is not enforced)
+export SOCKET_ENCRYPTION=True 
 ```
 
 **8. now run the server**

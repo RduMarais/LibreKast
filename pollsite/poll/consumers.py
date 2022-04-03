@@ -71,7 +71,8 @@ class QuestionConsumer(WebsocketConsumer):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
 		elif(message_in == "vote"):
-			print('debug : json data : '+str(text_data_json))
+			if(settings.DEBUG):
+				print('debug : json data : '+str(text_data_json))
 			async_to_sync(self.receive_vote(text_data_json,self.attendee))
 		elif(message_in == "get-score"):
 			self.send(text_data=json.dumps({
