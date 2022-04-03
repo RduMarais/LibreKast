@@ -152,6 +152,8 @@ STATICFILES_DIRS = [
 # for testing only, can be omitted for deployment
 if(DEBUG):
     STATIC_ROOT = '/Users/romain/Stratus/info/server/tests_beekast/LibreKast/pollsite/static/'
+else:
+    STATIC_ROOT = BASE_DIR + "/static"
 
 # TODO place here the absolute path of the static files you serve
 if(isDocker):

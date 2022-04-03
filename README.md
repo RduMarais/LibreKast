@@ -142,12 +142,22 @@ python manage.py makemigrations poll
 python manage.py migrate
 ```
 
-**4. create a superuser , with your own username and password**
+**4. Security settings**
+
+create a superuser , with your own username and password
 
 ```bash
 python manage.py createsuperuser
 ```
 A default superuser exists, named `defaultsuperuser` with password `LibreKast`.
+
+Then create a secure secret key:
+
+```bash
+python -c 'from django.core.management.utils import get_random_secret_key; \
+            print(get_random_secret_key())'
+export SECRET_KEY="<your secret key>"
+```
 
 **5. Collect Static files needed**
 
