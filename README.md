@@ -44,6 +44,8 @@ You can find screenshots :
 
 ## Project state
 
+V1 : 
+
  * [x] home as django models (for non-technical people)
  * [x] back : sync notificaton from admin 
  * [x] back : admin widget for handling question go 
@@ -59,15 +61,18 @@ You can find screenshots :
  * [x] Youtube : change attendee mangement to be function-oriented instead of object-oriented
  * [x] pie chart at the end of the poll
  * [x] front & back : have dashboard showing pie chart during the vote
- * [-] front & Youtube : add attendee is subscriber attribute in dashboard
-   * pytchat does not support this but support sponsor attribute
+ * [x] Youtube : add sponsor attribute in scoreboard
  * [ ] front : change front for a dark mode
+ * [ ] Youtube : solve issue with votes counted 3 times ??
+
+V2 : 
+
  * [ ] FR translation
  * [ ] Image slides
  * [ ] back: join during a question
- * [ ] Youtube : solve issue with votes counted 3 times ??
  * [ ] docker wrapping
  * [ ] Twitch : Twitch
+ * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
 
 #### code architecture
