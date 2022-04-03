@@ -45,7 +45,7 @@ def meeting(request, meeting_id):
 			'meeting':meeting,
 			'attendee':attendee,
 			'current_question': meeting.current_question(),
-			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order')
+			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order'),
 			'debug':settings.DEBUG 
 		}
 		return render(request, 'poll/meeting.html', context)
