@@ -175,7 +175,12 @@ docker run -p 6379:6379 -d redis:5
 
 **7. Setup env variables**
 
+
 ```bash
+export ALLOWED_HOSTS_LOCAL="<the url you plan to serve the app to>"
+export DJANGO_SETTINGS_MODULE="pollsite.settings"
+
+# only if this is for debugging
 export DEBUG=True
 ```
 

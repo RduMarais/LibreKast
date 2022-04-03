@@ -132,7 +132,7 @@
 <script>
 	const meeting_id = {{ meeting.id }};
 	const dashboardSocket = new WebSocket(
-		'ws://'
+		{% if debug %}'ws://'{% else %}'wss://'{% endif %}
 		+ window.location.host
 		+ '/ws/'
 		+ meeting_id

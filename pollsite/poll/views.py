@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
+from django.conf import settings
 
 import datetime
 
@@ -28,7 +29,8 @@ def index(request):
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	attendees = meeting.attendee_set.all().order_by('-score')
-	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
+	debug=settings.DEBUG
+	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees,'debug':debug})
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
@@ -43,7 +45,8 @@ def meeting(request, meeting_id):
 			'meeting':meeting,
 			'attendee':attendee,
 			'current_question': meeting.current_question(),
-			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order') 
+			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order')
+			'debug':settings.DEBUG 
 		}
 		return render(request, 'poll/meeting.html', context)
 
