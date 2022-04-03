@@ -2,6 +2,7 @@
 
 {% block scripts %}
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock  %}
 
@@ -68,12 +69,17 @@
 	var questionDesc = document.querySelector('#question-description');
 	var wordCloudData = [];
 
-	function showWait(){
-		questionTitle.innerText = "Next Activity is about to start...";
-		questionDesc.innerHTML = "";
+
+		function resetQuestionContent(){
 		if(document.querySelector('#question-content') != null){
 			document.querySelector('#question-content').remove();
 		}
+	}
+
+	function showWait(){
+		questionTitle.innerText = "Next Activity is about to start...";
+		questionDesc.innerHTML = "";
+		resetQuestionContent();
 		if(document.querySelector('#question-form') != null){
 			document.querySelector('#question-form').remove();
 		}
@@ -160,6 +166,7 @@
 	}
 
 	function showQuestionText(questionObj){
+
 		questionTitle.textContent = questionObj['title'];
 		questionTitle.setAttribute("question-id",questionObj['id']);
 		questionTitle.classList.add('librekast-'+questionObj['type']);
@@ -376,6 +383,7 @@
 		const data = JSON.parse(e.data);
 		console.log('received : '+e.data);
 		if(data['message']==='question-go'){
+			resetQuestionContent();
 			showQuestionText(data['question']);
 		} else if(data['message']==='results'){
 			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}

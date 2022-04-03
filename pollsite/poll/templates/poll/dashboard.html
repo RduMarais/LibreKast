@@ -2,8 +2,9 @@
 
 {% block scripts %}
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
-<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-pie.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-cartesian.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
+<script src="https://cdn.anychart.com/themes/2.0.0/dark_blue.min.js"></script>
 {% endblock  %}
 
 {% block title %}Dashboard{% endblock  %}
@@ -99,6 +100,10 @@
 			<tr class="bg-green-300">
 			  <th>Username</th>
 			  <th>Score</th>
+			  {% if meeting.platform == 'YT' %}
+			  <!-- so basically I prepared this for Twitch -->
+			  <th>Sponsor</th>
+			  {% endif %}
 			</tr>
 		</thead>
 		<tbody id="scoreboard-tbody">
@@ -107,6 +112,9 @@
 			<tr>
 			  <td>{{attendee.name}}</td>
 			  <td>{{attendee.score}}</td>
+			  {% if meeting.platform == 'YT' %}
+			  <td>{{attendee.is_subscriber}}</td>
+			  {% endif %}
 			</tr>
 			{% endfor %}
 			{% endif %}
@@ -135,15 +143,23 @@
 	var questionDesc = document.querySelector('#question-description');
 	var wordCloudData = [];
 	var questionStatus ;
+	var meetingPlatform = '{{meeting.platform}}' ; 
+
+	function resetQuestionContent(){
+		if(document.querySelector('#question-content') != null){
+			document.querySelector('#question-content').remove();
+		}
+	}
 
 	function showWait(){
 		questionTitle.innerText = "Next Activity is about to start...";
 		questionDesc.innerHTML = "";
-		if(document.querySelector('#question-content') != null){
-			document.querySelector('#question-content').remove();
-		}
+		resetQuestionContent();
 		// global vars reset ?
+	}
 
+	function quickNdirtyUIfix(height){
+		document.querySelector('.anychart-ui-support').height.baseVal.valueAsString = height;
 	}
 
 	function updateScoreboard(scoresArray){
@@ -158,6 +174,11 @@
 			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
 			row.appendChild(username);
 			row.appendChild(userscore);
+			if(meetingPlatform == 'YT'){
+				let isSub = document.createElement('td');
+				isSub.innerText = scoresArray[i].is_sub;
+				row.appendChild(isSub);
+			}
 			tableBody.appendChild(row);
 		}
 
@@ -260,10 +281,11 @@
 	}
 
 
-	function showResultsPoll(resultsArray,total_votes){
+	function showResultsPoll(resultsArray){
+		// anychart.theme(anychart.themes.darkBlue); //TODO : dark mode
 		document.querySelector("#question-content").innerText = '';
 
-		var chart = anychart.pie();
+		var chart = anychart.column();
 		let chartData = [];
 		for(i in resultsArray){
 			a = [resultsArray[i].text,resultsArray[i].votes];
@@ -273,27 +295,19 @@
 		chart.container("question-content");
 
 		chart.draw();
-		document.querySelector('.anychart-ui-support').height.baseVal.valueAsString = "300";
+		// TODO : this is a dirty fix
+		quickNdirtyUIfix(300);
 	}
 
 	function showResultsQuizz(resultsArray){
-		// consider that the choices are still here
 		for(i in resultsArray){
-			// or could use array of choice elmts
-			let choice = document.querySelector('#choice-'+resultsArray[i].id);
 			if(resultsArray[i].isTrue){
 				let s = document.createElement("span");
 				s.innerHTML = "The answer was <b>"+resultsArray[i].text+"</b>";
 				questionDesc.appendChild(s);
-				choice.classList.replace('bg-blue-200','bg-green-300');
-				choice.classList.replace('text-blue-600','text-green-600');
 			}
-			let c = document.createElement("span");
-			c.className="text-xs";
-			c.classList.add("px-4");
-			c.innerText = resultsArray[i].votes + " votes";
-			choice.appendChild(c);
 		}
+		showResultsPoll(resultsArray);
 	}
 
 	function updatePollPercentage(voteBar,totalCount){
@@ -346,6 +360,7 @@
 		chart.angles([0]);
 		chart.container("question-content");
 		chart.draw();
+		quickNdirtyUIfix(250);
 	}
 
 	function showWordCloud(questionObj){
@@ -363,6 +378,7 @@
 		chart.container("question-content");
 		chart.draw();
 		// console.log('WC drawn');
+		quickNdirtyUIfix(250);
 	}
 
 	function showChoices(choicesArray){
@@ -373,20 +389,6 @@
 		content.classList.add("px-2"); 
 		content.style="";
 		document.querySelector('#question-div').appendChild(content);
-
-		// TODO :
-		// problem 1. I can not update this based onthe data I recceive from the server
-		// problem 2. Quizz votes do not notify 
-		// var chart = anychart.pie();
-		// var chartData = [];
-		// for(i in choicesArray){
-		// 	console.log(choicesArray[i]);
-		// 	// TODO : problème : prends pas en compte les votes dans la db
-		// 	chartData.push([[choicesArray[i].text,0]]);
-		// }
-		// console.log("chartdata : "+chartData);
-		// chart.container("question-content");
-		// chart.data(chartData);
 
 		let l = document.createElement("ul");
 		l.id="choice-table";
@@ -418,14 +420,17 @@
 		} else if(data['message']==='current-question'){
 			updateMeetingPlan(data['question'].id);
 		} else if(data['message']==='results'){
-			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
+			if(data['question_type']=='QZ'){
+				showResultsQuizz(data['results']);
+			}
 			else if(data['question_type']=='PL'){
-				showResultsPoll(data['results'],data['total']);
+				showResultsPoll(data['results']);
 			}
 		} else if(data['message']==='question-ready'){
 			showWait();
 		} else if(data['message']==='notify-update-poll'){
-			updatePoll(data['vote']);
+			// updatePoll(data['vote']);
+			showResultsPoll(data['results'])
 		}else if(data['message']==='question-close'){
 			showWait();
 		} else if(data['message']==='notify-update-cloud'){

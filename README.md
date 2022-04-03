@@ -57,10 +57,10 @@ You can find screenshots :
  * [x] Youtube : word cloud with chat
  * [x] Youtube : meeting ID instead of URL
  * [x] Youtube : change attendee mangement to be function-oriented instead of object-oriented
- * [ ] front & back : have dashboard showing pie chart during the vote
-   * problem 1. I can not update this based onthe data I recceive from the server
-   * problem 2. Quizz votes do not notify 
- * [ ] front & Youtube : add attendee is subscriber attribute in dashboard
+ * [x] pie chart at the end of the poll
+ * [x] front & back : have dashboard showing pie chart during the vote
+ * [-] front & Youtube : add attendee is subscriber attribute in dashboard
+   * pytchat does not support this but support sponsor attribute
  * [ ] front : change front for a dark mode
  * [ ] FR translation
  * [ ] Image slides
@@ -68,6 +68,7 @@ You can find screenshots :
  * [ ] Youtube : solve issue with votes counted 3 times ??
  * [ ] docker wrapping
  * [ ] Twitch : Twitch
+ * [ ] refactor : make question object-oriented in consumers
 
 #### code architecture
 

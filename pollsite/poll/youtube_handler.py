@@ -35,7 +35,7 @@ class YoutubeHandler(threading.Thread):
 		if(attendee_queryset): # is this secure ?
 			attendee = attendee_queryset[0]
 		else:
-			attendee = Attendee(name=chat.author.name,meeting=self.questionConsumer.meeting,score=0) # is this secure ? 
+			attendee = Attendee(name=chat.author.name,meeting=self.questionConsumer.meeting,score=0,is_subscriber=chat.author.isChatSponsor) # is this secure ? 
 			attendee.save()
 		# attendee = chat.author.name
 

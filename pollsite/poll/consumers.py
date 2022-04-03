@@ -31,6 +31,13 @@ class QuestionConsumer(WebsocketConsumer):
 			self.channel_name
 		)
 
+		if(self.is_user_authenticated()):
+			async_to_sync(self.channel_layer.group_add)(
+				self.meeting_group_name+'_admin',
+				self.channel_name
+			)
+			self.isAdmin = True
+
 		self.accept()
 
 	# leave group
@@ -45,6 +52,11 @@ class QuestionConsumer(WebsocketConsumer):
 		message = event['message']
 		# Send message to WebSocket
 		self.send(text_data=json.dumps(message))
+
+	def admin_message(self,event):
+		message = event['message']
+		if(self.isAdmin):
+			self.send(text_data=json.dumps(message))
 
 
 	# receive message from client
@@ -205,6 +217,7 @@ class QuestionConsumer(WebsocketConsumer):
 				elif(question.question_type =='PL'):
 					self.send_results(question)
 					self.notify_update_PL(question,choice)
+				async_to_sync(self.notify_admin_vote(choice,question))
 			else:
 				message_out = {'message':'error : already voted'}
 				self.send(text_data=json.dumps(message_out)) #
@@ -358,6 +371,7 @@ class QuestionConsumer(WebsocketConsumer):
 				'id':user.id,
 				'name':user.name,
 				'score':user.score,
+				'is_sub':user.is_subscriber,
 			}
 			message_out['scores'].append(score_obj)
 		self.send(text_data=json.dumps(message_out))
@@ -376,6 +390,30 @@ class QuestionConsumer(WebsocketConsumer):
 				}
 			}
 		)
+
+	def notify_admin_vote(self,choice,question):
+		res = []
+		for choice in question.choice_set.all():
+			choice_obj = {
+				'id':choice.id,
+				'text':choice.choice_text,
+				'votes':choice.votes(),
+				'isTrue':choice.isTrue,
+			}
+			res.append(choice_obj)
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name+'_admin',
+			{
+				'type': 'admin_message', # is it though ?
+				'message': {
+					'message':'notify-update-poll',
+					'vote':choice.id,
+					'results': res
+				}
+			}
+		)
+
+
 
 # Youtube Live compatibility
 
