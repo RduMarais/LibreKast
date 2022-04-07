@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-08 00:24+0200\n"
+"POT-Creation-Date: 2022-04-08 00:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,6 +49,98 @@ msgstr "Rythmez"
 #: pollsite/home/templates/home/index.html:74
 msgid "Your interventions with key ideas"
 msgstr "Vos interventions avec des jeux"
+
+#: pollsite/poll/models.py:28
+#, fuzzy
+#| msgid "Join a Meeting"
+msgid "Title of Meeting"
+msgstr "Rejoindre un évènement"
+
+#: pollsite/poll/models.py:29
+msgid "Type of Meeting : IRL or live stream"
+msgstr "Type d'évènement : sur place ou en stream"
+
+#: pollsite/poll/models.py:30 pollsite/poll/models.py:74
+msgid "Description"
+msgstr "Description"
+
+#: pollsite/poll/models.py:32
+msgid "Security Code for joining the Meeting"
+msgstr "Code de sécurité pour pouvoir reoindre l'évènement"
+
+#: pollsite/poll/models.py:33
+msgid "Meeting has started"
+msgstr "L'évènement a commencé"
+
+#: pollsite/poll/models.py:34
+msgid "Reward the fastest answers"
+msgstr "Récompenser la rapidité de réponse"
+
+#: pollsite/poll/models.py:35
+msgid "Start time of the meeting"
+msgstr "Début de l'évènement"
+
+#: pollsite/poll/models.py:36
+msgid "End time of the meeting"
+msgstr "Fin de l'évènement"
+
+#: pollsite/poll/models.py:37
+msgid "Image for your meeting"
+msgstr "Image de l'évènement"
+
+#: pollsite/poll/models.py:38
+msgid "video ID for Youtube live stream (only if platform is Youtube)"
+msgstr "[Youtube uniquement] ID de vidéo Youtube"
+
+#: pollsite/poll/models.py:56
+#, fuzzy
+#| msgid "The meeting code is not valid"
+msgid "This meeting is over"
+msgstr "Cet évènement est maintenant terminé"
+
+#: pollsite/poll/models.py:56
+msgid ""
+"Thanks for using LibreKast. Please feel free to check ![the author's website]"
+"(https://www.pour-info.tech/)"
+msgstr ""
+"Merci d'avoir utilisé LibreKast. N'hésitez pas à jeter un coup d'oeil à la "
+"chaine Youtube de son auteur : https://www.youtube.com/c/PourInfo"
+
+#: pollsite/poll/models.py:65
+msgid "Your Name"
+msgstr "Votre nom"
+
+#: pollsite/poll/models.py:66
+msgid "Score"
+msgstr "Score"
+
+#: pollsite/poll/models.py:68
+msgid "(YouTube live only) is set to True if the user is subscriber"
+msgstr "[Youtube uniquement] True si l'utilisateur est un sponsor"
+
+#: pollsite/poll/models.py:73
+msgid "Question"
+msgstr "Question"
+
+#: pollsite/poll/models.py:77
+msgid "Date Published"
+msgstr "Date de publication"
+
+#: pollsite/poll/models.py:78
+msgid "Question already completed"
+msgstr "Question terminée"
+
+#: pollsite/poll/models.py:79
+msgid "Type of Question"
+msgstr "Type de question"
+
+#: pollsite/poll/models.py:84
+msgid "True if no one gave the correct answer already"
+msgstr "Vrai si personne n'a encore donné la bonne réponse"
+
+#: pollsite/poll/models.py:126
+msgid "(For Youtube live) shorter text the participants can type to vote"
+msgstr "[Youtube uniquement] réponse courte prise en compte pour le hashtag"
 
 #: pollsite/poll/templates/poll/index.html:11
 msgid "Join a Meeting"

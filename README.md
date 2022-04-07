@@ -67,17 +67,21 @@ V1 :
 
 V2 : 
 
- * [ ] front : change front for a dark mode
- * [ ] front : go back button
- * [-] FR translation templates
- * [ ] FR translation JS code
+ * [x] FR translation templates
  * [ ] FR translation models
- * [ ] Image slides
+ * [ ] FR translation JS code
+ * [ ] front : change front for a dark mode
+ * [ ] front : go back button in dashboard
  * [ ] back: join during a question
- * [ ] docker wrapping
+ * [ ] Image slides
  * [ ] Twitch : Twitch
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
+
+ V3 : 
+
+ * [ ] docker wrapping
+ * [ ] Youtube : automatically generate short answer for poll & quizz
 
 #### code architecture
 

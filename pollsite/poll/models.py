@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 
 from adminsortable.models import SortableMixin
@@ -24,17 +25,17 @@ LIVE_TYPE = (
 
 # represents an occurence of a presentation. 
 class Meeting(models.Model):
-	title = models.CharField('Title of Meeting', max_length=50)
-	platform = models.CharField('Type of Meeting : IRL or live stream',max_length=3,choices=LIVE_TYPE,default='IRL')
-	desc = MarkdownField('Description', max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
+	title = models.CharField(_('Title of Meeting'), max_length=50)
+	platform = models.CharField(_('Type of Meeting : IRL or live stream'),max_length=3,choices=LIVE_TYPE,default='IRL')
+	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
-	code = models.CharField('Security Code for joining the Meeting', default='Pour1nf0', max_length=50)
-	has_started = models.BooleanField('Meeting has started',default=False)
-	reward_fastest = models.BooleanField('Reward the fastest answers',default=False)
-	date_start = models.DateTimeField('Start time of the meeting',default=timezone.now)
-	date_end = models.DateTimeField('End time of the meeting',default=timezone.now)
-	image = models.ImageField('Image for your meeting',null = True,blank=True)
-	stream_id = models.CharField('video ID for Youtube live stream (only if platform is Youtube)',max_length=15, null=True,blank=True)
+	code = models.CharField(_('Security Code for joining the Meeting'), default='Pour1nf0', max_length=50)
+	has_started = models.BooleanField(_('Meeting has started'),default=False)
+	reward_fastest = models.BooleanField(_('Reward the fastest answers'),default=False)
+	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
+	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
+	image = models.ImageField(_('Image for your meeting'),null = True,blank=True)
+	stream_id = models.CharField(_('video ID for Youtube live stream (only if platform is Youtube)'),max_length=15, null=True,blank=True)
 
 	def __str__(self):
 		return self.title
@@ -52,7 +53,7 @@ class Meeting(models.Model):
 		if(self.question_set.order_by('question_order').filter(is_done=False)):
 			return self.question_set.order_by('question_order').filter(is_done=False)[0]
 		else:
-			MeetingEnd = Question(title='This meeting is over',desc="Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)",
+			MeetingEnd = Question(title=_('This meeting is over'),desc=_("Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)"),
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
 
@@ -61,26 +62,26 @@ class Meeting(models.Model):
 #   (which allows to create a top and them to give themselves cool names)
 # 	the model name is attendee in order not to confuse with django users 
 class Attendee(models.Model):
-	name = models.CharField('Your Name', max_length=50, default='Anonymous')
-	score = models.IntegerField('Score',default=0)
+	name = models.CharField(_('Your Name'), max_length=50, default='Anonymous')
+	score = models.IntegerField(_('Score'),default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-	is_subscriber = models.BooleanField('(YouTube live only) is set to True if the user is subscriber',default=False)
+	is_subscriber = models.BooleanField(_('(YouTube live only) is set to True if the user is subscriber'),default=False)
 	
 # model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text.
 # The different question types are defined as an attribute (question_type), and the relevant attributes are optional.
 class Question(SortableMixin):
-	title = models.CharField('Question', max_length=50)
-	desc = MarkdownField('Description', max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)
+	title = models.CharField(_('Question'), max_length=50)
+	desc = MarkdownField(_('Description'), max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)
 	# this attribute is generated automatically as markdown render of previous field
 	desc_rendered = RenderedMarkdownField()
-	pub_date = models.DateTimeField('Date Published',default=timezone.now)
-	is_done = models.BooleanField('Question already completed',default=False)
-	question_type = models.CharField('Type of Question', max_length=2,choices=QUESTION_TYPES, default='PL')
+	pub_date = models.DateTimeField(_('Date Published'),default=timezone.now)
+	is_done = models.BooleanField(_('Question already completed'),default=False)
+	question_type = models.CharField(_('Type of Question'), max_length=2,choices=QUESTION_TYPES, default='PL')
 	meeting = SortableForeignKey(Meeting, on_delete=models.CASCADE)
 	question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
 	# for quizzes
-	first_correct_answer = models.BooleanField('True if no one gave the correct answer already',default=True)
+	first_correct_answer = models.BooleanField(_('True if no one gave the correct answer already'),default=True)
 
 	class Meta:
 		ordering = ['question_order'] 
@@ -122,7 +123,7 @@ class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	choice_text = models.CharField(max_length=100)
 	# votes = models.IntegerField(default=0)
-	slug = models.CharField('(For Youtube live) shorter text the participants can type to vote',max_length=20,blank=True)
+	slug = models.CharField(_('(For Youtube live) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
 
 	def __str__(self):
