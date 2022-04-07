@@ -3,7 +3,12 @@
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">Canvass Poll-App Admin</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">LIBREKAST ADMIN</a></h1>
 {% endblock %}
 
+<!-- bloc on top (navbar) -->
 {% block nav-global %}{% endblock %}
+
+{% block copyright %}
+TEST COPYRIGHT
+{% endblock %}

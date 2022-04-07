@@ -1,5 +1,6 @@
 {% extends "base_layout.html" %}
 
+{% load i18n %}
 {% load static %}
 
 {% block title  %}Meetings{% endblock  %}
@@ -7,7 +8,7 @@
 {% block content  %}
 
 {% if meetings %}
-<h1 class="text-3xl text-center">Join a Meeting</h1>
+<h1 class="text-3xl text-center">{% trans "Join a Meeting" %}</h1>
 <section class="text-gray-700 body-font overflow-hidden">
     <div class="container px-5 py-24 mx-auto">
         <div class="-my-8">
@@ -24,13 +25,14 @@
                 <div class="md:flex-grow">
 
                     <h2 class="text-2xl font-medium text-gray-900 title-font mb-2">{{meeting.title }}
-                    <span class="mt-1 text-gray-500 text-sm" style="margin-left:10px">{{ meeting.activities_done }}/{{ meeting.activities }} Activities completed</span>
+                    <span class="mt-1 text-gray-500 text-sm" style="margin-left:10px">{{ meeting.activities_done }}/{{ meeting.activities }} {% trans "Activities completed" %}</span>
                     </h2>
                     <p class="leading-relaxed">{{meeting.desc_rendered | safe}}
                     </p>
                     {% comment %} FINDME {% endcomment %}
                     <span class="tracking-widest font-medium title-font text-gray-900">{{meeting.date_start.date }}</span>
-                    <a href="{% url 'poll:meeting' meeting.id %}" class="text-blue-500 inline-flex items-center mt-4">Join Meeting
+                    <a href="{% url 'poll:meeting' meeting.id %}" class="text-blue-500 inline-flex items-center mt-4">
+                        {% trans "Join Meeting" %}
                         <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14"></path>

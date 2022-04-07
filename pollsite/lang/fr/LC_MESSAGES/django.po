@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-08 00:24+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: pollsite/home/templates/home/index.html:43
+msgid "Catch"
+msgstr "Saisissez"
+
+#: pollsite/home/templates/home/index.html:44
+msgid "Your participant's attention"
+msgstr "L'attention de vos participants"
+
+#: pollsite/home/templates/home/index.html:55
+msgid "Gamify"
+msgstr "Gagnez"
+
+#: pollsite/home/templates/home/index.html:56
+msgid "Your meetings with scores"
+msgstr "Des points en jouant"
+
+#: pollsite/home/templates/home/index.html:64
+msgid "Visualize"
+msgstr "Visualisez"
+
+#: pollsite/home/templates/home/index.html:65
+msgid "The different ideas with graphs"
+msgstr "Vos idées avec des graphiques"
+
+#: pollsite/home/templates/home/index.html:73
+msgid "Rythm"
+msgstr "Rythmez"
+
+#: pollsite/home/templates/home/index.html:74
+msgid "Your interventions with key ideas"
+msgstr "Vos interventions avec des jeux"
+
+#: pollsite/poll/templates/poll/index.html:11
+msgid "Join a Meeting"
+msgstr "Rejoindre un évènement"
+
+#: pollsite/poll/templates/poll/index.html:28
+msgid "Activities completed"
+msgstr "Activités terminées"
+
+#: pollsite/poll/templates/poll/index.html:36
+msgid "Join Meeting"
+msgstr "Rejoindre l'évènement"
+
+#: pollsite/poll/templates/poll/login.html:15
+msgid "Choose a username"
+msgstr "Choisissez un pseudo"
+
+#: pollsite/poll/templates/poll/login.html:19
+msgid "Meeting code"
+msgstr "Code de l'évènement"
+
+#: pollsite/poll/templates/poll/login.html:23
+msgid "Join"
+msgstr "Rejoindre"
+
+#: pollsite/poll/templates/poll/meeting.html:28
+msgid "START"
+msgstr "COMMENCER"
+
+#: pollsite/poll/templates/poll/meeting.html:35
+msgid "Previous questions"
+msgstr "Questions précédentes"
+
+#: pollsite/poll/templates/poll/meeting.html:42
+msgid "See results"
+msgstr "Voir les résultats"
+
+#: pollsite/poll/views.py:66
+msgid "The meeting code is not valid"
+msgstr "Le code de participation n'est pas valide"
+
+#: pollsite/poll/views.py:69
+msgid "Something went wrong"
+msgstr "Quelque chose a mal tourné"
+
+#: pollsite/templates/admin/base_site.html:3
+msgid "Django site admin"
+msgstr "LibreKast Admin"
+
+#: pollsite/templates/base_layout.html:30
+msgid "Meetings"
+msgstr "Évènements"
+
+#: pollsite/templates/base_layout.html:31
+msgid "How-To"
+msgstr "Tuto"
+
+#: pollsite/templates/base_layout.html:32
+msgid "Contributors"
+msgstr "Contributeurs"
+
+#: pollsite/templates/base_layout.html:35
+msgid "Admin"
+msgstr "Admin"
+
+#: pollsite/templates/base_layout.html:64
+msgid "See Source Code on GitHub"
+msgstr "Voir le code source sur GitHub"
+
+#~ msgid "Home"
+#~ msgstr "Accueil"
+
+#~ msgid "Login"
+#~ msgstr "Rejoindre"
+
+#~ msgid "Meeting"
+#~ msgstr "Évènement"
+
+#~ msgid "Results"
+#~ msgstr "Résultats"

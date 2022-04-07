@@ -1,4 +1,5 @@
 {% extends "base_layout.html" %}
+{% load i18n %}
 
 {% block title  %}Login{% endblock  %}
 
@@ -11,18 +12,18 @@
     <form class="text-center pb mt-2 mb-4 mx-auto text-gray-900" action="{% url 'poll:login' meeting.id %}" method="post"> 
         {% csrf_token %}
         <div class="form-field-wrapper mb-4 mx-2 py">
-            <p class="text-gray-900 text-center my-2">Choose a username</p>
+            <p class="text-gray-900 text-center my-2">{% trans "Choose a username" %}</p>
             {{ form.username }}
         </div>
         <div class="form-field-wrapper mx-2 py">
-            <p class="text-gray-900 text-center my-2">Meeting code</p>
+            <p class="text-gray-900 text-center my-2">{% trans "Meeting code" %}</p>
             {{ form.meeting_code }}
         </div>
         <br>
-        <input class="bg-blue-500 text-white hover:bg-blue-800 rounded w-1/4" type="submit" value="Join">
+        <input class="bg-blue-500 text-white hover:bg-blue-800 rounded w-1/4" type="submit" value="{% trans 'Join' %}">
     </form>
     <div id="error_message text-center mx-auto my-2">
-        <strong class="text-xl"> 
+        <strong class="text-l text-center text-gray-900"> 
             {{ error }}
         </strong>
     </div>

@@ -62,13 +62,16 @@ V1 :
  * [x] pie chart at the end of the poll
  * [x] front & back : have dashboard showing pie chart during the vote
  * [x] Youtube : add sponsor attribute in scoreboard
- * [ ] front : change front for a dark mode
  * [ ] BUG : solve issue with votes counted 3 times ??
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
 
 V2 : 
 
- * [ ] FR translation
+ * [ ] front : change front for a dark mode
+ * [ ] front : go back button
+ * [-] FR translation templates
+ * [ ] FR translation JS code
+ * [ ] FR translation models
  * [ ] Image slides
  * [ ] back: join during a question
  * [ ] docker wrapping
@@ -183,8 +186,8 @@ export DJANGO_SETTINGS_MODULE="pollsite.settings"
 
 # only if this is for debugging
 export DEBUG=True
-# is your wss has a valid certificate (some browser will throw errors if this is not enforced)
-export SOCKET_ENCRYPTION=True 
+# is your server does not have a valid certificate (some browser will throw errors if this is not enforced)
+export DISABLE_SOCKET_ENCRYPTION=True 
 ```
 
 **8. now run the server**

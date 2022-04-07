@@ -71,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'pollsite.urls'
@@ -138,6 +139,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = BASE_DIR + "/lang",
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -183,5 +186,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-SOCKET_ENCRYPTION = os.environ.get("SOCKET_ENCRYPTION",default=True)
+SOCKET_ENCRYPTION = True 
+if(os.environ.get("DISABLE_SOCKET_ENCRYPTION",default=False)):
+    SOCKET_ENCRYPTION = False
 

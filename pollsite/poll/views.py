@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 
@@ -62,10 +63,10 @@ def login(request,meeting_id):
 					request.session['attendee_id'] = new_attendee.id
 					return HttpResponseRedirect(reverse('poll:meeting', args=(meeting.id,)))
 				else:
-					context = {'meeting':meeting,'error':"The meeting code is not valid",'form':LoginForm()}
+					context = {'meeting':meeting,'error':_("The meeting code is not valid"),'form':LoginForm()}
 					return render(request,'poll/login.html',context)
 			else:
-				context = {'meeting':meeting,'error':"Something went wrong",'form':LoginForm()}
+				context = {'meeting':meeting,'error':_("Something went wrong"),'form':LoginForm()}
 				return render(request,'poll/login.html',context)
 		else:
 			return render(request,'poll/login.html',{'meeting':meeting})
