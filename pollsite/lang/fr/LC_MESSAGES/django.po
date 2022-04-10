@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-10 11:09+0200\n"
+"POT-Creation-Date: 2022-04-10 16:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Your Name"
 msgstr "Votre nom"
 
-#: pollsite/poll/models.py:70
+#: pollsite/poll/models.py:70 pollsite/poll/templates/poll/dashboard.html:103
 msgid "Score"
 msgstr "Score"
 
@@ -137,6 +137,7 @@ msgid "Participants"
 msgstr "Participants"
 
 #: pollsite/poll/models.py:81 pollsite/poll/models.py:96
+#: pollsite/poll/templates/poll/dashboard.html:47
 msgid "Question"
 msgstr "Question"
 
@@ -174,6 +175,103 @@ msgstr "Choice"
 msgid "Choices"
 msgstr "Choices"
 
+#: pollsite/poll/templates/poll/dashboard.html:15
+#, fuzzy
+#| msgid "Meeting has started"
+msgid "Meeting Dashboard"
+msgstr "Tableau de bord"
+
+#: pollsite/poll/templates/poll/dashboard.html:21
+msgid "Current Question title"
+msgstr "Titre Question"
+
+#: pollsite/poll/templates/poll/dashboard.html:24
+#, fuzzy
+#| msgid "Description"
+msgid "Question description"
+msgstr "Description"
+
+#: pollsite/poll/templates/poll/dashboard.html:28
+#: pollsite/poll/templates/poll/meeting.html:28
+msgid "START"
+msgstr "COMMENCER"
+
+#: pollsite/poll/templates/poll/dashboard.html:34
+#, fuzzy
+#| msgid "Meeting"
+msgid "Meeting plan"
+msgstr "Plan"
+
+#: pollsite/poll/templates/poll/dashboard.html:38
+#, fuzzy
+#| msgid "Start time of the meeting"
+msgid "start meeting"
+msgstr "Commencer"
+
+#: pollsite/poll/templates/poll/dashboard.html:39
+msgid "start activity"
+msgstr "Démarrer l'activité"
+
+#: pollsite/poll/templates/poll/dashboard.html:40
+#, fuzzy
+#| msgid "See results"
+msgid "show results"
+msgstr "Voir les résultats"
+
+#: pollsite/poll/templates/poll/dashboard.html:41
+msgid "show scoreboard"
+msgstr "envoyer les scores"
+
+#: pollsite/poll/templates/poll/dashboard.html:42
+msgid "next activity"
+msgstr "suivant"
+
+#: pollsite/poll/templates/poll/dashboard.html:48
+msgid "Type"
+msgstr "Type"
+
+#: pollsite/poll/templates/poll/dashboard.html:49
+msgid "Status"
+msgstr "État"
+
+#: pollsite/poll/templates/poll/dashboard.html:57
+msgid "Word Cloud"
+msgstr "Nuage de mots"
+
+#: pollsite/poll/templates/poll/dashboard.html:58
+msgid "Poll"
+msgstr "Sondage"
+
+#: pollsite/poll/templates/poll/dashboard.html:59
+msgid "Quizz"
+msgstr "Quizz"
+
+#: pollsite/poll/templates/poll/dashboard.html:60
+msgid "Text Only"
+msgstr "Texte"
+
+#: pollsite/poll/templates/poll/dashboard.html:79
+msgid ""
+"&#9199; to start a question, &#128202; to show the results, &#9193; to go to "
+"next question."
+msgstr ""
+"&#9199; pour commencer l'activité, &#128202; pour montrer les résultats, "
+"&#9193; pour passer à la suite."
+
+#: pollsite/poll/templates/poll/dashboard.html:86
+#, fuzzy
+#| msgid "Score"
+msgid "Score Board"
+msgstr "Scores"
+
+#: pollsite/poll/templates/poll/dashboard.html:102
+msgid "Username"
+msgstr "Nom"
+
+#: pollsite/poll/templates/poll/dashboard.html:156
+msgid "Next Activity is about to start..."
+msgstr "L'activité suivante va démarrer"
+
 #: pollsite/poll/templates/poll/index.html:11
 msgid "Join a Meeting"
 msgstr "Rejoindre un évènement"
@@ -197,10 +295,6 @@ msgstr "Code de l'évènement"
 #: pollsite/poll/templates/poll/login.html:23
 msgid "Join"
 msgstr "Rejoindre"
-
-#: pollsite/poll/templates/poll/meeting.html:28
-msgid "START"
-msgstr "COMMENCER"
 
 #: pollsite/poll/templates/poll/meeting.html:35
 msgid "Previous questions"

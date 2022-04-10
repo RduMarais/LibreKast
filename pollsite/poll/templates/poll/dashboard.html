@@ -12,41 +12,41 @@
 
 {% block content  %}
 <section class="text-center pb-2 mb-2" name="meeting_details">
-	<h1 class="text-3xl text-center">Meeting Dashboard : {{ meeting.title }}</h1>
+	<h1 class="text-3xl text-center">{% trans "Meeting Dashboard" %} : {{ meeting.title }}</h1>
 </section>
 <div class="md:flex">
 <section class="w-full md:w-1/2 body-font md:border md:border-blue-200" name="current-question">
 	<div class="text-center" id="question-div">
 		<div class="text-center m-2">
-			<span id="current-question-id" class="text-2xl" name="current-question-id" value="">Current Question title</span>
+			<span id="current-question-id" class="text-2xl" name="current-question-id" value="">{% trans "Current Question title" %}</span>
 		</div>
 		<div>
-			<div id="question-description" class="">Question description</div>
+			<div id="question-description" class="">{% trans "Question description" %}</div>
 		</div>
 	</div>
 	<div class="container px-5 py-24 mx-auto text-center" id="start-div">
-		<button id="question-start" value="question-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">START</button>
+		<button id="question-start" value="question-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">{% trans "START" %}</button>
 	</div>
 </section>
 
 <section class="w-full md:w-1/4 body-font md:border md:border-red-200" name="meeting-plan-section">
 	<div class="text-2xl text-center mt-2 mx-2" id="meeting-div">
-		Meeting plan
+		{% trans "Meeting plan" %}
 	</div>
 	<div class = "w-full items-center m-2 p-1">
 		<div id="meeting-controls" class="items-center text-center mb-2">
-			<button id="meeting-start" value="meeting-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">start meeting</button>
-			<button id="meeting-question-go" value="meeting-question-go" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9199; start activity</button>
-			<button id="meeting-question-results" value="meeting-question-results" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#128202; show results</button>
-			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#127942; show scoreboard</button>
-			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9193; next activity</button>
+			<button id="meeting-start" value="meeting-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">{% trans "start meeting" %}</button>
+			<button id="meeting-question-go" value="meeting-question-go" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9199; {% trans "start activity" %}</button>
+			<button id="meeting-question-results" value="meeting-question-results" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#128202; {% trans "show results" %}</button>
+			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#127942; {% trans "show scoreboard" %}</button>
+			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9193; {% trans "next activity" %}</button>
 		</div>
 		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center">
 			<thead>
 				<tr class="bg-red-300">
-				  <th>Question</th>
-				  <th>Type</th>
-				  <th>Status</th>
+				  <th>{% trans "Question" %}</th>
+				  <th>{% trans "Type" %}</th>
+				  <th>{% trans "Status" %}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -54,10 +54,10 @@
 				<tr id="librekast-question-{{question.id}}">
 				  <td>{{ question.title }}</td>
 				  <td>
-				  	{% if question.question_type == 'WC' %}Word Cloud{%endif%}
-				  	{% if question.question_type == 'PL' %}Poll{%endif%}
-				  	{% if question.question_type == 'QZ' %}Quizz{%endif%}
-				  	{% if question.question_type == 'TX' %}Text Only{%endif%}
+				  	{% if question.question_type == 'WC' %}{% trans "Word Cloud" %}{%endif%}
+				  	{% if question.question_type == 'PL' %}{% trans "Poll" %}{%endif%}
+				  	{% if question.question_type == 'QZ' %}{% trans "Quizz" %}{%endif%}
+				  	{% if question.question_type == 'TX' %}{% trans "Text Only" %}{%endif%}
 				  </td>
 				  <td>
 				  	<span id="librekast-question-status-{{question.id}}">
@@ -76,14 +76,14 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="text-center text-sm m-1">&#9199; to start a question, &#128202; to show the results, &#9193; to go to next question.
+	<div class="text-center text-sm m-1">{% trans "&#9199; to start a question, &#128202; to show the results, &#9193; to go to next question." %}
 	</div>
 </section>
 
 <section class="w-full md:w-1/4 body-font md:border md:border-green-200" name="scoreboard-section">
 	<div class="text-center w-full m-2" id="scoreboard-div">
 		<div class="basis-3/4 inline">
-			<span class="text-2xl text-center p-2">Score Board</span>
+			<span class="text-2xl text-center p-2">{% trans "Score Board" %}</span>
 		</div>
 		<div class="basis-1/4 inline text-center">
 			<span class="p-2" id="update-scoreboard-div">
@@ -99,8 +99,8 @@
 	<table class="table-auto border-separate border border-solid border-green-900 divide-solid divide-y-2 divide-x-2 divide-green-800 mx-auto text-center">
 		<thead>
 			<tr class="bg-green-300">
-			  <th>Username</th>
-			  <th>Score</th>
+			  <th>{% trans "Username" %}</th>
+			  <th>{% trans "Score" %}</th>
 			  {% if meeting.platform == 'YT' %}
 			  <!-- so basically I prepared this for Twitch -->
 			  <th>Sponsor</th>
@@ -153,9 +153,8 @@
 	}
 
 	function showWait(){
-		questionTitle.innerText = "Next Activity is about to start...";
-		questionDesc.innerHTML = "";
-		resetQuestionContent();
+		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
+		questionDesc.innerHTML = "";		resetQuestionContent();
 		// global vars reset ?
 	}
 
