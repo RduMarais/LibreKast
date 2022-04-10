@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-08 00:58+0200\n"
+"POT-Creation-Date: 2022-04-10 11:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,13 +54,13 @@ msgstr "Vos interventions avec des jeux"
 #, fuzzy
 #| msgid "Join a Meeting"
 msgid "Title of Meeting"
-msgstr "Rejoindre un évènement"
+msgstr "Nom de l'évènement"
 
 #: pollsite/poll/models.py:29
 msgid "Type of Meeting : IRL or live stream"
 msgstr "Type d'évènement : sur place ou en stream"
 
-#: pollsite/poll/models.py:30 pollsite/poll/models.py:74
+#: pollsite/poll/models.py:30 pollsite/poll/models.py:82
 msgid "Description"
 msgstr "Description"
 
@@ -92,13 +92,21 @@ msgstr "Image de l'évènement"
 msgid "video ID for Youtube live stream (only if platform is Youtube)"
 msgstr "[Youtube uniquement] ID de vidéo Youtube"
 
-#: pollsite/poll/models.py:56
+#: pollsite/poll/models.py:41
+msgid "Meeting"
+msgstr "Évènement"
+
+#: pollsite/poll/models.py:42 pollsite/templates/base_layout.html:30
+msgid "Meetings"
+msgstr "Évènements"
+
+#: pollsite/poll/models.py:60
 #, fuzzy
 #| msgid "The meeting code is not valid"
 msgid "This meeting is over"
 msgstr "Cet évènement est maintenant terminé"
 
-#: pollsite/poll/models.py:56
+#: pollsite/poll/models.py:60
 msgid ""
 "Thanks for using LibreKast. Please feel free to check ![the author's website]"
 "(https://www.pour-info.tech/)"
@@ -106,41 +114,65 @@ msgstr ""
 "Merci d'avoir utilisé LibreKast. N'hésitez pas à jeter un coup d'oeil à la "
 "chaine Youtube de son auteur : https://www.youtube.com/c/PourInfo"
 
-#: pollsite/poll/models.py:65
+#: pollsite/poll/models.py:69
 msgid "Your Name"
 msgstr "Votre nom"
 
-#: pollsite/poll/models.py:66
+#: pollsite/poll/models.py:70
 msgid "Score"
 msgstr "Score"
 
-#: pollsite/poll/models.py:68
-msgid "(YouTube live only) is set to True if the user is subscriber"
-msgstr "[Youtube uniquement] True si l'utilisateur est un sponsor"
+#: pollsite/poll/models.py:72
+#, fuzzy
+#| msgid "[YouTube only] is subscriber"
+msgid "[YouTube only] is sponsor"
+msgstr "[YouTube uniquement] sponsor"
 
-#: pollsite/poll/models.py:73
+#: pollsite/poll/models.py:75
+msgid "Participant"
+msgstr "Participant"
+
+#: pollsite/poll/models.py:76
+msgid "Participants"
+msgstr "Participants"
+
+#: pollsite/poll/models.py:81 pollsite/poll/models.py:96
 msgid "Question"
 msgstr "Question"
 
-#: pollsite/poll/models.py:77
+#: pollsite/poll/models.py:85
 msgid "Date Published"
 msgstr "Date de publication"
 
-#: pollsite/poll/models.py:78
+#: pollsite/poll/models.py:86
 msgid "Question already completed"
 msgstr "Question terminée"
 
-#: pollsite/poll/models.py:79
+#: pollsite/poll/models.py:87
 msgid "Type of Question"
 msgstr "Type de question"
 
-#: pollsite/poll/models.py:84
-msgid "True if no one gave the correct answer already"
-msgstr "Vrai si personne n'a encore donné la bonne réponse"
+#: pollsite/poll/models.py:92
+msgid "No correct answers yet"
+msgstr "Pas encore de bonne réponse"
 
-#: pollsite/poll/models.py:126
+#: pollsite/poll/models.py:97
+#, fuzzy
+#| msgid "Question"
+msgid "Questions"
+msgstr "Questions"
+
+#: pollsite/poll/models.py:136
 msgid "(For Youtube live) shorter text the participants can type to vote"
 msgstr "[Youtube uniquement] réponse courte prise en compte pour le hashtag"
+
+#: pollsite/poll/models.py:140
+msgid "Choice"
+msgstr "Choice"
+
+#: pollsite/poll/models.py:141
+msgid "Choices"
+msgstr "Choices"
 
 #: pollsite/poll/templates/poll/index.html:11
 msgid "Join a Meeting"
@@ -190,10 +222,6 @@ msgstr "Quelque chose a mal tourné"
 msgid "Django site admin"
 msgstr "LibreKast Admin"
 
-#: pollsite/templates/base_layout.html:30
-msgid "Meetings"
-msgstr "Évènements"
-
 #: pollsite/templates/base_layout.html:31
 msgid "How-To"
 msgstr "Tuto"
@@ -210,14 +238,17 @@ msgstr "Admin"
 msgid "See Source Code on GitHub"
 msgstr "Voir le code source sur GitHub"
 
+#~ msgid "(YouTube live only) is set to True if the user is subscriber"
+#~ msgstr "[Youtube uniquement] True si l'utilisateur est un sponsor"
+
+#~ msgid "True if no one gave the correct answer already"
+#~ msgstr "Vrai si personne n'a encore donné la bonne réponse"
+
 #~ msgid "Home"
 #~ msgstr "Accueil"
 
 #~ msgid "Login"
 #~ msgstr "Rejoindre"
-
-#~ msgid "Meeting"
-#~ msgstr "Évènement"
 
 #~ msgid "Results"
 #~ msgstr "Résultats"

@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # for docker deployment :
-isDocker = os.getenv('IS_DOCKER')
+isDocker = os.getenv('IS_DOCKER', default=False)
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -186,7 +186,19 @@ CHANNEL_LAYERS = {
     },
 }
 
+# default security settings 
 SOCKET_ENCRYPTION = True 
-if(os.environ.get("DISABLE_SOCKET_ENCRYPTION",default=False)):
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE='Lax'
+SESSION_COOKIE_SECURE = True
+
+if(os.environ.get("DISABLE_ENCRYPTION",default=False)):
     SOCKET_ENCRYPTION = False
+    CSRF_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_SECURE = False
+
+# for my prod environment, this follows the good practices
+NGINX_PROXY = os.environ.get("NGINX_PROXY",default=False)
+if(NGINX_PROXY):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

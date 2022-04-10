@@ -37,6 +37,10 @@ class Meeting(models.Model):
 	image = models.ImageField(_('Image for your meeting'),null = True,blank=True)
 	stream_id = models.CharField(_('video ID for Youtube live stream (only if platform is Youtube)'),max_length=15, null=True,blank=True)
 
+	class Meta:
+		verbose_name = _('Meeting')
+		verbose_name_plural = _('Meetings')
+
 	def __str__(self):
 		return self.title
 
@@ -65,7 +69,11 @@ class Attendee(models.Model):
 	name = models.CharField(_('Your Name'), max_length=50, default='Anonymous')
 	score = models.IntegerField(_('Score'),default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-	is_subscriber = models.BooleanField(_('(YouTube live only) is set to True if the user is subscriber'),default=False)
+	is_subscriber = models.BooleanField(_('[YouTube only] is sponsor'),default=False)
+
+	class Meta:
+		verbose_name = _('Participant')
+		verbose_name_plural = _('Participants')
 	
 # model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text.
 # The different question types are defined as an attribute (question_type), and the relevant attributes are optional.
@@ -81,10 +89,12 @@ class Question(SortableMixin):
 	question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
 	# for quizzes
-	first_correct_answer = models.BooleanField(_('True if no one gave the correct answer already'),default=True)
+	first_correct_answer = models.BooleanField(_('No correct answers yet'),default=True)
 
 	class Meta:
 		ordering = ['question_order'] 
+		verbose_name = _('Question')
+		verbose_name_plural = _('Questions')
 
 	def __str__(self):
 		return self.title
@@ -125,6 +135,10 @@ class Choice(models.Model):
 	# votes = models.IntegerField(default=0)
 	slug = models.CharField(_('(For Youtube live) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
+
+	class Meta:
+		verbose_name = _('Choice')
+		verbose_name_plural = _('Choices')
 
 	def __str__(self):
 		return self.choice_text

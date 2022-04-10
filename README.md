@@ -68,7 +68,7 @@ V1 :
 V2 : 
 
  * [x] FR translation templates
- * [ ] FR translation models
+ * [x] FR translation models
  * [ ] FR translation JS code
  * [ ] front : change front for a dark mode
  * [ ] front : go back button in dashboard
