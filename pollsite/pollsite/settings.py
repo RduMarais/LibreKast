@@ -193,6 +193,7 @@ CHANNEL_LAYERS = {
 TWITCH_OAUTH_TOKEN = os.environ.get("TWITCH_OAUTH_TOKEN",default='')
 TWITCH_CLIENT_ID = os.environ.get("TWITCH_CLIENT_ID",default='')
 TWITCH_CLIENT_SECRET = os.environ.get("TWITCH_CLIENT_SECRET",default='')
+TWITCH_NICKNAME = 'LibreKast_Bot'
 
 #### SECURITY SETTINGS
 

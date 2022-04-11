@@ -62,6 +62,10 @@ class MeetingConsumer(WebsocketConsumer):
 			self.meeting_group_name,
 			self.channel_name
 		)
+		if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
+			self.terminate_yt_polling()
+		if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
+			self.terminate_tw_polling()
 
 	# Receive message from meeting group
 	def meeting_message(self, event):
@@ -456,16 +460,20 @@ class MeetingConsumer(WebsocketConsumer):
 	def init_yt_polling(self):
 		self.ytHandler = YoutubeHandler(self.meeting.stream_id) 
 		self.ytHandler.meetingConsumer = self
+		self.ytHandler.start()
 
 	def start_yt_polling(self,question):
-		self.ytHandler.question_type = question.question_type
-		self.ytHandler.start()
+		# self.ytHandler.question_type = question.question_type
+		self.ytHandler._polling = True
+
+	def terminate_yt_polling(self):
+		self.ytHandler.terminate()
+		self.ytHandler = None
 
 	def stop_yt_polling(self,question):
 		if(not self.ytHandler):
 			raise KeyError('There should be a YoutubeHandler object')
-		self.ytHandler.terminate()
-		# self.ytHandler = None # to delete the thread ?
+		self.ytHandler._polling = False
 
 
 # Twitch Streams compatibility
@@ -479,7 +487,12 @@ class MeetingConsumer(WebsocketConsumer):
 			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.run()
 
-	def stop_tw_polling(self,question):
+	def terminate_tw_polling(self):
 		self.twHandler.terminate()
 		self.twHandler = None
+		# self.twHandler = None
+
+	def stop_tw_polling(self,question):
+		self.twHandler.stop()
+		# self.twHandler.terminate()
 

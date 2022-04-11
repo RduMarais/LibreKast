@@ -72,6 +72,8 @@ class Attendee(models.Model):
 	score = models.IntegerField(_('Score'),default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
 	is_subscriber = models.BooleanField(_('[YouTube only] is sponsor'),default=False)
+	is_twitch = models.BooleanField(_('is Twitch user'),default=False)
+	is_youtube = models.BooleanField(_('is Youtube user'),default=False)
 
 	class Meta:
 		verbose_name = _('Participant')

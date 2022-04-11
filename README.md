@@ -63,6 +63,7 @@ V1 :
  * [x] front & back : have dashboard showing pie chart during the vote
  * [x] Youtube : add sponsor attribute in scoreboard
  * [ ] BUG : solve issue with votes counted 3 times ??
+ * [ ] BUG : solve issue with twitch messages appearing 2 times when refresh page
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
 
 V2 : 
@@ -74,10 +75,10 @@ V2 :
  * [ ] front : go back button in dashboard
  * [ ] back: join during a question
  * [ ] Image slides
- * [ ] Twitch : Fetch chat messages
- * [ ] Twitch : Change Youtube code to support same threading model
- * [ ] Twitch : Add chat in dashboard
- * [ ] Twitch : Twitch support for answers
+ * [x] Twitch : Fetch chat messages
+ * [x] Twitch : Change Youtube code to support same threading model
+ * [x] Twitch : Add chat in dashboard
+ * [x] Twitch : Twitch support for answers
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
 
