@@ -11,15 +11,15 @@ from markdownfield.models import MarkdownField, RenderedMarkdownField
 from markdownfield.validators import VALIDATOR_CLASSY
 
 QUESTION_TYPES = (
-		('PL', 'Poll'),           # For questions to get the attendees' POV
-		('TX', 'Text Only'),      # For text display before and after a question 
-		('QZ', 'Quizz'),          # For questions that do have a correct answer
-		('WC', 'Word Cloud'),     # For requesting inputs from attendees to make a word cloud diagram
+		('PL', _('Poll')),           # For questions to get the attendees' POV
+		('TX', _('Text Only')),      # For text display before and after a question 
+		('QZ', _('Quizz')),          # For questions that do have a correct answer
+		('WC', _('Word Cloud')),     # For requesting inputs from attendees to make a word cloud diagram
 	)
 LIVE_TYPE = (
-		('IRL','Physical Meeting'), 	# beekast-like meeting type
-		('YT','Youtube Live Stream'), 	# Work in progress
-		('TW','Twitch live'),			# TODO
+		('IRL',_('Physical Meeting')), 	# beekast-like meeting type
+		('YT',_('Youtube Live Stream')), 	# Work in progress
+		('TW',_('Twitch live')),			# TODO
 	)
 
 

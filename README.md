@@ -69,7 +69,7 @@ V2 :
 
  * [x] FR translation templates
  * [x] FR translation models
- * [ ] FR translation JS code
+ * [x] FR translation JS code
  * [ ] front : change front for a dark mode
  * [ ] front : go back button in dashboard
  * [ ] back: join during a question

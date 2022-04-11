@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-10 16:06+0200\n"
+"POT-Creation-Date: 2022-04-11 10:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,6 +49,36 @@ msgstr "Rythmez"
 #: pollsite/home/templates/home/index.html:74
 msgid "Your interventions with key ideas"
 msgstr "Vos interventions avec des jeux"
+
+#: pollsite/poll/models.py:14 pollsite/poll/templates/poll/dashboard.html:58
+msgid "Poll"
+msgstr "Sondage"
+
+#: pollsite/poll/models.py:15 pollsite/poll/templates/poll/dashboard.html:60
+msgid "Text Only"
+msgstr "Texte"
+
+#: pollsite/poll/models.py:16 pollsite/poll/templates/poll/dashboard.html:59
+msgid "Quizz"
+msgstr "Quizz"
+
+#: pollsite/poll/models.py:17 pollsite/poll/templates/poll/dashboard.html:57
+msgid "Word Cloud"
+msgstr "Nuage de mots"
+
+#: pollsite/poll/models.py:20
+#, fuzzy
+#| msgid "Join a Meeting"
+msgid "Physical Meeting"
+msgstr "Présentiel"
+
+#: pollsite/poll/models.py:21
+msgid "Youtube Live Stream"
+msgstr "Stream Youtube"
+
+#: pollsite/poll/models.py:22
+msgid "Twitch live"
+msgstr "Stream twitch"
 
 #: pollsite/poll/models.py:28
 #, fuzzy
@@ -233,22 +263,6 @@ msgstr "Type"
 #: pollsite/poll/templates/poll/dashboard.html:49
 msgid "Status"
 msgstr "État"
-
-#: pollsite/poll/templates/poll/dashboard.html:57
-msgid "Word Cloud"
-msgstr "Nuage de mots"
-
-#: pollsite/poll/templates/poll/dashboard.html:58
-msgid "Poll"
-msgstr "Sondage"
-
-#: pollsite/poll/templates/poll/dashboard.html:59
-msgid "Quizz"
-msgstr "Quizz"
-
-#: pollsite/poll/templates/poll/dashboard.html:60
-msgid "Text Only"
-msgstr "Texte"
 
 #: pollsite/poll/templates/poll/dashboard.html:79
 msgid ""
