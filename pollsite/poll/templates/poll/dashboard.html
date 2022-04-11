@@ -184,9 +184,11 @@
 			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
 			row.appendChild(username);
 			row.appendChild(userscore);
-			if(meetingPlatform == 'YT'){
+			if(meetingPlatform != 'IRL'){
 				let isSub = document.createElement('td');
-				isSub.innerText = scoresArray[i].is_sub;
+				if(scoresArray[i].is_sub){
+					isSub.innerText = '&#9745;';
+				}
 				row.appendChild(isSub);
 			}
 			tableBody.appendChild(row);

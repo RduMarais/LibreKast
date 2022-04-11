@@ -78,14 +78,15 @@ V2 :
  * [ ] front : change front for a dark mode
  * [ ] front : go back button in dashboard
  * [ ] back: join during a question
- * [ ] Image slides
  * [ ] Twitch : error catching
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
+ * [ ] refactor : config.ini file instead of env variables
 
  V3 : 
 
+ * [ ] Image slides
  * [ ] docker wrapping
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] front : have a nicer dashboard
@@ -196,10 +197,16 @@ docker run -p 6379:6379 -d redis:5
 export ALLOWED_HOSTS_LOCAL="<the url you plan to serve the app to>"
 export DJANGO_SETTINGS_MODULE="pollsite.settings"
 
+# For Twitch (does not need to be the channel of the streamer)
+export TWITCH_OAUTH_TOKEN="abcdefghijklmnopqrst1234567890"  # should looks like "oauth:abcdefghijklmnopqrst1234567890"
+export TWITCH_CLIENT_ID="1234567890abcdefghijklmnopqrst"
+export TWITCH_CLIENT_SECRET="1234567890abcdefghijklmnopqrst"
+
 # only if this is for debugging
 export DEBUG=True
 # is your server does not have a valid certificate (some browser will throw errors if this is not enforced)
-export DISABLE_SOCKET_ENCRYPTION=True 
+# this removes secure web socket and secure cookies
+export DISABLE_ENCRYPTION=True 
 ```
 
 **8. now run the server**
@@ -226,15 +233,25 @@ In order to setup LibreKast in an deployment envionment, one needs to :
  2. setup an ASGI server for delivering a django app 
    * *please note that you have to redirect not only HTTP, but also websockets !*
  3. clone the repository to start the app. 
- 4. In pollsite/settings.py : 
-   * change the default `SECRET_KEY` in settings
-   * add a `STATIC_ROOT` variable with the **absolute path for the static files your server is serving**
-   * setup `DEBUG = False` 
-   * add your server IP/hostname to the `ALLOWED_HOSTS` 
+ 4. _By defaults, all environments variables are setup for prod_, but you should setup some more variables :  : 
+	 * `SECRET_KEY` : generate a secure key with the following code : 
+		```bash
+		 python -c 'from django.core.management.utils import get_random_secret_key; \
+            print(get_random_secret_key())'
+		 export SECRET_KEY="<your secret key>"
+		```
+	 * `ALLOWED_HOSTS_LOCAL` : add your server IP/hostname. I recommend setting up a dedicated subdomain (such as _librekast.domainname.com_)
+	 * `TWITCH_CLIENT_ID` : generate a client ID for the account you are using to fetch the chat. this can be done [in the Twitch console](https://dev.twitch.tv/console)
+	 * `TWITCH_CLIENT_SECRET` : this too should be done [in the Twitch console](https://dev.twitch.tv/console)
+	 * `TWITCH_OAUTH_TOKEN` : this should be requested on [Twitch Chat OAuth Password Generator](https://twitchapps.com/tmi/) and grants authorization to use the account for LibreKast.
+	 * `NGINX_PROXY` : it's a good practice to have an nginx reverse proxy adding `X-Forwarded-Proto` headers. if you do, it's better to setup this var to `True`
+	 * `DJANGO_SETTINGS_MODULE=pollsite.settings` because why not
+	 * add your server IP/hostname to the `ALLOWED_HOSTS` 
  5. create a superuser and remove the default user (or change its password)
  6. collect static files and migrate them in the server static folder
+ 	 * it is a good practice to serve **static files** and **media files** separately using your end server (such as nginx reverse proxy)
  7. start the ASGI server
-   * *you may need to export `DJANGO_SETTINGS_MODULE`*
+	 * you may need to export `DJANGO_SETTINGS_MODULE` or other env variables in the command running the server
 
 With Gunicorn/uvicorn, the last step is the following : 
 

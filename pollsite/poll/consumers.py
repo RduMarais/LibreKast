@@ -31,30 +31,23 @@ class MeetingConsumer(WebsocketConsumer):
 			self.meeting_group_name,
 			self.channel_name
 		)
-
-		# INIT admin panel
+		# join admin group if needed
 		if(self.is_user_authenticated()):
 			async_to_sync(self.channel_layer.group_add)(
 				self.meeting_group_name+'_admin',
 				self.channel_name
 			)
+
+		self.accept()
+		
+		# ADMIN settings
+		if(self.is_user_authenticated()):
 			self.isAdmin = True
 			# INIT live stream
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
-				if(not self.meeting.stream_id):
-					message_out = {'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}
-					self.send(text_data=json.dumps(message_out))
 				self.init_yt_polling()
 			if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
-				if(not self.meeting.channel_id):
-					message_out = {'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}
-					self.send(text_data=json.dumps(message_out))
 				self.init_tw_polling()
-
-
-
-
-		self.accept()
 
 	# leave group
 	def disconnect(self, close_code):
@@ -458,6 +451,9 @@ class MeetingConsumer(WebsocketConsumer):
 # Youtube Live compatibility
 
 	def init_yt_polling(self):
+		if(not self.meeting.stream_id):
+			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
+			raise KeyError('There should be a Youtube live/video ID defined')
 		self.ytHandler = YoutubeHandler(self.meeting.stream_id) 
 		self.ytHandler.meetingConsumer = self
 		self.ytHandler.start()
@@ -479,6 +475,9 @@ class MeetingConsumer(WebsocketConsumer):
 # Twitch Streams compatibility
 
 	def init_tw_polling(self):
+		if(not self.meeting.channel_id):
+			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}))
+			raise KeyError('There should be a Twitch channel ID defined')
 		self.twHandler = TwitchHandler(self.meeting.channel_id)
 		self.twHandler.meetingConsumer = self
 
