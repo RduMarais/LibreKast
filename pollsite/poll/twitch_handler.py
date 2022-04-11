@@ -8,7 +8,7 @@ INTERACTION_CHAR = '#'
 PRINT_MESSAGES = False
 
 class TwitchHandler(threading.Thread):
-	questionConsumer = None
+	meetingConsumer = None
 
 	def __init__(self,channel):
 		helix = twitch.Helix(settings.TWITCH_CLIENT_ID, settings.TWITCH_CLIENT_SECRET)
@@ -17,7 +17,7 @@ class TwitchHandler(threading.Thread):
 
 
 	def print_message(self,chatlog):
-		self.questionConsumer.notify_chat(chatlog)
+		self.meetingConsumer.notify_chat(chatlog)
 
 	def show_message(self,message: twitch.chat.Message) -> None:
 		 print(f'author {message.sender}, text: {message.text}')

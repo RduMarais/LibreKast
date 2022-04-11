@@ -47,7 +47,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
 		(None, {'fields': ['participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
-		('Parameters',{'fields':['code','reward_fastest','stream_id']})
+		('Parameters',{'fields':['code','reward_fastest','stream_id','channel_id']})
 	]
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')

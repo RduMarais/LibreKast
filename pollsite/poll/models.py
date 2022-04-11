@@ -36,7 +36,8 @@ class Meeting(models.Model):
 	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
 	image = models.ImageField(_('Image for your meeting'),null = True,blank=True)
-	stream_id = models.CharField(_('video ID for Youtube live stream (only if platform is Youtube)'),max_length=15, null=True,blank=True)
+	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
+	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 
 	class Meta:
 		verbose_name = _('Meeting')

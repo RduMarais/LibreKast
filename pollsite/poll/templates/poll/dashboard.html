@@ -421,7 +421,24 @@
 	{% if meeting.platform != 'IRL' %}
 
 	function addChatLog(chatMessage){
-		console.log(chatMessage['author']+" : "+chatMessage['text']);
+		let chatLogSize = 6;
+		//data looks like {'chat':{'author':xxxx,'text':yyy,'source':y/t/ts/ys}}
+		let chatlog = document.querySelector('#chatlog-content');
+		if(chatlog.childElementCount>=chatLogSize){
+			chatlog.removeChild(chatlog.firstChild);
+		}
+		let l = document.createElement("p");
+		let u = document.createElement("span");
+		let t = document.createElement("span");
+		l.classList.add("mx-2","my-2");
+		u.innerText = chatMessage['author'];
+		u.classList.add("text-red-700","font-bold","mr-2");
+		if(chatMessage['source']=='y'){u.classList.add("text-red-700");}
+		if(chatMessage['source']=='t'){u.classList.add("text-purple-700");}
+		t.innerText = chatMessage['text'];
+		l.appendChild(u);
+		l.appendChild(t);
+		chatlog.appendChild(l);
 	}
 
 
@@ -459,7 +476,9 @@
 		}else if(data['message']==='update-scoreboard'){
 			updateScoreboard(data['scores']);
 		}else if(data['message']==='notify-chat'){
-			addChatLog(data['chat']); 		//you need to sned smthing like {'chat':{'author':xxxx,'text':yyy,'source':y/t/ts/ys}}
+			addChatLog(data['chat']); 		
+		}else if(data['message']==='admin-error'){
+			alert(data['text']);
 		}
 		
 	};

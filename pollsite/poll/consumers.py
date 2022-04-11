@@ -12,7 +12,7 @@ from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler
 from .twitch_handler import TwitchHandler
 
-class QuestionConsumer(WebsocketConsumer):
+class MeetingConsumer(WebsocketConsumer):
 
 	def connect(self):
 		meeting_id = self.scope['url_route']['kwargs']['meeting_id']  
@@ -32,12 +32,27 @@ class QuestionConsumer(WebsocketConsumer):
 			self.channel_name
 		)
 
+		# INIT admin panel
 		if(self.is_user_authenticated()):
 			async_to_sync(self.channel_layer.group_add)(
 				self.meeting_group_name+'_admin',
 				self.channel_name
 			)
 			self.isAdmin = True
+			# INIT live stream
+			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
+				if(not self.meeting.stream_id):
+					message_out = {'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}
+					self.send(text_data=json.dumps(message_out))
+				self.init_yt_polling()
+			if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
+				if(not self.meeting.channel_id):
+					message_out = {'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}
+					self.send(text_data=json.dumps(message_out))
+				self.init_tw_polling()
+
+
+
 
 		self.accept()
 
@@ -96,9 +111,9 @@ class QuestionConsumer(WebsocketConsumer):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_question(question))
-				if(self.meeting.platform == 'YT' and question.question_type != 'TX'): # FOR Live cases
+				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_yt_polling(question)
-				if(self.meeting.platform == 'TW' and question.question_type != 'TX'):
+				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_tw_polling(question)
 		elif(message_in == "admin-live-start"):
 			if(self.is_user_authenticated()):
@@ -112,9 +127,9 @@ class QuestionConsumer(WebsocketConsumer):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
 				async_to_sync(self.send_group_results(question))
-				if(self.meeting.platform == 'YT' and question.question_type != 'TX'):
+				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_yt_polling(question)
-				if(self.meeting.platform == 'TW' and question.question_type != 'TX'):
+				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_tw_polling(question)
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
@@ -432,16 +447,18 @@ class QuestionConsumer(WebsocketConsumer):
 		)
 
 
+### LIVE STREAMS
+# the polling process is defined in another class for clarity of threading
+# but it calls the methods from this class receive_vote() and add_word() for each message
 
 # Youtube Live compatibility
 
+	def init_yt_polling(self):
+		self.ytHandler = YoutubeHandler(self.meeting.stream_id) 
+		self.ytHandler.meetingConsumer = self
+
 	def start_yt_polling(self,question):
-		if settings.DEBUG:
-			print('debug : Youtube meeting thread init called')
-		self.ytHandler = YoutubeHandler(self.meeting.stream_id,question.question_type) 
-		self.ytHandler.questionConsumer = self
-		# the polling process is defined in another class for clarity of threading
-		# but it calls the methods from this class receive_vote() and add_word() for each message
+		self.ytHandler.question_type = question.question_type
 		self.ytHandler.start()
 
 	def stop_yt_polling(self,question):
@@ -452,15 +469,14 @@ class QuestionConsumer(WebsocketConsumer):
 
 
 # Twitch Streams compatibility
+
+	def init_tw_polling(self):
+		self.twHandler = TwitchHandler(self.meeting.channel_id)
+		self.twHandler.meetingConsumer = self
+
 	def start_tw_polling(self,question):
-		if settings.DEBUG:
-			print('debug : Twitch meeting thread init called')
-		self.twHandler = TwitchHandler(self.meeting.stream_id)
-		if settings.DEBUG:
-			print('debug : Twitch meeting initiated')
-		self.twHandler.questionConsumer = self
-		if settings.DEBUG:
-			print('debug : Twitch questionConsumer')
+		if(not self.twHandler):
+			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.run()
 
 	def stop_tw_polling(self,question):
