@@ -111,7 +111,7 @@
 			<tr class="bg-green-300">
 			  <th>{% trans "Username" %}</th>
 			  <th>{% trans "Score" %}</th>
-			  {% if meeting.platform == 'YT' %}
+			  {% if meeting.platform != 'IRL' %}
 			  <!-- so basically I prepared this for Twitch -->
 			  <th>Sponsor</th>
 			  {% endif %}
@@ -121,9 +121,9 @@
 			{% if attendees %}
 			{% for attendee in attendees %}
 			<tr>
-			  <td>{{attendee.name}}</td>
+			  <td class="{% if attendee.is_youtube %}text-red-700{% endif %}{% if attendee.is_twitch %}text-purple-700{% endif %}">{{attendee.name}}</td>
 			  <td>{{attendee.score}}</td>
-			  {% if meeting.platform == 'YT' %}
+			  {% if meeting.platform != 'IRL' %}
 			  <td>{{attendee.is_subscriber}}</td>
 			  {% endif %}
 			</tr>

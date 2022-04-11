@@ -22,7 +22,7 @@ There are 3 types of meetings :
 
  * IRL meetings : those are beekast-like meetings. You need to register as explained below to join the meeting.
  * Youtube Live Stream : the chat is automatically fetched by Youtube
- * Twitch live Stream : currently under development
+ * Twitch live Stream : the chat is fetched with Twitch Helix API (needs API tokens)
 
 To connect to a meeting, participants only need to go to Meetings > choose the meetings. A meeting code is needed to register, by default it is `Pour1nf0`.
 
@@ -71,16 +71,18 @@ V2 :
  * [x] FR translation templates
  * [x] FR translation models
  * [x] FR translation JS code
- * [ ] front : change front for a dark mode
- * [ ] front : go back button in dashboard
- * [ ] back: join during a question
- * [ ] Image slides
  * [x] Twitch : Fetch chat messages
  * [x] Twitch : Change Youtube code to support same threading model
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
+ * [ ] front : change front for a dark mode
+ * [ ] front : go back button in dashboard
+ * [ ] back: join during a question
+ * [ ] Image slides
+ * [ ] Twitch : error catching
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
+ * [ ] refactor : code wrapping and documentation
 
  V3 : 
 

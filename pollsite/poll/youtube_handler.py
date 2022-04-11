@@ -31,7 +31,7 @@ class YoutubeHandler(threading.Thread):
 	# similar to twitch_handler.check_attendee but takes author object as input
 	def check_attendee(self,author):
 		attendee = None
-		attendee_queryset = Attendee.objects.filter(name=author.name)
+		attendee_queryset = self.meetingConsumer.meeting.attendee_set.all().filter(name=author.name)
 		if(attendee_queryset): # is this secure ?
 			attendee = attendee_queryset[0]
 		else:

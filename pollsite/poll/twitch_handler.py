@@ -30,7 +30,7 @@ class TwitchHandler(threading.Thread):
 	# TODO : is subscriber
 	def check_attendee(self,name):
 		attendee = None
-		attendee_queryset = Attendee.objects.filter(name=name)
+		attendee_queryset = self.meetingConsumer.meeting.attendee_set.all().filter(name=name)
 		if(attendee_queryset): # is this secure ?
 			attendee = attendee_queryset[0]
 		else:
