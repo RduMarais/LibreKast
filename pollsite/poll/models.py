@@ -20,6 +20,7 @@ LIVE_TYPE = (
 		('IRL',_('Physical Meeting')), 	# beekast-like meeting type
 		('YT',_('Youtube Live Stream')), 	# Work in progress
 		('TW',_('Twitch live')),			# TODO
+		('MX',_('Twitch AND Youtube')),		# TODO
 	)
 
 

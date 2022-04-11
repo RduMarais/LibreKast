@@ -14,6 +14,7 @@ from .models import Choice, Question, Meeting,Attendee,Vote
 # I recommend using '#', @ is for testing purposes
 # on Youtube, "@" is for tagging people and "!"" for bots
 INTERACTION_CHAR = '#' 
+PRINT_MESSAGES = True
 
 class YoutubeHandler(threading.Thread):
 	questionConsumer = None
@@ -26,7 +27,6 @@ class YoutubeHandler(threading.Thread):
 	
 	def terminate(self):
 		self._running = False
-
 
 	def parse_message(self,chat):
 		# TODO add attendee
@@ -60,6 +60,8 @@ class YoutubeHandler(threading.Thread):
 
 		# elif(self.question_type == 'QZ'):
 
+	def print_message(self,chat):
+		self.questionConsumer.notify_chat({'author':chat.author.name,'text':chat.message,'source':'y'})
 
 
 	def run(self):
@@ -68,4 +70,6 @@ class YoutubeHandler(threading.Thread):
 			for c in self.chat.get().sync_items():
 				if(c.message.startswith(INTERACTION_CHAR)):
 					self.parse_message(c)
+				if(PRINT_MESSAGES):
+					self.print_message(c)
 

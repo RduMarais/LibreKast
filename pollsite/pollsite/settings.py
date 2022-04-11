@@ -186,6 +186,16 @@ CHANNEL_LAYERS = {
     },
 }
 
+
+### TWITCH API
+
+# OAuth token looks like : oauth:xxx1234xxx8daje8j8js9, only put in env variable the 'xxx1234xxx8daje8j8js9'
+TWITCH_OAUTH_TOKEN = os.environ.get("TWITCH_OAUTH_TOKEN",default='')
+TWITCH_CLIENT_ID = os.environ.get("TWITCH_CLIENT_ID",default='')
+TWITCH_CLIENT_SECRET = os.environ.get("TWITCH_CLIENT_SECRET",default='')
+
+#### SECURITY SETTINGS
+
 # default security settings 
 SOCKET_ENCRYPTION = True 
 CSRF_COOKIE_HTTPONLY = True

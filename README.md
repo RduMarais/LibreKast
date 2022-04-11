@@ -74,7 +74,10 @@ V2 :
  * [ ] front : go back button in dashboard
  * [ ] back: join during a question
  * [ ] Image slides
- * [ ] Twitch : Twitch
+ * [ ] Twitch : Fetch chat messages
+ * [ ] Twitch : Change Youtube code to support same threading model
+ * [ ] Twitch : Add chat in dashboard
+ * [ ] Twitch : Twitch support for answers
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
 
@@ -82,6 +85,8 @@ V2 :
 
  * [ ] docker wrapping
  * [ ] Youtube : automatically generate short answer for poll & quizz
+ * [ ] front : have a nicer dashboard
+ * [ ] front : create a meeting admin interface
 
 #### code architecture
 

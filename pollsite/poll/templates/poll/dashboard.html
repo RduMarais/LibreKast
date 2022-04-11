@@ -78,6 +78,16 @@
 	</div>
 	<div class="text-center text-sm m-1">{% trans "&#9199; to start a question, &#128202; to show the results, &#9193; to go to next question." %}
 	</div>
+	{% if meeting.platform != 'IRL' %}
+	<div class = "w-full items-center m-2 p-1">
+		<div class="text-2xl text-center mt-2 mx-2" id="chatlog-title">
+			{% trans "Chat Log" %}
+		</div>
+		<div class="border border-blue-200 bg-blue-100" id="chatlog-content">
+		</div>
+	</div>
+	{% endif %}
+
 </section>
 
 <section class="w-full md:w-1/4 body-font md:border md:border-green-200" name="scoreboard-section">
@@ -407,6 +417,17 @@
 		// chart.draw();
 	}
 
+
+	{% if meeting.platform != 'IRL' %}
+
+	function addChatLog(chatMessage){
+		console.log(chatMessage['author']+" : "+chatMessage['text']);
+	}
+
+
+	{% endif %}
+
+
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
@@ -437,6 +458,8 @@
 			updateWordCloud(data['vote']);
 		}else if(data['message']==='update-scoreboard'){
 			updateScoreboard(data['scores']);
+		}else if(data['message']==='notify-chat'){
+			addChatLog(data['chat']); 		//you need to sned smthing like {'chat':{'author':xxxx,'text':yyy,'source':y/t/ts/ys}}
 		}
 		
 	};

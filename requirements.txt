@@ -23,3 +23,6 @@ channels-redis==3.3.1
 
 # for Youtube Streams
 pytchat==0.5.5
+
+# For Twitch 
+twitch-python==0.0.19

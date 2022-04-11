@@ -10,6 +10,7 @@ import threading
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler
+from .twitch_handler import TwitchHandler
 
 class QuestionConsumer(WebsocketConsumer):
 
@@ -97,6 +98,8 @@ class QuestionConsumer(WebsocketConsumer):
 				async_to_sync(self.send_group_question(question))
 				if(self.meeting.platform == 'YT' and question.question_type != 'TX'): # FOR Live cases
 					self.start_yt_polling(question)
+				if(self.meeting.platform == 'TW' and question.question_type != 'TX'):
+					self.start_tw_polling(question)
 		elif(message_in == "admin-live-start"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
@@ -111,6 +114,8 @@ class QuestionConsumer(WebsocketConsumer):
 				async_to_sync(self.send_group_results(question))
 				if(self.meeting.platform == 'YT' and question.question_type != 'TX'):
 					self.stop_yt_polling(question)
+				if(self.meeting.platform == 'TW' and question.question_type != 'TX'):
+					self.stop_tw_polling(question)
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
 				async_to_sync(self.next_question())
@@ -414,6 +419,18 @@ class QuestionConsumer(WebsocketConsumer):
 			}
 		)
 
+	def notify_chat(self,message):
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name+'_admin',
+			{
+				'type': 'admin_message', # is it though ?
+				'message': {
+					'message':'notify-chat',
+					'chat':message,
+				}
+			}
+		)
+
 
 
 # Youtube Live compatibility
@@ -433,4 +450,20 @@ class QuestionConsumer(WebsocketConsumer):
 		self.ytHandler.terminate()
 		# self.ytHandler = None # to delete the thread ?
 
+
+# Twitch Streams compatibility
+	def start_tw_polling(self,question):
+		if settings.DEBUG:
+			print('debug : Twitch meeting thread init called')
+		self.twHandler = TwitchHandler(self.meeting.stream_id)
+		if settings.DEBUG:
+			print('debug : Twitch meeting initiated')
+		self.twHandler.questionConsumer = self
+		if settings.DEBUG:
+			print('debug : Twitch questionConsumer')
+		self.twHandler.run()
+
+	def stop_tw_polling(self,question):
+		self.twHandler.terminate()
+		self.twHandler = None
 
