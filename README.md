@@ -77,7 +77,8 @@ V2 :
  * [x] Twitch : Twitch support for answers
  * [ ] front : change front for a dark mode
  * [ ] front : go back button in dashboard
- * [ ] back: join during a question
+ * [ ] back : join during a question
+ * [ ] back : join admin open with attendee_id
  * [ ] Twitch : error catching
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers

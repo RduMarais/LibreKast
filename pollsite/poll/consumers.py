@@ -14,17 +14,20 @@ from .twitch_handler import TwitchHandler
 
 class MeetingConsumer(WebsocketConsumer):
 
+	def check_attendee(self,username,is_subscriber=False,is_twitch=False,is_youtube=False):
+		attendee = None
+		attendee_queryset = self.meeting.attendee_set.all().filter(name=username)
+		if(attendee_queryset): # is this secure ?
+			attendee = attendee_queryset[0]
+		else:
+			attendee = Attendee(name=username,meeting=self.meeting,score=0,is_subscriber=is_subscriber,is_twitch=is_twitch,is_youtube=is_youtube)
+			attendee.save()
+		return attendee
+
 	def connect(self):
 		meeting_id = self.scope['url_route']['kwargs']['meeting_id']  
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
-
-		if(not self.scope['session']['attendee_id']):
-			self.send(text_data=json.dumps({'message':'error no login'}))
-			return 
-
-		attendee_id = self.scope['session']['attendee_id']
-		self.attendee = Attendee.objects.get(pk=attendee_id)
 
 		# Join group
 		async_to_sync(self.channel_layer.group_add)(
@@ -39,9 +42,20 @@ class MeetingConsumer(WebsocketConsumer):
 			)
 
 		self.accept()
+
+		# setup user session
+		if('attendee_id' in self.scope['session']):
+			attendee_id = self.scope['session']['attendee_id']
+			self.attendee = Attendee.objects.get(pk=attendee_id)
+		elif(self.is_user_authenticated()):
+			print(self.scope['user'].username)
+		else:
+			self.send(text_data=json.dumps({'message':'error no login'}))
+			return 
 		
 		# ADMIN settings
-		if(self.is_user_authenticated()):
+		if(self.is_user_authenticated() and not hasattr(self, 'isAdmin')): 
+			# check isAdmin ensures that there is always only one consumer for twitch and Youtube (but there may be several admins in the meeting)
 			self.isAdmin = True
 			# INIT live stream
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):

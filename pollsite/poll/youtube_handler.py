@@ -28,19 +28,8 @@ class YoutubeHandler(threading.Thread):
 	def terminate(self):
 		self._running = False
 
-	# similar to twitch_handler.check_attendee but takes author object as input
-	def check_attendee(self,author):
-		attendee = None
-		attendee_queryset = self.meetingConsumer.meeting.attendee_set.all().filter(name=author.name)
-		if(attendee_queryset): # is this secure ?
-			attendee = attendee_queryset[0]
-		else:
-			attendee = Attendee(name=author.name,meeting=self.meetingConsumer.meeting,score=0,is_subscriber=author.isChatSponsor,is_youtube=True) # is this secure ? 
-			attendee.save()
-		return attendee
-
 	def parse_message(self,chat):
-		attendee = self.check_attendee(chat.author)
+		attendee = self.meetingConsumer.check_attendee(chat.author.name,is_subscriber=chat.author.isChatSponsor,is_youtube=True)
 
 		question_type = self.meetingConsumer.meeting.current_question().question_type
 

@@ -155,3 +155,8 @@ class Choice(models.Model):
 class Vote(models.Model):
 	choice = models.ForeignKey(Choice,on_delete=models.CASCADE)
 	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
+
+# class TwitchUser(models.Model):
+# 	name = models.CharField(_('Name of the User'),max_length=20)
+# 	description = models.TextField(_('Description of the user'),max_length=400)
+# 	oauth = models.CharField(_('OAuth Token'),max_length=20)
