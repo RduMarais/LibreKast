@@ -10,10 +10,10 @@ PRINT_MESSAGES = False
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
 
-	def __init__(self,channel):
-		self.helix = twitch.Helix(settings.TWITCH_CLIENT_ID, settings.TWITCH_CLIENT_SECRET)
+	def __init__(self,channel,twitch_api):
+		self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
 		self.channel = '#'+channel
-		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+settings.TWITCH_OAUTH_TOKEN,helix=self.helix)
+		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
 		if(settings.DEBUG):
 			print('debug : twitch object initiated')
 		self.chat.subscribe(self.show_message)
@@ -66,7 +66,7 @@ class TwitchHandler(threading.Thread):
 
 	def stop(self):
 		self.terminate()
-		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+settings.TWITCH_OAUTH_TOKEN,helix=self.helix)
+		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+self.meetingConsumer.meeting.twitch_api.oauth,helix=self.helix)
 		self.chat.subscribe(self.show_message)
 		if(settings.DEBUG):
 			print('debug : twitch chat polling stopped, messages listening restarted')

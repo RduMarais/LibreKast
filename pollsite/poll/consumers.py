@@ -492,7 +492,10 @@ class MeetingConsumer(WebsocketConsumer):
 		if(not self.meeting.channel_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}))
 			raise KeyError('There should be a Twitch channel ID defined')
-		self.twHandler = TwitchHandler(self.meeting.channel_id)
+		if(not self.meeting.twitch_api):
+			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no Twitch API specified in the Meeting settings'}))
+			raise KeyError('There should be a Twitch API defined')
+		self.twHandler = TwitchHandler(self.meeting.channel_id,self.meeting.twitch_api)
 		self.twHandler.meetingConsumer = self
 
 	def start_tw_polling(self,question):

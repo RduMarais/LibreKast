@@ -423,8 +423,7 @@
 	{% if meeting.platform != 'IRL' %}
 
 	function addChatLog(chatMessage){
-		let chatLogSize = 6;
-		//data looks like {'chat':{'author':xxxx,'text':yyy,'source':y/t/ts/ys}}
+		let chatLogSize = {{ meeting.chat_log_size }} -1;
 		let chatlog = document.querySelector('#chatlog-content');
 		if(chatlog.childElementCount>=chatLogSize){
 			chatlog.removeChild(chatlog.firstChild);
@@ -442,7 +441,6 @@
 		l.appendChild(t);
 		chatlog.appendChild(l);
 	}
-
 
 	{% endif %}
 

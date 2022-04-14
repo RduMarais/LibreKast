@@ -7,7 +7,7 @@ from django.conf import settings
 
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
-from .models import Question, Choice, Meeting, Attendee, Vote
+from .models import Question,Choice,Meeting,Attendee,Vote,TwitchAPI
 
 # administration of choices once in Question admin panel
 class ChoiceInline(admin.TabularInline):
@@ -47,7 +47,8 @@ class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
 		(None, {'fields': ['participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
-		('Parameters',{'fields':['code','reward_fastest','stream_id','channel_id']})
+		('Parameters',{'fields':['code','reward_fastest']}),
+		('Live Stream only',{'fields':['chat_log_size','stream_id','channel_id','twitch_api']})
 	]
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
@@ -94,5 +95,5 @@ class VoteAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Attendee, ScoreBoard)
-if(settings.DEBUG):
-	admin.site.register(Vote, VoteAdmin) # for debug
+admin.site.register(Vote, VoteAdmin) # for debug
+admin.site.register(TwitchAPI)

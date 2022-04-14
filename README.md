@@ -75,7 +75,9 @@ V2 :
  * [x] Twitch : Change Youtube code to support same threading model
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
- * [ ] front : change front for a dark mode
+ * [ ] front : dashboard dark mode
+ * [ ] front : home dark mode
+ * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
  * [ ] back : join during a question
  * [ ] back : join admin open with attendee_id

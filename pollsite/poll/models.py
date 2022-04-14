@@ -23,6 +23,14 @@ LIVE_TYPE = (
 		('MX',_('Twitch AND Youtube')),		# TODO
 	)
 
+# For security purposes, the twitch API is stored as an object
+class TwitchAPI(models.Model):
+	name = models.CharField(_('Name of the API key'),max_length=20)
+	description = models.TextField(_('Description of the API key'),max_length=400)
+	oauth = models.CharField(_('OAuth Token'),max_length=30)
+	client_id = models.CharField(_('Client ID'),max_length=30)
+	client_secret = models.CharField(_('Client Secret'),max_length=30)
+
 
 # represents an occurence of a presentation. 
 class Meeting(models.Model):
@@ -36,8 +44,10 @@ class Meeting(models.Model):
 	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
 	image = models.ImageField(_('Image for your meeting'),null = True,blank=True)
+	chat_log_size = models.IntegerField(_('Max chat messages to show'),default=8)
 	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
+	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True)
 
 	class Meta:
 		verbose_name = _('Meeting')
@@ -156,7 +166,4 @@ class Vote(models.Model):
 	choice = models.ForeignKey(Choice,on_delete=models.CASCADE)
 	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
 
-# class TwitchUser(models.Model):
-# 	name = models.CharField(_('Name of the User'),max_length=20)
-# 	description = models.TextField(_('Description of the user'),max_length=400)
-# 	oauth = models.CharField(_('OAuth Token'),max_length=20)
+
