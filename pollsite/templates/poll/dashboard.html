@@ -80,8 +80,9 @@
 	</div>
 	{% if meeting.platform != 'IRL' %}
 	<div class = "w-full items-center m-2 p-1">
-		<div class="text-2xl text-center mt-2 mx-2" id="chatlog-title">
-			{% trans "Chat Log" %}
+		<div class="text-center mt-2 mx-2" id="chatlog-title">
+			<div class="basis-3/4 inline"><span class="text-2xl mr-2">{% trans "Chat Log" %}</span></div>
+			<div class="basis-1/4 inline"><button class="bg-gray-500 px-1 rounded py" onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'poll:chatlog' meeting.id %}')">{% trans "URL" %}</button></div>
 		</div>
 		<div class="border border-blue-200 bg-blue-100" id="chatlog-content">
 		</div>
@@ -322,27 +323,6 @@
 		showResultsPoll(resultsArray);
 	}
 
-	function updatePollPercentage(voteBar,totalCount){
-		voteCount = parseInt(voteBar.innerText.split()[0]);
-		percent = (voteCount / totalCount) *100 ;
-		voteBar.style.width = percent+"%";
-	}
-
-	function updatePoll(voteId){
-		let totalCountElmt = document.querySelector('#total-votes');
-		let totalCount = parseInt(totalCountElmt.innerText.split()[0]);
-		let voteBar = document.querySelector('#bar-'+voteId);
-		voteCount = parseInt(voteBar.innerText.split()[0]);
-		voteCount++;
-		voteBar.innerText = voteCount + " votes";
-		totalCount++;
-		let choiceBars = document.getElementsByClassName('librekast-bar');
-		[...document.getElementsByClassName("librekast-bar")].forEach(function(item){
-			updatePollPercentage(item,totalCount);
-		});
-		totalCountElmt.innerText = totalCount + " votes";
-	}
-
 	function updateWordCloud(word){
 		//updte value array
 		let b = false;
@@ -431,12 +411,19 @@
 		let l = document.createElement("p");
 		let u = document.createElement("span");
 		let t = document.createElement("span");
-		l.classList.add("mx-2","my-2");
+		l.classList.add("librekast-chatlog","mx-2","my-2");
 		u.innerText = chatMessage['author'];
-		u.classList.add("text-red-700","font-bold","mr-2");
-		if(chatMessage['source']=='y'){u.classList.add("text-red-700");}
-		if(chatMessage['source']=='t'){u.classList.add("text-purple-700");}
+		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
+		if(chatMessage['source']=='y'){
+			u.classList.add("librekast-youtube-username","text-red-700");
+			u.classList.remove('text-blue-700');
+		}
+		if(chatMessage['source']=='t'){
+			u.classList.add("librekast-twitch-username","text-purple-700");
+			u.classList.remove('text-blue-700');
+		}
 		t.innerText = chatMessage['text'];
+		t.classList.add("librekast-chatlog-msg")
 		l.appendChild(u);
 		l.appendChild(t);
 		chatlog.appendChild(l);

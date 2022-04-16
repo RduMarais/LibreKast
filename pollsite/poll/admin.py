@@ -48,7 +48,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 		(None, {'fields': ['participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
 		('Parameters',{'fields':['code','reward_fastest']}),
-		('Live Stream only',{'fields':['chat_log_size','stream_id','channel_id','twitch_api']})
+		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','stream_id','channel_id','twitch_api']})
 	]
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
