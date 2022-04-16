@@ -1,0 +1,105 @@
+{% extends "base_layout.html" %}
+{% load i18n %}
+
+{% block title %}Chat Log{% endblock  %}
+
+{% block content  %}
+<section class="w-full body-font md:border md:border-red-200" name="meeting-plan-section">
+	{% if meeting.platform != 'IRL' %}
+	<div class = "w-full items-center m-2 p-1">
+		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
+			{% trans "Meeting Live Chat Log" %}
+		</div>
+		<div id="#chat-offset">
+		</div>
+		<div class="" id="chatlog-content" style="position:absolute; bottom:0;">
+			<p class="mx-2 my-2 librekast-chatlog"><span class="librekast-chatlog-username text-blue-700 font-bold mr-2">LibreKast</span><span class="librekast-chatlog-msg"><i>{% trans "(To get the chat rolling, a Librekast admin must be connected on the dashboard)" %}</i></span></p>
+		</div>
+	</div>
+	{% else %}
+	<div class = "w-full items-center m-2 p-1">
+		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
+			{% trans "No live chat for this meeting" %}
+		</div>
+	</div>
+	{% endif %}
+
+</section>
+{% endblock %}
+
+{% block javascript %}
+<script>
+	var meetingPlatform = '{{meeting.platform}}' ; 
+
+	{% if meeting.platform != 'IRL' %}
+
+	const meeting_id = {{ meeting.id }};
+	const dashboardSocket = new WebSocket(
+		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
+		+ window.location.host
+		+ '/ws/'
+		+ meeting_id
+		+ '/'
+	);
+
+	function showWait(){
+		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
+		questionDesc.innerHTML = "";		resetQuestionContent();
+		// global vars reset ?
+	}
+
+	function addChatLog(chatMessage){
+		let chatLogSize = {{ meeting.obs_chat_log_size }} +1;
+		let chatlog = document.querySelector('#chatlog-content');
+		if(chatlog.childElementCount>=chatLogSize){
+			chatlog.removeChild(chatlog.firstChild);
+		}
+		let l = document.createElement("p");
+		let u = document.createElement("span");
+		let t = document.createElement("span");
+		l.classList.add("librekast-chatlog","mx-2","my-2");
+		u.innerText = chatMessage['author'];
+		u.classList.add("librekast-chatlog-username","font-bold","mr-2");
+		if(chatMessage['source']=='y'){u.classList.add("librekast-youtube-username","text-red-700");}
+		if(chatMessage['source']=='t'){u.classList.add("librekast-twitch-username","text-purple-700");}
+		t.innerText = chatMessage['text'];
+		t.classList.add("librekast-chatlog-msg")
+		l.appendChild(u);
+		l.appendChild(t);
+		chatlog.appendChild(l);
+	}
+
+
+
+	// main fuction : receive messages
+	dashboardSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		console.log('received : '+e.data);
+
+		if(data['message']==='question-go'){
+			showQuestionText(data['question']);
+			// updateMeetingPlan(data['question'].id)
+		}else if(data['message']==='error no login'){
+			dashboardSocket.send(JSON.stringify({
+				'message': "chat-subscribe", 
+			}));
+		}else if(data['message']==='notify-chat'){
+			addChatLog(data['chat']); 		
+		}else if(data['message']==='admin-error'){
+			alert(data['text']);
+		}
+		
+	};
+
+	dashboardSocket.onclose = function(e) {
+	};
+
+	// start chat
+	document.querySelector('header').classList.add('hidden');
+	document.querySelector('footer').classList.add('hidden');
+
+	
+	{% endif %}
+
+</script>
+{% endblock %}

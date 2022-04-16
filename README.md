@@ -75,13 +75,22 @@ V2 :
  * [x] Twitch : Change Youtube code to support same threading model
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
+ * [x] Twitch : API as model
+ * [ ] front : remove dashboard unused code
  * [ ] front : dashboard dark mode
+ * [ ] OBS dedicated chatlog page
+   * fix createion of 2 parallel consumers of chat logs
+   * create page
+   * socket close
+   * chat subscribe
+   * fix authent & consumer subscrption to chat logs
+ * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
  * [ ] back : join during a question
  * [ ] back : join admin open with attendee_id
- * [ ] Twitch : error catching
+ * [ ] Twitch : proper error catching
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
@@ -199,11 +208,6 @@ docker run -p 6379:6379 -d redis:5
 ```bash
 export ALLOWED_HOSTS_LOCAL="<the url you plan to serve the app to>"
 export DJANGO_SETTINGS_MODULE="pollsite.settings"
-
-# For Twitch (does not need to be the channel of the streamer)
-export TWITCH_OAUTH_TOKEN="abcdefghijklmnopqrst1234567890"  # should looks like "oauth:abcdefghijklmnopqrst1234567890"
-export TWITCH_CLIENT_ID="1234567890abcdefghijklmnopqrst"
-export TWITCH_CLIENT_SECRET="1234567890abcdefghijklmnopqrst"
 
 # only if this is for debugging
 export DEBUG=True

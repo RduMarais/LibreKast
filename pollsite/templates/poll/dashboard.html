@@ -449,6 +449,7 @@
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
 		console.log('received : '+e.data);
+
 		if(data['message']==='question-go'){
 			showQuestionText(data['question']);
 			// updateMeetingPlan(data['question'].id)
@@ -458,12 +459,8 @@
 		} else if(data['message']==='current-question'){
 			updateMeetingPlan(data['question'].id);
 		} else if(data['message']==='results'){
-			if(data['question_type']=='QZ'){
-				showResultsQuizz(data['results']);
-			}
-			else if(data['question_type']=='PL'){
-				showResultsPoll(data['results']);
-			}
+			if(data['question_type']=='QZ'){showResultsQuizz(data['results']);}
+			else if(data['question_type']=='PL'){showResultsPoll(data['results']);}
 		} else if(data['message']==='question-ready'){
 			showWait();
 		} else if(data['message']==='notify-update-poll'){
@@ -480,7 +477,6 @@
 		}else if(data['message']==='admin-error'){
 			alert(data['text']);
 		}
-		
 	};
 
 	dashboardSocket.onclose = function(e) {

@@ -33,6 +33,12 @@ def dashboard(request,meeting_id):
 	wss=settings.SOCKET_ENCRYPTION
 	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees,'wss':wss})
 
+# TODO this page is not protected, for simplicity. But the data shown here are actually public on YT and Twitch
+def chat(request,meeting_id):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	wss=settings.SOCKET_ENCRYPTION
+	return render(request,'poll/chatlog.html',{'meeting':meeting,'wss':wss})
+
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
 def meeting(request, meeting_id):

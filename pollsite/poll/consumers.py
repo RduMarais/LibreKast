@@ -12,6 +12,11 @@ from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler
 from .twitch_handler import TwitchHandler
 
+
+# there are 3 group channels joined if needed : 
+# * meeting_group_name = evryone on the meeting (used for word cloud, results, and the questions content)
+# * _admin : admins only (used for live results)
+# * _chat : anyone that wants to get the live chat (used for live chat, obviously)
 class MeetingConsumer(WebsocketConsumer):
 
 	def check_attendee(self,username,is_subscriber=False,is_twitch=False,is_youtube=False):
@@ -40,6 +45,10 @@ class MeetingConsumer(WebsocketConsumer):
 				self.meeting_group_name+'_admin',
 				self.channel_name
 			)
+			async_to_sync(self.channel_layer.group_add)(
+				self.meeting_group_name+'_chat',
+				self.channel_name
+			)
 
 		self.accept()
 
@@ -51,7 +60,6 @@ class MeetingConsumer(WebsocketConsumer):
 			print(self.scope['user'].username)
 		else:
 			self.send(text_data=json.dumps({'message':'error no login'}))
-			return 
 		
 		# ADMIN settings
 		if(self.is_user_authenticated() and not hasattr(self, 'isAdmin')): 
@@ -82,8 +90,8 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def admin_message(self,event):
 		message = event['message']
-		if(self.isAdmin):
-			self.send(text_data=json.dumps(message))
+		# if(self.isAdmin):
+		self.send(text_data=json.dumps(message))
 
 
 	# receive message from client
@@ -91,9 +99,11 @@ class MeetingConsumer(WebsocketConsumer):
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
+		
 		if(settings.DEBUG):
 			print('RECV : '+message_in)
 
+		# THE MAIN APP LOGIC is here
 		if(message_in == "debug-question-start"):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
@@ -146,6 +156,8 @@ class MeetingConsumer(WebsocketConsumer):
 			if(self.is_user_authenticated()):
 				async_to_sync(self.next_question())
 				async_to_sync(self.notify_next_question())
+		elif(message_in == "chat-subscribe"):
+			self.subscribe_to_chat()
 		else:
 			message_out = {'message':'error'}
 			self.send(text_data=json.dumps(message_out))
@@ -447,7 +459,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def notify_chat(self,message):
 		async_to_sync(self.channel_layer.group_send)(
-			self.meeting_group_name+'_admin',
+			self.meeting_group_name+'_chat',
 			{
 				'type': 'admin_message', # is it though ?
 				'message': {
@@ -456,6 +468,15 @@ class MeetingConsumer(WebsocketConsumer):
 				}
 			}
 		)
+
+	def subscribe_to_chat(self):
+		if(self.meeting.platform != 'IRL'):
+			if(settings.DEBUG):
+				print('debug : socket subscribing to live chat')
+			async_to_sync(self.channel_layer.group_add)(
+				self.meeting_group_name+'_chat',
+				self.channel_name
+			)
 
 
 ### LIVE STREAMS
