@@ -498,12 +498,12 @@ class MeetingConsumer(WebsocketConsumer):
 		self.ytHandler._polling = True
 
 	def terminate_yt_polling(self):
-		if(self.ytHandler):
+		if(hasattr(self,'ytHandler')):
 			self.ytHandler.terminate()
 			self.ytHandler = None
 
 	def stop_yt_polling(self,question):
-		if(not self.ytHandler):
+		if(not hasattr(self,'ytHandler')):
 			raise KeyError('There should be a YoutubeHandler object')
 		self.ytHandler._polling = False
 
@@ -521,17 +521,19 @@ class MeetingConsumer(WebsocketConsumer):
 		self.twHandler.meetingConsumer = self
 
 	def start_tw_polling(self,question):
-		if(not self.twHandler):
+		if(not hasattr(self,'twHandler')):
 			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.run()
 
 	def terminate_tw_polling(self):
-		if(self.twHandler):
+		if(hasattr(self,'twHandler')):
 			self.twHandler.terminate()
 			self.twHandler = None
 		# self.twHandler = None
 
 	def stop_tw_polling(self,question):
+		if(not hasattr(self,'twHandler')):
+			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.stop()
 		# self.twHandler.terminate()
 

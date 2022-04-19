@@ -62,9 +62,8 @@ V1 :
  * [x] pie chart at the end of the poll
  * [x] front & back : have dashboard showing pie chart during the vote
  * [x] Youtube : add sponsor attribute in scoreboard
- * [ ] BUG : solve issue with votes counted 3 times ??
- * [ ] BUG : solve issue with twitch messages appearing 2 times when refresh page
- * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
+ * [x] BUG : solve issue with votes counted 3 times ??
+ * [x] BUG : solve issue with twitch messages appearing 2 times when refresh page
 
 V2 : 
 
@@ -76,28 +75,25 @@ V2 :
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
  * [x] Twitch : API as model
- * [ ] front : remove dashboard unused code
+ * [ ] Twitch : proper error catching
+ * [x] OBS dedicated chatlog page
+ * [x] front : remove dashboard unused code
  * [ ] front : dashboard dark mode
- * [ ] OBS dedicated chatlog page
-   * fix createion of 2 parallel consumers of chat logs
-   * create page
-   * socket close
-   * chat subscribe
-   * fix authent & consumer subscrption to chat logs
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
+ * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
  * [ ] back : join during a question
  * [ ] back : join admin open with attendee_id
- * [ ] Twitch : proper error catching
+
+ V3 : 
+
+ * [ ] generate QR code
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
  * [ ] refactor : config.ini file instead of env variables
-
- V3 : 
-
  * [ ] Image slides
  * [ ] docker wrapping
  * [ ] Youtube : automatically generate short answer for poll & quizz
@@ -192,6 +188,9 @@ export SECRET_KEY="<your secret key>"
 
 ```bash
 python manage.py collectstatic
+# build tailwinds with npm 
+npm install -D tailwindcss
+npx tailwindcss -i ./style_input.css -o ./pollsite/static/style.css --watch --minifier
 ```
 
 **6. Run Redis in a docker container**

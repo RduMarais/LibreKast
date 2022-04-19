@@ -13,7 +13,7 @@
 		<div id="#chat-offset">
 		</div>
 		<div class="" id="chatlog-content" style="position:absolute; bottom:0;">
-			<p class="mx-2 my-2 librekast-chatlog"><span class="librekast-chatlog-username text-blue-700 font-bold mr-2">LibreKast</span><span class="librekast-chatlog-msg"><i>{% trans "(To get the chat rolling, a Librekast admin must be connected on the dashboard)" %}</i></span></p>
+			<p class="mx-2 my-2 librekast-chatlog"><span class="librekast-chatlog-username text-blue-700 font-bold mr-2">LibreKast</span><span class="librekast-chatlog-msg librekast-chatlog-init"><i>{% trans "(To get the chat rolling, a Librekast admin must be connected on the dashboard)" %}</i></span></p>
 		</div>
 	</div>
 	{% else %}
@@ -42,6 +42,15 @@
 		+ '/'
 	);
 
+	{% if meeting.platform == 'MX' %}
+	const twitchIcon = document.createElement('img');
+	twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+	twitchIcon.src = 'https://restream.io/img/api/platforms/platform-1.png';
+	const youtubeIcon = document.createElement('img');
+	youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+	youtubeIcon.src = 'https://restream.io/img/api/platforms/platform-5.png';
+	{% endif %}
+
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
 		questionDesc.innerHTML = "";		resetQuestionContent();
@@ -60,8 +69,18 @@
 		l.classList.add("librekast-chatlog","mx-2","my-2");
 		u.innerText = chatMessage['author'];
 		u.classList.add("librekast-chatlog-username","font-bold","mr-2");
-		if(chatMessage['source']=='y'){u.classList.add("librekast-youtube-username","text-red-700");}
-		if(chatMessage['source']=='t'){u.classList.add("librekast-twitch-username","text-purple-700");}
+		if(chatMessage['source']=='y'){
+			u.classList.add("librekast-youtube-username","text-red-700");
+			{% if meeting.platform == 'MX' %}
+			l.appendChild(youtubeIcon);
+			{% endif %}
+		}
+		if(chatMessage['source']=='t'){
+			u.classList.add("librekast-twitch-username","text-purple-700");
+			{% if meeting.platform == 'MX' %}
+			l.appendChild(twitchIcon);
+			{% endif %}
+		}
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg")
 		l.appendChild(u);
