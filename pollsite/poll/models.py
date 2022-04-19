@@ -23,6 +23,7 @@ LIVE_TYPE = (
 		('MX',_('Twitch AND Youtube')),		# TODO
 	)
 
+
 # For security purposes, the twitch API is stored as an object
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
@@ -30,6 +31,13 @@ class TwitchAPI(models.Model):
 	oauth = models.CharField(_('OAuth Token'),max_length=30)
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
+
+
+class MessageBot(models.Model):
+	command = models.CharField(_('command to trigger the message'),max_length=10) # unique ? 
+	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
+	is_active = models.BooleanField(_('is this command activated'))
+	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.CASCADE)
 
 
 # represents an occurence of a presentation. 

@@ -75,17 +75,17 @@ V2 :
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
  * [x] Twitch : API as model
- * [ ] Twitch : proper error catching
+ * [x] Twitch : proper error catching
  * [x] OBS dedicated chatlog page
  * [x] front : remove dashboard unused code
- * [ ] front : dashboard dark mode
+ * [x] back : join admin open with attendee_id
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
+ * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
- * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing n exception 
+ * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception 
  * [ ] back : join during a question
- * [ ] back : join admin open with attendee_id
 
  V3 : 
 
@@ -96,8 +96,13 @@ V2 :
  * [ ] refactor : config.ini file instead of env variables
  * [ ] Image slides
  * [ ] docker wrapping
+ * [ ] back : automatically generate short answer for poll & quizz
+ * [ ] back : rebuild Youtube chat log to use Youtube Live Stream API
+ * [ ] back : setup bots commands models
+ * [ ] back : setup bots commands for Twitch and Youtube
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] front : have a nicer dashboard
+ * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
 
 #### code architecture
