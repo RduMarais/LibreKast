@@ -61,7 +61,7 @@ v0.3.0 :
  * [x] Twitch : proper error catching when stream is done
  * [x] back : centralize interaction char in settings
  * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
- * [ ] back : fix bots is_active
+ * [x] back : fix bots is_active
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
