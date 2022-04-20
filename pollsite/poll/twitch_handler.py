@@ -53,7 +53,7 @@ class TwitchHandler(threading.Thread):
 
 	def bot_listen(self,message: twitch.chat.Message) -> None:
 		if message.text.startswith('!'):
-			command = self.meetingConsumer.meeting.messagebot_set.filter(command=message.text.split()[0][1:])
+			command = self.meetingConsumer.meeting.messagebot_set.filter(command=message.text.split()[0][1:]).filter(is_active=True)
 			if(command):
 				print('debug : command activated : '+command[0].message)
 				self.chat.send('[BOT] '+command[0].message)

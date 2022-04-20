@@ -152,7 +152,7 @@ class YoutubeHandler(threading.Thread):
 		self.meetingConsumer.notify_chat({'author':msg['author'],'text':msg['text'],'source':'y'})
 
 	def bot_listen(self,msg):
-		command = self.meetingConsumer.meeting.messagebot_set.filter(command=msg['text'].split()[0][1:])
+		command = self.meetingConsumer.meeting.messagebot_set.filter(command=msg['text'].split()[0][1:]).filter(is_active=True)
 		if(command):
 			print('debug : command activated : '+command[0].message)
 			self.send_message('[BOT] '+command[0].message)
