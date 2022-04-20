@@ -56,7 +56,7 @@ class TwitchHandler(threading.Thread):
 			command = self.meetingConsumer.meeting.messagebot_set.filter(command=message.text.split()[0][1:])
 			if(command):
 				print('debug : command activated : '+command[0].message)
-				self.chat.send(command[0].message)
+				self.chat.send('[BOT] '+command[0].message)
 
 
 

@@ -60,14 +60,15 @@ v0.3.0 :
  * [x] back : join admin open with attendee_id
  * [x] Twitch : proper error catching when stream is done
  * [x] back : centralize interaction char in settings
- * [-] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
+ * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
  * [ ] back : fix bots is_active
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
- * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception 
+ * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
+ * [ ] BUG : fix youtube chat message polling that answers past commands 
 
 v0.4.0 : 
 

@@ -155,7 +155,7 @@ class YoutubeHandler(threading.Thread):
 		command = self.meetingConsumer.meeting.messagebot_set.filter(command=msg['text'].split()[0][1:])
 		if(command):
 			print('debug : command activated : '+command[0].message)
-			self.send_message(command[0].message)
+			self.send_message('[BOT] '+command[0].message)
 
 	def send_message(self,message):
 		request = self.youtube_api_client.liveChatMessages().insert(
