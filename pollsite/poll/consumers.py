@@ -9,6 +9,7 @@ import threading
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
+from .youtube_listener import YoutubeListener
 from .youtube_handler import YoutubeHandler
 from .twitch_handler import TwitchHandler
 
@@ -489,7 +490,13 @@ class MeetingConsumer(WebsocketConsumer):
 		if(not self.meeting.stream_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
 			raise KeyError('There should be a Youtube live/video ID defined')
-		self.ytHandler = YoutubeHandler(self.meeting.stream_id) 
+		self.ytHandler = None
+		if(self.meeting.youtube_api):
+			print('debug : YT API identified')
+			self.ytHandler = YoutubeHandler(self.meeting.youtube_api,self.meeting.stream_id) 
+		else:
+			print('debug : no YT API')
+			self.ytHandler = YoutubeListener(self.meeting.stream_id) 
 		self.ytHandler.meetingConsumer = self
 		self.ytHandler.start()
 
@@ -504,7 +511,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def stop_yt_polling(self,question):
 		if(not hasattr(self,'ytHandler')):
-			raise KeyError('There should be a YoutubeHandler object')
+			raise KeyError('There should be a YoutubeHandler or YoutubeListener object')
 		self.ytHandler._polling = False
 
 

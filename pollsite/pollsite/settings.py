@@ -187,13 +187,19 @@ CHANNEL_LAYERS = {
 }
 
 
-### TWITCH API
+### TWITCH & YOUTUBE API SETTINGS
 
-# OAuth token looks like : oauth:xxx1234xxx8daje8j8js9, only put in env variable the 'xxx1234xxx8daje8j8js9'
-TWITCH_OAUTH_TOKEN = os.environ.get("TWITCH_OAUTH_TOKEN",default='')
-TWITCH_CLIENT_ID = os.environ.get("TWITCH_CLIENT_ID",default='')
-TWITCH_CLIENT_SECRET = os.environ.get("TWITCH_CLIENT_SECRET",default='')
+# This char is the one that will trigger the parsing
+# I recommend using '#', @ is for testing purposes
+# on Youtube, "@" is for tagging people and "!"" for bots
+INTERACTION_CHAR = "#" 
 TWITCH_NICKNAME = 'LibreKast_Bot'
+
+YOUTUBE_REDIRECT_URIS = ["http://localhost", "urn:ietf:wg:oauth:2.0:oob"]
+YOUTUBE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
+YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
+# YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
+YTAPI_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/youtube.force-ssl"]
 
 #### SECURITY SETTINGS
 
@@ -202,11 +208,13 @@ SOCKET_ENCRYPTION = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE='Lax'
 SESSION_COOKIE_SECURE = True
+OAUTHLIB_INSECURE_TRANSPORT = False
 
 if(os.environ.get("DISABLE_ENCRYPTION",default=False)):
     SOCKET_ENCRYPTION = False
     CSRF_COOKIE_HTTPONLY = False
     SESSION_COOKIE_SECURE = False
+    OAUTHLIB_INSECURE_TRANSPORT = True
 
 # for my prod environment, this follows the good practices
 NGINX_PROXY = os.environ.get("NGINX_PROXY",default=False)

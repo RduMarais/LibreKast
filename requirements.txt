@@ -21,8 +21,12 @@ uvicorn[standard]==0.16.0
 channels==3.0.4
 channels-redis==3.3.1
 
-# for Youtube Streams
+# for Youtube Streams without API
 pytchat==0.5.5
 
-# For Twitch 
+# For Twitch API
 twitch-python==0.0.19
+
+# For Youtube API
+google-auth-oauthlib
+google-api-python-client

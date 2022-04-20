@@ -42,19 +42,9 @@
 		+ '/'
 	);
 
-	{% if meeting.platform == 'MX' %}
-	const twitchIcon = document.createElement('img');
-	twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-	twitchIcon.src = 'https://restream.io/img/api/platforms/platform-1.png';
-	const youtubeIcon = document.createElement('img');
-	youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-	youtubeIcon.src = 'https://restream.io/img/api/platforms/platform-5.png';
-	{% endif %}
-
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
 		questionDesc.innerHTML = "";		resetQuestionContent();
-		// global vars reset ?
 	}
 
 	function addChatLog(chatMessage){
@@ -72,12 +62,18 @@
 		if(chatMessage['source']=='y'){
 			u.classList.add("librekast-youtube-username","text-red-700");
 			{% if meeting.platform == 'MX' %}
+			let youtubeIcon = document.createElement('img');
+			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			youtubeIcon.src = 'https://restream.io/img/api/platforms/platform-5.png';
 			l.appendChild(youtubeIcon);
 			{% endif %}
 		}
 		if(chatMessage['source']=='t'){
 			u.classList.add("librekast-twitch-username","text-purple-700");
 			{% if meeting.platform == 'MX' %}
+			let twitchIcon = document.createElement('img');
+			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			twitchIcon.src = 'https://restream.io/img/api/platforms/platform-1.png';
 			l.appendChild(twitchIcon);
 			{% endif %}
 		}

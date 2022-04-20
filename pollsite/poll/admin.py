@@ -7,7 +7,7 @@ from django.conf import settings
 
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
-from .models import Question,Choice,Meeting,Attendee,Vote,TwitchAPI
+from .models import Question,Choice,Meeting,Attendee,Vote,TwitchAPI,MessageBot,YoutubeAPI
 
 # administration of choices once in Question admin panel
 class ChoiceInline(admin.TabularInline):
@@ -48,7 +48,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 		(None, {'fields': ['participants','date_start','date_end','platform']}),
 		('Meeting informations', {'fields': ['title','desc','image']}),
 		('Parameters',{'fields':['code','reward_fastest']}),
-		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','stream_id','channel_id','twitch_api']})
+		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','stream_id','channel_id','twitch_api','youtube_api']})
 	]
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
@@ -92,8 +92,17 @@ class VoteAdmin(admin.ModelAdmin):
 	def get_user(self,obj):
 		return obj.user.name
 
+class YTAPIAdmin(admin.ModelAdmin):
+	exclude = ('credentials',)
+
+class BotAdmin(admin.ModelAdmin):
+	list_display =('command','is_active','meeting')
+	list_editable = ('is_active',)
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Attendee, ScoreBoard)
 admin.site.register(Vote, VoteAdmin) # for debug
 admin.site.register(TwitchAPI)
+admin.site.register(YoutubeAPI,YTAPIAdmin)
+admin.site.register(MessageBot,BotAdmin)

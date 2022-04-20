@@ -44,28 +44,7 @@ You can find screenshots :
 
 ## Project state
 
-V1 : 
-
- * [x] home as django models (for non-technical people)
- * [x] back : sync notificaton from admin 
- * [x] back : admin widget for handling question go 
- * [x] back : reward_fastest
- * [x] front : showWait() reset front
- * [x] front : sync previous question
- * [x] front : bug with polls appearance
- * [x] front : widgets un dashboard
- * [x] Youtube : fetch live streams chat
- * [x] Youtube : poll with chat
- * [x] Youtube : word cloud with chat
- * [x] Youtube : meeting ID instead of URL
- * [x] Youtube : change attendee mangement to be function-oriented instead of object-oriented
- * [x] pie chart at the end of the poll
- * [x] front & back : have dashboard showing pie chart during the vote
- * [x] Youtube : add sponsor attribute in scoreboard
- * [x] BUG : solve issue with votes counted 3 times ??
- * [x] BUG : solve issue with twitch messages appearing 2 times when refresh page
-
-V2 : 
+v0.3.0 : 
 
  * [x] FR translation templates
  * [x] FR translation models
@@ -79,31 +58,38 @@ V2 :
  * [x] OBS dedicated chatlog page
  * [x] front : remove dashboard unused code
  * [x] back : join admin open with attendee_id
+ * [x] Twitch : proper error catching when stream is done
+ * [x] back : centralize interaction char in settings
+ * [-] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
+ * [ ] back : fix bots is_active
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception 
+
+v0.4.0 : 
+
  * [ ] back : join during a question
-
- V3 : 
-
  * [ ] generate QR code
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
  * [ ] refactor : config.ini file instead of env variables
- * [ ] Image slides
- * [ ] docker wrapping
+ * [ ] add Image slides
  * [ ] back : automatically generate short answer for poll & quizz
- * [ ] back : rebuild Youtube chat log to use Youtube Live Stream API
  * [ ] back : setup bots commands models
  * [ ] back : setup bots commands for Twitch and Youtube
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
+
+v0.5.0
+
+ * [ ] docker wrapping
+ * [ ] readthedocs
 
 #### code architecture
 

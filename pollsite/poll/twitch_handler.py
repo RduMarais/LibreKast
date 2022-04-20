@@ -4,7 +4,6 @@ from django.conf import settings
 from .models import Choice, Question, Meeting,Attendee,Vote
 
 
-INTERACTION_CHAR = '#' 
 PRINT_MESSAGES = False
 
 class TwitchHandler(threading.Thread):
@@ -17,6 +16,7 @@ class TwitchHandler(threading.Thread):
 		if(settings.DEBUG):
 			print('debug : twitch object initiated')
 		self.chat.subscribe(self.show_message)
+		self.chat.subscribe(self.bot_listen)
 		if(settings.DEBUG):
 			print('debug : twitch chat listening')
 
@@ -29,7 +29,7 @@ class TwitchHandler(threading.Thread):
 		 self.print_message({'author':message.sender,'text':message.text,'source':'t'})
 
 	def handle_question(self,message: twitch.chat.Message) -> None:
-		if message.text.startswith(INTERACTION_CHAR):
+		if message.text.startswith(settings.INTERACTION_CHAR):
 			# TODO : is subscriber
 			attendee = self.meetingConsumer.check_attendee(message.sender,is_subscriber=False,is_twitch=True)
 			question_type = self.meetingConsumer.meeting.current_question().question_type
@@ -51,6 +51,14 @@ class TwitchHandler(threading.Thread):
 						print('debug : no poll choice for vote '+message.text[1:]+ ' from user '+message.sender)
 
 
+	def bot_listen(self,message: twitch.chat.Message) -> None:
+		if message.text.startswith('!'):
+			command = self.meetingConsumer.meeting.messagebot_set.filter(command=message.text.split()[0][1:])
+			if(command):
+				print('debug : command activated : '+command[0].message)
+				self.chat.send(command[0].message)
+
+
 
 	def terminate(self):
 		self.chat.irc.active = False
@@ -68,5 +76,6 @@ class TwitchHandler(threading.Thread):
 		self.terminate()
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+self.meetingConsumer.meeting.twitch_api.oauth,helix=self.helix)
 		self.chat.subscribe(self.show_message)
+		self.chat.subscribe(self.bot_listen)
 		if(settings.DEBUG):
 			print('debug : twitch chat polling stopped, messages listening restarted')

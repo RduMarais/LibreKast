@@ -32,12 +32,12 @@ class TwitchAPI(models.Model):
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 
-
-class MessageBot(models.Model):
-	command = models.CharField(_('command to trigger the message'),max_length=10) # unique ? 
-	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
-	is_active = models.BooleanField(_('is this command activated'))
-	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.CASCADE)
+class YoutubeAPI(models.Model):
+	name = models.CharField(_('Name of the API key'),max_length=20)
+	description = models.TextField(_('Description of the API key'),max_length=400)
+	client_id = models.CharField(_('OAuth Client ID'),max_length=90)
+	client_secret = models.CharField(_('OAuth Client Secret'),max_length=40)
+	authorized_credentials = models.TextField('This should not be accessed manually',max_length=1000,blank=True,default='')
 
 
 # represents an occurence of a presentation. 
@@ -57,6 +57,7 @@ class Meeting(models.Model):
 	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True)
+	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True)
 
 	class Meta:
 		verbose_name = _('Meeting')
@@ -81,6 +82,15 @@ class Meeting(models.Model):
 			MeetingEnd = Question(title=_('This meeting is over'),desc=_("Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)"),
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
+
+
+class MessageBot(models.Model):
+	command = models.CharField(_('command to trigger the message'),max_length=10) # unique ? 
+	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
+	is_active = models.BooleanField(_('is this command activated'))
+	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+	# twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True)
+	# youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True)
 
 
 # model to hold the attendee's name 
