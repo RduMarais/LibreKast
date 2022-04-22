@@ -56,8 +56,8 @@ class Meeting(models.Model):
 	obs_chat_log_size = models.IntegerField(_('Max chat messages for OBS'),default=12)
 	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
-	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True)
-	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True)
+	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
+	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 
 	class Meta:
 		verbose_name = _('Meeting')

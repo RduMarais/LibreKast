@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-20 23:36+0200\n"
+"POT-Creation-Date: 2022-04-22 11:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,7 +136,7 @@ msgstr "Nom de chaîne (Twitch)"
 msgid "Meeting"
 msgstr "Évènement"
 
-#: pollsite/poll/models.py:64 pollsite/templates/base_layout.html:30
+#: pollsite/poll/models.py:64 pollsite/templates/base_layout.html:31
 msgid "Meetings"
 msgstr "Évènements"
 
@@ -247,19 +247,19 @@ msgstr "Quelque chose a mal tourné"
 msgid "Django site admin"
 msgstr "LibreKast Admin"
 
-#: pollsite/templates/base_layout.html:31
+#: pollsite/templates/base_layout.html:32
 msgid "How-To"
 msgstr "Tuto"
 
-#: pollsite/templates/base_layout.html:32
+#: pollsite/templates/base_layout.html:33
 msgid "Contributors"
 msgstr "Contributeurs"
 
-#: pollsite/templates/base_layout.html:35
+#: pollsite/templates/base_layout.html:36
 msgid "Admin"
 msgstr "Admin"
 
-#: pollsite/templates/base_layout.html:64
+#: pollsite/templates/base_layout.html:65
 msgid "See Source Code on GitHub"
 msgstr "Voir le code source sur GitHub"
 
@@ -304,8 +304,8 @@ msgid ""
 "(To get the chat rolling, a Librekast admin must be connected on the "
 "dashboard)"
 msgstr ""
-"(Pour lancer le chat, un administrateur LibreKast doit être connecté"
-"au tableau de bord)"
+"(Pour lancer le chat, un administrateur LibreKast doit être connectéau "
+"tableau de bord)"
 
 #: pollsite/templates/poll/chatlog.html:22
 #, fuzzy
@@ -414,6 +414,10 @@ msgstr "Activités terminées"
 #: pollsite/templates/poll/index.html:36
 msgid "Join Meeting"
 msgstr "Rejoindre l'évènement"
+
+#: pollsite/templates/poll/index.html:51
+msgid "No meetings availaible"
+msgstr "Pas d'évènements en vue"
 
 #: pollsite/templates/poll/login.html:15
 msgid "Choose a username"

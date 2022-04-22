@@ -68,12 +68,13 @@ v0.3.0 :
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
+ * [ ] front : custom tailwinds css file
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
  * [ ] BUG : fix youtube chat "The live chat is no longer live."
  * [ ] BUG : APIs can be null
- * [ ] BUG : Librekast
- * [ ] BUG : content 1st §
+ * [x] BUG : Librekast
+ * [x] BUG : content 1st §
  * [ ] install script
 
 
