@@ -61,6 +61,7 @@ v0.3.0 :
  * [x] Twitch : proper error catching when stream is done
  * [x] back : centralize interaction char in settings
  * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
+ * [x] back : websocket + web exchnge to get Youtube API rolling
  * [x] back : fix bots is_active
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : dashboard dark mode
@@ -69,6 +70,12 @@ v0.3.0 :
  * [ ] front : go back button in dashboard
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
+ * [ ] BUG : fix youtube chat "The live chat is no longer live."
+ * [ ] BUG : APIs can be null
+ * [ ] BUG : Librekast
+ * [ ] BUG : content 1st §
+ * [ ] install script
+
 
 v0.4.0 : 
 
