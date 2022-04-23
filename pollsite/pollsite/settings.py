@@ -31,6 +31,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default='3zaz_n48y63wv5xl(s9=zfrkixc-p
 # TODO when deploying
 DEBUG = os.environ.get("DEBUG",default=False)
 
+ADMIN_URL = os.environ.get("ADMIN_URL",default='admin')
+SHOW_ADMIN = not os.environ.get("DONT_SHOW_ADMIN",default=False)
+
+
 # TODO when deploying add your hostname
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # TODO ADD this variable to your env vars (ex : 'librekast.pour-info.tech')

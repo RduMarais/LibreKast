@@ -6,5 +6,6 @@ def base_context(request):
     # return the value you want as a dictionnary. you may add multiple values in there.
     return {
         'pages': HomePage.objects.all()[1:],
-        'showAdmin' : True,
+        'show_admin' : settings.SHOW_ADMIN,
+        'admin_url' : settings.ADMIN_URL,
     }

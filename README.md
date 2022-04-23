@@ -76,6 +76,7 @@ v0.3.0 : main functionalities
  * [x] BUG : APIs can be null
  * [x] BUG : Librekast
  * [x] BUG : content 1st §
+ * [x] back : admin URL
 
 
 v0.4.0 : more functionnalities
