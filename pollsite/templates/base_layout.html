@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <!-- <link href="{% static 'style.css' %}" rel="stylesheet"> -->
+    <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet"> -->
     <link rel="icon"href="{% static 'favicon.ico' %}">
     {% block scripts %} {% endblock %}
@@ -33,9 +33,10 @@
                 <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900">{{ add_page.topTitle_ln1 }}</a>
                 {% endfor %}
             </nav>
+            <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();">&#9790;</button>
             {% if show_admin %}
             <a href="/{{admin_url}}" <button
-                class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">{% trans "Admin" %}
+                class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-2 md:mt-0">{% trans "Admin" %}
                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     class="w-4 h-4 ml-1" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -70,6 +71,17 @@
             </span>
         </div>
     </footer>
+    <script>
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            btn = document.querySelector('#darkmode-button');
+            if(btn.innerHTML == '&#9790;'){
+                btn.innerHTML = '&#9788;';
+            } else if(btn.innerHTML == '&#9788;'){
+                btn.innerHTML = '&#9790;';
+            }
+        }
+    </script>
     {% block javascript %}
 
     {% comment %} dynamic content goes here {% endcomment %}

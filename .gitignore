@@ -8,5 +8,6 @@ pollsite/poll/migrations/*
 pollsite/home/migrations/*
 !pollsite/static/LibreKast.png
 !pollsite/static/favicon.ico
-!pollsite/static/license
+!pollsite/static/license.html
+!pollsite/static/style.css
 pollsite/db.sqlite3
