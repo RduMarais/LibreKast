@@ -44,7 +44,7 @@ You can find screenshots :
 
 ## Project state
 
-v0.3.0 : 
+v0.3.0 : main functionalities
 
  * [x] FR translation templates
  * [x] FR translation models
@@ -72,31 +72,32 @@ v0.3.0 :
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
  * [ ] BUG : fix youtube chat "The live chat is no longer live."
- * [ ] BUG : APIs can be null
+ * [x] BUG : APIs can be null
  * [x] BUG : Librekast
  * [x] BUG : content 1st §
- * [ ] install script
 
 
-v0.4.0 : 
+v0.4.0 : more functionnalities
 
- * [ ] back : join during a question
  * [ ] generate QR code
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
- * [ ] refactor : make question object-oriented in consumers
- * [ ] refactor : code wrapping and documentation
- * [ ] refactor : config.ini file instead of env variables
  * [ ] add Image slides
  * [ ] back : automatically generate short answer for poll & quizz
- * [ ] back : setup bots commands models
- * [ ] back : setup bots commands for Twitch and Youtube
+ * [x] back : setup bots commands models
+ * [x] back : setup bots commands for Twitch and Youtube
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
+ * [ ] front : type de question : appréciation /100 (échelle)
+ * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
 
-v0.5.0
+v0.5.0 : installation and Quality of Life
 
+ * [ ] refactor : make question object-oriented in consumers
+ * [ ] refactor : code wrapping and documentation
+ * [ ] back : join during a question
+ * [ ] install script
  * [ ] docker wrapping
  * [ ] readthedocs
 

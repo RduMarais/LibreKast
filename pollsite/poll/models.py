@@ -111,8 +111,8 @@ class Attendee(models.Model):
 # model for all questions, whether they are Word Cloud, Polls, Quizzes or ony text.
 # The different question types are defined as an attribute (question_type), and the relevant attributes are optional.
 class Question(SortableMixin):
-	title = models.CharField(_('Question'), max_length=50)
-	desc = MarkdownField(_('Description'), max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY)
+	title = models.CharField(_('Question'), max_length=200)
+	desc = MarkdownField(_('Description'), max_length=800,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	# this attribute is generated automatically as markdown render of previous field
 	desc_rendered = RenderedMarkdownField()
 	pub_date = models.DateTimeField(_('Date Published'),default=timezone.now)
@@ -164,7 +164,7 @@ class Question(SortableMixin):
 #   for Word clouds, choices are user input
 class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
-	choice_text = models.CharField(max_length=100)
+	choice_text = models.CharField(max_length=200)
 	# votes = models.IntegerField(default=0)
 	slug = models.CharField(_('(For Youtube live) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)

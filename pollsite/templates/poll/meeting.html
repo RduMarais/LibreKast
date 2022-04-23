@@ -228,7 +228,7 @@
 			if(choice.classList.contains('librekast-chosen')){
 				if(resultsArray[i].isTrue){
 					let s = document.createElement("span");
-					s.innerHTML = "Yes, the answer is <b>"+resultsArray[i].text+"</b>";
+					s.innerHTML = '{% trans "Yes, the answer is" %} <b>'+resultsArray[i].text+'</b><br/>';
 					questionDesc.appendChild(s);
 					choice.classList.replace('bg-blue-500','bg-green-500');
 				} else{
@@ -236,7 +236,7 @@
 				}
 			} else if(resultsArray[i].isTrue){
 				let s = document.createElement("span");
-				s.innerHTML = "Sorry, the answer was <b>"+resultsArray[i].text+"</b>";
+				s.innerHTML = '{% trans "Sorry, the answer was" %} <b>'+resultsArray[i].text+'</b><br/>';
 				questionDesc.appendChild(s);
 				choice.classList.replace('bg-blue-200','bg-green-300');
 				choice.classList.replace('text-blue-600','text-green-600');
