@@ -16,14 +16,18 @@
             <p class="mb-8 leading-relaxed">{{hpe.topDes}}</p>
             <div class="flex justify-center">
                 <a href="{% url 'poll:index' %}"><button
-                        class="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg">{{hpe.btn1Text}}</button></a>
+                        class="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg"> {% trans "Participate Now"%}</button></a>
                 <a href="{{hpe.btn2Url}}"><button
-                        class="ml-4 inline-flex text-gray-400 bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-700 hover:text-white rounded text-lg">{{hpe.btn2Text}}</button></a>
+                        class="ml-4 inline-flex text-gray-400 bg-gray-800 border-0 py-2 px-6 focus:outline-none hover:bg-gray-700 hover:text-white rounded text-lg"> {{hpe.btn2Text}}</button></a>
 
             </div>
         </div>
         <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
+            {% if page.image %}
+            <img class="object-cover object-center rounded" alt="hero" src="{{ page.image.url }}">
+            {% else %}
             <img class="object-cover object-center rounded" alt="hero" src="{% static 'LibreKast.png' %}">
+            {% endif %}
         </div>
     </div>
 </section>
@@ -31,8 +35,8 @@
 <section class="text-gray-700 body-font">
     <div class="container px-5 py-24 mx-auto">
         <div class="flex flex-col text-center w-full mb-20">
-            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">{{hpe.midTitle}}</h1>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">{{hpe.midDesc}}</p>
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">{% trans "LibreKast, by POUR 1NF0" %}</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">{% trans "LibreKast is an open-source software for meeting and streaming gamification. This software is free to use, to install on your own server, and free to modify under GNU GPL licence. It is developped by POUR 1NF0, a french vulgarization channel on cyber security, for teachers, vulgariators, and streamers. Feel free to contribute !" %}</p>
         </div>
         <div class="flex flex-wrap -m-4 text-center">
             <div class="p-4 md:w-1/4 sm:w-1/2 w-full">

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-22 11:16+0200\n"
+"POT-Creation-Date: 2022-04-23 15:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -248,20 +248,33 @@ msgid "Django site admin"
 msgstr "LibreKast Admin"
 
 #: pollsite/templates/base_layout.html:32
-msgid "How-To"
-msgstr "Tuto"
+msgid "About LibreKast"
+msgstr "À propos de LibreKast"
 
-#: pollsite/templates/base_layout.html:33
-msgid "Contributors"
-msgstr "Contributeurs"
-
-#: pollsite/templates/base_layout.html:36
+#: pollsite/templates/base_layout.html:38
 msgid "Admin"
 msgstr "Admin"
 
-#: pollsite/templates/base_layout.html:65
+#: pollsite/templates/base_layout.html:67
 msgid "See Source Code on GitHub"
 msgstr "Voir le code source sur GitHub"
+
+#: pollsite/templates/home/index.html:34
+msgid "LibreKast, by POUR 1NF0"
+msgstr "LibreKast par POUR 1NF0"
+
+#: pollsite/templates/home/index.html:35
+msgid ""
+"LibreKast is an open-source software for meeting and streaming gamification. "
+"This software is free to use, to install on your own server, and free to "
+"modify under GNU GPL licence. It is developped by POUR 1NF0, a french "
+"vulgarization channel on cyber security, for teachers, vulgariators, and "
+"streamers. Feel free to contribute !"
+msgstr "LibreKast est une application de gamification de réunions et de streams. "
+"Cette application est gratuite et libre d'utilisation, d'installation et de modification "
+"sous licence libre GNU GPL. Elle est développée par POUR 1NF0, une chaîne de vulgarisation "
+"française en cyber sécurité, à destination des professeurs, vulgarisateurs et streamers. "
+"Toute contribution est bienvenue !"
 
 #: pollsite/templates/home/index.html:43
 msgid "Catch"
@@ -293,7 +306,7 @@ msgstr "Rythmez"
 
 #: pollsite/templates/home/index.html:74
 msgid "Your interventions with key ideas"
-msgstr "Vos interventions avec des jeux"
+msgstr "Vos interventions avec des quizz"
 
 #: pollsite/templates/poll/chatlog.html:11
 msgid "Meeting Live Chat Log"
@@ -438,6 +451,17 @@ msgstr "Questions précédentes"
 #: pollsite/templates/poll/meeting.html:42
 msgid "See results"
 msgstr "Voir les résultats"
+
+#: pollsite/templates/poll/meeting.html:231
+msgid "Yes, the answer is"
+msgstr ""
+
+#: pollsite/templates/poll/meeting.html:239
+msgid "Sorry, the answer was"
+msgstr ""
+
+#~ msgid "Contributors"
+#~ msgstr "Contributeurs"
 
 #~ msgid "video ID for Youtube live stream (only if platform is Youtube)"
 #~ msgstr "[Youtube uniquement] ID de vidéo Youtube"

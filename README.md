@@ -63,6 +63,7 @@ v0.3.0 : main functionalities
  * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
  * [x] back : websocket + web exchnge to get Youtube API rolling
  * [x] back : fix bots is_active
+ * [x] back : have home and additional pages as models
  * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
@@ -189,9 +190,6 @@ export SECRET_KEY="<your secret key>"
 
 ```bash
 python manage.py collectstatic
-# build tailwinds with npm 
-npm install -D tailwindcss
-npx tailwindcss -i ./style_input.css -o ./pollsite/static/style.css --watch --minifier
 ```
 
 **6. Run Redis in a docker container**
