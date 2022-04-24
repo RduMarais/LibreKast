@@ -19,18 +19,18 @@
 <body>
     <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
 
-    <header class="text-gray-700 body-font">
+    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500">
         <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <a href="/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
                 <img style="max-height:30px; width: auto;" src="{% static 'LibreKast.png' %}">
-                <span class="ml-3 text-xl">LibreKast</span>
+                <span class="ml-3 text-xl dark:text-white">LibreKast</span>
             </a>
-            <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
+            <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center dark:text-white">
                 <!-- <a href="" class="mr-5 hover:text-gray-900">Featured</a> -->
-                <a href="/poll" class="mr-5 hover:text-gray-900">{% trans "Meetings" %}</a>
-                <a href="/#HowTo" class="mr-5 hover:text-gray-900">{% trans "About LibreKast" %}</a>
+                <a href="/poll" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{% trans "Meetings" %}</a>
+                <a href="/#HowTo" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{% trans "About LibreKast" %}</a>
                 {% for add_page in pages %}
-                <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900">{{ add_page.topTitle_ln1 }}</a>
+                <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
                 {% endfor %}
             </nav>
             <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();">&#9790;</button>
@@ -53,7 +53,7 @@
     {%endblock%}
 
 
-    <footer class="text-gray-700 body-font">
+    <footer class="text-gray-700 dark:bg-pour1nf0-back-500 body-font">
         <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
             <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-500">
                 <span class="ml-3 text-xs">©

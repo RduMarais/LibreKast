@@ -64,15 +64,16 @@ v0.3.0 : main functionalities
  * [x] back : websocket + web exchnge to get Youtube API rolling
  * [x] back : fix bots is_active
  * [x] back : have home and additional pages as models
- * [ ] front : fix bug in dashboard where chat log gets outside of the chat section 
+ * [x] front : custom tailwinds css file
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] front : go back button in dashboard
- * [ ] front : custom tailwinds css file
+ * [ ] back : go back button in dashboard
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
  * [ ] BUG : fix youtube chat "The live chat is no longer live."
+ * [ ] BUG : fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : APIs can be null
  * [x] BUG : Librekast
  * [x] BUG : content 1st §
