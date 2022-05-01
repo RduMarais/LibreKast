@@ -143,6 +143,7 @@
 
 <script>
 	const meeting_id = {{ meeting.id }};
+	var botMsgPrefix = '{{ bot_msg_prefix }}';
 	const dashboardSocket = new WebSocket(
 		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
 		+ window.location.host

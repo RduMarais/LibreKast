@@ -65,6 +65,7 @@ class YoutubeHandler(threading.Thread):
 					access_type='offline',
 					include_granted_scopes='true')
 				print('debug : OAUTH Authorization : go to this URL :')
+				# self.meetingConsumer.send(text_data=json.dumps({'message':'error test API'}))
 				print(authorization_url)
 				# i kinda need to make the redirection myself for now ?
 				oauth_code = input('INPUT : Press any key when authorized\n') 
@@ -155,7 +156,7 @@ class YoutubeHandler(threading.Thread):
 		command = self.meetingConsumer.meeting.messagebot_set.filter(command=msg['text'].split()[0][1:]).filter(is_active=True)
 		if(command):
 			print('debug : command activated : '+command[0].message)
-			self.send_message('[BOT] '+command[0].message)
+			self.send_message(settings.BOT_MSG_PREFIX+command[0].message)
 
 	def send_message(self,message):
 		request = self.youtube_api_client.liveChatMessages().insert(

@@ -30,6 +30,7 @@
 {% block javascript %}
 <script>
 	var meetingPlatform = '{{meeting.platform}}' ; 
+	var botMsgPrefix = '{{ bot_msg_prefix }}' ; 
 
 	{% if meeting.platform != 'IRL' %}
 

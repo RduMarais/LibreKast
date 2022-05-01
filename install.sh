@@ -20,7 +20,12 @@ echo "\n### 4. creating database ###\n"
 python manage.py makemigrations
 python manage.py migrate
 
+echo "\n### 4bis. creating super user ###\n"
 python manage.py createsuperuser
+
+echo "\n### 4ter. creating default home page ###\n"
+
+echo "from home.models import HomePage; HomePage.objects.create()" | python pollsite/manage.py shell
 
 echo "\n### 5. Starting REDIS ###\n"
 docker run -p 6379:6379 -d redis:5
@@ -35,4 +40,4 @@ echo -n "gunicorn pollsite.asgi -b 127.0.0.1:8000 -w 2 -k uvicorn.workers.Uvicor
 echo -n "source ./env/bin/activate" > ./start.sh
 echo -n "gunicorn pollsite.asgi -b 127.0.0.1:8000 -w 2 -k uvicorn.workers.UvicornWorker --chdir ./pollsite/ -e DJANGO_SETTINGS_MODULE=pollsite.settings --log-file librekast.log -e -SECRET_KEY=$SECRET_KEY -e ALLOWED_HOSTS_LOCAL=$filename &" >> ./start.sh
 
-echo -n "you may set additional properties with the following env variables :\n- DEBUG\n- ADMIN_URL\n- SHOW_ADMIN\n- DISABLE_ENCRYPTION\n"
+echo -n "you may set additional properties with the following env variables :\n- DEBUG\n- ADMIN_URL\n- DONT_SHOW_ADMIN\n- DISABLE_ENCRYPTION\n"

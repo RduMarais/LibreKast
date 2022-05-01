@@ -8,4 +8,5 @@ def base_context(request):
         'pages': HomePage.objects.all()[1:],
         'show_admin' : settings.SHOW_ADMIN,
         'admin_url' : settings.ADMIN_URL,
+        'bot_msg_prefix' : settings.BOT_MSG_PREFIX,
     }

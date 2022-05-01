@@ -49,27 +49,28 @@ v0.3.0 : main functionalities
  * [x] FR translation templates
  * [x] FR translation models
  * [x] FR translation JS code
+ * [x] OBS dedicated chatlog page
  * [x] Twitch : Fetch chat messages
  * [x] Twitch : Change Youtube code to support same threading model
  * [x] Twitch : Add chat in dashboard
  * [x] Twitch : Twitch support for answers
  * [x] Twitch : API as model
  * [x] Twitch : proper error catching
- * [x] OBS dedicated chatlog page
- * [x] front : remove dashboard unused code
- * [x] back : join admin open with attendee_id
  * [x] Twitch : proper error catching when stream is done
+ * [x] back : join admin open with attendee_id
  * [x] back : centralize interaction char in settings
  * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
  * [x] back : websocket + web exchnge to get Youtube API rolling
  * [x] back : fix bots is_active
  * [x] back : have home and additional pages as models
+ * [x] front : remove dashboard unused code
  * [x] front : custom tailwinds css file
  * [ ] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
- * [ ] front : go back button in dashboard
- * [ ] back : go back button in dashboard
+ * [ ] Youtube : setup oauth redirection for API
+ * [ ] Youtube : setup creds renewal
+ * [ ] bots : regular messages bots
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
  * [ ] BUG : fix youtube chat "The live chat is no longer live."
@@ -82,27 +83,33 @@ v0.3.0 : main functionalities
 
 v0.4.0 : more functionnalities
 
- * [ ] generate QR code
+ * [ ] front : go back button in dashboard
+ * [ ] back : go back button in dashboard
+ * [ ] back : generate QR code
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] add Image slides
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
  * [ ] Youtube : automatically generate short answer for poll & quizz
+ * [ ] Youtube : setup alert for Youtube creds
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
+ * [ ] Bots sonores
+ * [ ] Bots réguliers
 
 v0.5.0 : installation and Quality of Life
 
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
  * [ ] back : join during a question
- * [ ] install script
+ * [x] install script
  * [ ] docker wrapping
  * [ ] readthedocs
+ * [ ] dulicate question and meetings
 
 #### code architecture
 

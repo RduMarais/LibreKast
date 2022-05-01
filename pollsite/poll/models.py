@@ -186,3 +186,4 @@ class Vote(models.Model):
 	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
 
 
+

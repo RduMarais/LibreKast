@@ -87,13 +87,26 @@ class ScoreBoard(admin.ModelAdmin):
 
 class VoteAdmin(admin.ModelAdmin):
 	readonly_fields =['choice', 'user']
-	list_display =('choice', 'get_user','id')
+	list_display =('choice', 'get_user','get_question')
+
+	def get_question(self,obj):
+		return obj.choice.question
 
 	def get_user(self,obj):
-		return obj.user.name
+		if(obj.user.is_twitch):
+			return 'T: '+obj.user.name
+		if(obj.user.is_youtube):
+			return 'Y: '+obj.user.name
+		else:
+			return obj.user.name
+
+class TwitchAPIAdmin(admin.ModelAdmin):
+	list_display = ('name','description')
 
 class YTAPIAdmin(admin.ModelAdmin):
-	exclude = ('credentials',)
+	# readonly_fields =['authorized_credentials']
+	exclude = ('authorized_credentials',)
+	list_display = ('name','description')
 
 class BotAdmin(admin.ModelAdmin):
 	list_display =('command','is_active','meeting')
@@ -103,6 +116,6 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Attendee, ScoreBoard)
 admin.site.register(Vote, VoteAdmin) # for debug
-admin.site.register(TwitchAPI)
+admin.site.register(TwitchAPI,TwitchAPIAdmin)
 admin.site.register(YoutubeAPI,YTAPIAdmin)
 admin.site.register(MessageBot,BotAdmin)
