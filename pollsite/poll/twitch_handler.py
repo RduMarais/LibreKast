@@ -1,13 +1,18 @@
 import threading
 import twitch
+import time
 from django.conf import settings
 from .models import Choice, Question, Meeting,Attendee,Vote
 
 
 PRINT_MESSAGES = False
+TWITCH_MSG_PERIOD = 5
 
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
+	# quick fix for periodic messages
+	i = 0
+	j = 0
 
 	def __init__(self,channel,twitch_api):
 		self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
@@ -21,17 +26,30 @@ class TwitchHandler(threading.Thread):
 			print('debug : twitch chat listening')
 
 
+	def iterate_periodic_bots(self):
+		if(self.i % TWITCH_MSG_PERIOD == 0 and self.meetingConsumer.meeting.periodicbot_set.all()):
+			self.chat.send(settings.BOT_MSG_PREFIX
+				+self.meetingConsumer.meeting.periodicbot_set.all()[self.j].message)
+			self.print_message({
+				'author':settings.TWITCH_NICKNAME,
+				'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.j].message,
+				'source':'t'})
+			self.j = self.j + 1 % len(self.meetingConsumer.meeting.periodicbot_set.all())
+		self.i = (self.i + 1) % TWITCH_MSG_PERIOD
+
 	def print_message(self,chatlog):
 		self.meetingConsumer.notify_chat(chatlog)
 
 	def show_message(self,message: twitch.chat.Message) -> None:
-		 # print(f'author {message.sender}, text: {message.text}')
-		 self.print_message({'author':message.sender,'text':message.text,'source':'t'})
+		# print(f'author {message.sender}, text: {message.text}')
+		self.print_message({'author':message.sender,'text':message.text,'source':'t'})
+		self.iterate_periodic_bots()
 
 	def handle_question(self,message: twitch.chat.Message) -> None:
 		if message.text.startswith(settings.INTERACTION_CHAR):
 			# TODO : is subscriber
-			attendee = self.meetingConsumer.check_attendee(message.sender,is_subscriber=False,is_twitch=True)
+			attendee = self.meetingConsumer.check_attendee(message.sender,is_subscriber=False,
+				is_twitch=True)
 			question_type = self.meetingConsumer.meeting.current_question().question_type
 
 			if(question_type == 'WC'):
@@ -59,6 +77,7 @@ class TwitchHandler(threading.Thread):
 			if(command):
 				print('debug : command activated : '+command[0].message)
 				self.chat.send(settings.BOT_MSG_PREFIX+command[0].message)
+				self.print_message({'author':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+command[0].message,'source':'t'})
 
 
 
@@ -73,6 +92,9 @@ class TwitchHandler(threading.Thread):
 		self.chat.subscribe(self.handle_question)
 		if(settings.DEBUG):
 			print('debug : twitch poll running')
+		# while(True):
+		# 	print('-- debug : loop running')
+		# 	time.sleep(1)
 
 	def stop(self):
 		self.terminate()

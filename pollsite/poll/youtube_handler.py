@@ -10,7 +10,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 
 from django.conf import settings
-from .models import Choice, Question, Meeting,Attendee,Vote,YoutubeAPI
+from .models import Choice, Question, Meeting,Attendee,Vote,YoutubeAPI,PeriodicBot
 
 
 # This class is designed to create a simple handler for managing Youtube live stream chat message with an API key
@@ -180,6 +180,8 @@ class YoutubeHandler(threading.Thread):
 		print('debug : YT chat listening')
 		# self._running = True # else it will not allow 2 starts in a meeting
 		print('##### polling....')
+		i = 0
+		j = 0
 		while(self._running):
 			for c in self.fetch_chat_message():
 				if(c['text'].startswith(settings.INTERACTION_CHAR) and self._polling):
@@ -188,6 +190,13 @@ class YoutubeHandler(threading.Thread):
 					self.print_message(c)
 				if(c['text'].startswith('!')):
 					self.bot_listen(c)
-
+			if(i % settings.PERIODIC_BOT_DELAY == 0 and 
+				self.meetingConsumer.meeting.periodicbot_set.all()):
+				# send jth bot message
+				self.send_message(settings.BOT_MSG_PREFIX
+					+self.meetingConsumer.meeting.periodicbot_set.all()[j].message)
+				# iterate over j
+				j = (j + 1) % len(self.meetingConsumer.meeting.periodicbot_set.all())
+			i = i + 2 % 3600
 			time.sleep(2)
 

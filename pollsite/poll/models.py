@@ -85,13 +85,16 @@ class Meeting(models.Model):
 
 
 class MessageBot(models.Model):
-	command = models.CharField(_('command to trigger the message'),max_length=10) # unique ? 
+	command = models.CharField(_('command to trigger the message'),max_length=10) 
 	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
 	is_active = models.BooleanField(_('is this command activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-	# twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True)
-	# youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True)
 
+class PeriodicBot(models.Model):
+	name = models.CharField(_('short name for the message'),max_length=15) 
+	message = models.CharField(_('Message to send regularly'),max_length=150)
+	is_active = models.BooleanField(_('is this message activated'))
+	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 
 # model to hold the attendee's name 
 #   (which allows to create a top and them to give themselves cool names)

@@ -70,7 +70,12 @@ v0.3.0 : main functionalities
  * [ ] front : meeting dark mode
  * [ ] Youtube : setup oauth redirection for API
  * [ ] Youtube : setup creds renewal
- * [ ] bots : regular messages bots
+ * [x] Youtube : regular messages bots
+ * [ ] front : bot message icon
+ * [ ] front : static platform icon
+ * [ ] Twitch : regular messages bots
+   * either i start a new thread from the twitch handler
+   * either i find a more pythonesque way to handle this
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
  * [ ] BUG : fix youtube chat "The live chat is no longer live."

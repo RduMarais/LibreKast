@@ -437,6 +437,9 @@
 		}
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg")
+		if(chatMessage['text'].startsWith(botMsgPrefix)){
+			t.classList.add("librekast-bot-message","italic");
+		}
 		l.appendChild(u);
 		l.appendChild(t);
 		chatlog.appendChild(l);

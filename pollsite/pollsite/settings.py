@@ -200,6 +200,7 @@ CHANNEL_LAYERS = {
 INTERACTION_CHAR = "#" 
 TWITCH_NICKNAME = 'LibreKast_Bot'
 BOT_MSG_PREFIX = '[BOT] '
+PERIODIC_BOT_DELAY = 10
 
 YOUTUBE_REDIRECT_URIS = ["http://localhost", "urn:ietf:wg:oauth:2.0:oob"]
 YOUTUBE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
