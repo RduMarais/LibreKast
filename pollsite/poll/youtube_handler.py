@@ -22,6 +22,8 @@ PRINT_MESSAGES = True
 
 class YoutubeHandler(threading.Thread):
 	meetingConsumer = None
+	time_iterator = 0
+	periodic_bot_iterator = 0
 	  
 	def __init__(self,youtube_api,yt_id):
 		threading.Thread.__init__(self)
@@ -175,13 +177,19 @@ class YoutubeHandler(threading.Thread):
 		if(settings.DEBUG):
 			print(response)
 
+	def send_periodic_bots(self):
+		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meetingConsumer.meeting.periodicbot_set.all()):
+			# send jth bot message
+			self.send_message(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+			# iterate over periodic_bot_iterator
+			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meetingConsumer.meeting.periodicbot_set.all())
+		self.time_iterator = self.time_iterator + 2 % 3600
 
 	def run(self):
 		print('debug : YT chat listening')
 		# self._running = True # else it will not allow 2 starts in a meeting
 		print('##### polling....')
 		i = 0
-		j = 0
 		while(self._running):
 			for c in self.fetch_chat_message():
 				if(c['text'].startswith(settings.INTERACTION_CHAR) and self._polling):
@@ -190,13 +198,6 @@ class YoutubeHandler(threading.Thread):
 					self.print_message(c)
 				if(c['text'].startswith('!')):
 					self.bot_listen(c)
-			if(i % settings.PERIODIC_BOT_DELAY == 0 and 
-				self.meetingConsumer.meeting.periodicbot_set.all()):
-				# send jth bot message
-				self.send_message(settings.BOT_MSG_PREFIX
-					+self.meetingConsumer.meeting.periodicbot_set.all()[j].message)
-				# iterate over j
-				j = (j + 1) % len(self.meetingConsumer.meeting.periodicbot_set.all())
-			i = i + 2 % 3600
+			self.send_periodic_bots()
 			time.sleep(2)
 

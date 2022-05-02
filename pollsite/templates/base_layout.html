@@ -16,10 +16,10 @@
     {% comment %} title of page goes here {% endcomment %}
 </head>
 
-<body>
+<body class="dark:bg-pour1nf0-back-400 dark:text-gray-100">
     <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
 
-    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500">
+    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500 md:mb-4">
         <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <a href="/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
                 <img style="max-height:30px; width: auto;" src="{% static 'LibreKast.png' %}">
@@ -27,16 +27,16 @@
             </a>
             <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center dark:text-white">
                 <!-- <a href="" class="mr-5 hover:text-gray-900">Featured</a> -->
-                <a href="/poll" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{% trans "Meetings" %}</a>
-                <a href="/#HowTo" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{% trans "About LibreKast" %}</a>
+                <a href="/poll" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{% trans "Meetings" %}</a>
+                <a href="/#HowTo" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{% trans "About LibreKast" %}</a>
                 {% for add_page in pages %}
-                <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900 dark:hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
+                <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
                 {% endfor %}
             </nav>
-            <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();">&#9790;</button>
+            <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();" value="day">&#9790;</button>
             {% if show_admin %}
             <a href="/{{admin_url}}" <button
-                class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-2 md:mt-0">{% trans "Admin" %}
+                class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 dark:bg-pour1nf0-blue-500 dark:hover:bg-pour1nf0-blue-200 rounded text-base mt-2 md:mt-0">{% trans "Admin" %}
                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     class="w-4 h-4 ml-1" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -75,10 +75,12 @@
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
             btn = document.querySelector('#darkmode-button');
-            if(btn.innerHTML == '&#9790;'){
-                btn.innerHTML = '&#9788;';
-            } else if(btn.innerHTML == '&#9788;'){
+            if(btn.value=='night'){
                 btn.innerHTML = '&#9790;';
+                btn.value = 'day';
+            } else if(btn.value == 'day'){
+                btn.innerHTML = '&#9788;';
+                btn.value = 'night';
             }
         }
     </script>

@@ -11,8 +11,7 @@ TWITCH_MSG_PERIOD = 5
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
 	# quick fix for periodic messages
-	i = 0
-	j = 0
+	periodic_bot_iterator = 0
 
 	def __init__(self,channel,twitch_api):
 		self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
@@ -26,16 +25,13 @@ class TwitchHandler(threading.Thread):
 			print('debug : twitch chat listening')
 
 
-	def iterate_periodic_bots(self):
-		if(self.i % TWITCH_MSG_PERIOD == 0 and self.meetingConsumer.meeting.periodicbot_set.all()):
-			self.chat.send(settings.BOT_MSG_PREFIX
-				+self.meetingConsumer.meeting.periodicbot_set.all()[self.j].message)
-			self.print_message({
-				'author':settings.TWITCH_NICKNAME,
-				'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.j].message,
-				'source':'t'})
-			self.j = self.j + 1 % len(self.meetingConsumer.meeting.periodicbot_set.all())
-		self.i = (self.i + 1) % TWITCH_MSG_PERIOD
+	def send_periodic_bots(self):
+		self.chat.send(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+		self.print_message({
+			'author':settings.TWITCH_NICKNAME,
+			'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message,
+			'source':'t'})
+		self.periodic_bot_iterator = self.periodic_bot_iterator + 1 % len(self.meetingConsumer.meeting.periodicbot_set.all())
 
 	def print_message(self,chatlog):
 		self.meetingConsumer.notify_chat(chatlog)
@@ -43,7 +39,6 @@ class TwitchHandler(threading.Thread):
 	def show_message(self,message: twitch.chat.Message) -> None:
 		# print(f'author {message.sender}, text: {message.text}')
 		self.print_message({'author':message.sender,'text':message.text,'source':'t'})
-		self.iterate_periodic_bots()
 
 	def handle_question(self,message: twitch.chat.Message) -> None:
 		if message.text.startswith(settings.INTERACTION_CHAR):

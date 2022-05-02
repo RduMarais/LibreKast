@@ -13,7 +13,7 @@
 
 {% block content  %}
 <section class="text-center pb-2 mb-2" name="meeting_details">
-	<h1 class="text-3xl text-center">{% trans "Meeting Dashboard" %} : {{ meeting.title }}</h1>
+	<h1 class="text-3xl dark:text-white text-center">{% trans "Meeting Dashboard" %} : {{ meeting.title }}</h1>
 </section>
 <div class="md:flex">
 <section class="w-full md:w-1/2 body-font md:border md:border-blue-200" name="current-question">
@@ -42,9 +42,9 @@
 			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#127942; {% trans "show scoreboard" %}</button>
 			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9193; {% trans "next activity" %}</button>
 		</div>
-		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center">
+		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center dark:bg-pour1nf0-pink-900">
 			<thead>
-				<tr class="bg-red-300">
+				<tr class="bg-red-300 dark:bg-pour1nf0-pink-700">
 				  <th>{% trans "Question" %}</th>
 				  <th>{% trans "Type" %}</th>
 				  <th>{% trans "Status" %}</th>
@@ -66,10 +66,10 @@
 					  	{% else %}&#9723;
 					  	{%endif%}
 				  	</span>
-				  	<button id="librekast-question-go-{{question.id}}" class="bg-gray-300">&#9723;
+				  	<button id="librekast-question-go-{{question.id}}">&#9723;
 				  	</button>
-				  	<button id="librekast-question-results-{{question.id}}" class="bg-gray-300">&#9723;
-				  	<button id="librekast-question-next-{{question.id}}" class="bg-gray-300">&#9723;
+				  	<button id="librekast-question-results-{{question.id}}">&#9723;
+				  	<button id="librekast-question-next-{{question.id}}">&#9723;
 				  	</button>
 				  </td>
 				</tr>
@@ -85,7 +85,7 @@
 			<div class="basis-3/4 inline"><span class="text-2xl mr-2">{% trans "Chat Log" %}</span></div>
 			<div class="basis-1/4 inline"><button class="bg-gray-500 px-1 rounded py" onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'poll:chatlog' meeting.id %}')">{% trans "URL" %}</button></div>
 		</div>
-		<div class="border border-blue-200 bg-blue-100" id="chatlog-content">
+		<div class="border border-blue-200 bg-blue-100 dark:border-pour1nf0-blue-700 dark:bg-pour1nf0-dark-100" id="chatlog-content">
 		</div>
 	</div>
 	{% endif %}
@@ -99,7 +99,7 @@
 		</div>
 		<div class="basis-1/4 inline text-center">
 			<span class="p-2" id="update-scoreboard-div">
-			<button id="update-scoreboard" value="update-scoreboard" class="bg-green-600 hover:bg-green-800 text-white text-center font-bold rounded">
+			<button id="update-scoreboard" value="update-scoreboard" class="bg-green-600 hover:bg-green-800 dark:bg-pour1nf0-purple-600 dark:hover:bg-pour1nf0-purple-200 text-white text-center font-bold rounded">
 				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
 				</svg>
@@ -108,14 +108,14 @@
 		</div>
 	</div>
 	<div class = "w-full items-center m-2 p-2">
-	<table class="table-auto border-separate border border-solid border-green-900 divide-solid divide-y-2 divide-x-2 divide-green-800 mx-auto text-center">
+	<table class="table-auto border-separate border border-solid border-green-900 divide-solid divide-y-2 divide-x-2 divide-green-800 mx-auto text-center dark:bg-pour1nf0-purple-900">
 		<thead>
-			<tr class="bg-green-300">
+			<tr class="bg-green-300 dark:bg-pour1nf0-purple-400">
 			  <th>{% trans "Username" %}</th>
 			  <th>{% trans "Score" %}</th>
 			  {% if meeting.platform != 'IRL' %}
 			  <!-- so basically I prepared this for Twitch -->
-			  <th>Sponsor</th>
+			  <th>{% trans "Badges" %}</th>
 			  {% endif %}
 			</tr>
 		</thead>
@@ -123,10 +123,20 @@
 			{% if attendees %}
 			{% for attendee in attendees %}
 			<tr>
-			  <td class="{% if attendee.is_youtube %}text-red-700{% endif %}{% if attendee.is_twitch %}text-purple-700{% endif %}">{{attendee.name}}</td>
+			  <td class="{% if attendee.is_youtube %}text-red-700 dark:text-red-500{% endif %}{% if attendee.is_twitch %}text-purple-700 dark:text-pour1nf0-purple-100{% endif %}">{{attendee.name}}</td>
 			  <td>{{attendee.score}}</td>
 			  {% if meeting.platform != 'IRL' %}
-			  <td>{{attendee.is_subscriber}}</td>
+			  <td>
+			  	{% if attendee.is_youtube %}
+			  	<img class="w-4" src="{% static 'youtube-icon.png' %}">
+			  	{% endif %}
+				{% if attendee.is_twitch %}
+				<img class="w-4" src="{% static 'twitch-icon.png' %}">
+				{% endif %}
+			  	{% if attendee.is_subscriber %}
+			  	<img class="w-4" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Twemoji12_1f947.svg/240px-Twemoji12_1f947.svg.png">
+				{% endif %}
+			  </td>
 			  {% endif %}
 			</tr>
 			{% endfor %}
@@ -253,7 +263,7 @@
 		item_next.onclick = null;
 		item_next.innerHTML = "&#9723;"; //blank icon
 
-		document.querySelector('#librekast-question-'+id).classList.remove('bg-red-200');
+		document.querySelector('#librekast-question-'+id).classList.remove('bg-red-200','dark:bg-pour1nf0-pink-400');
 		document.querySelector('#librekast-question-status-'+id).innerHTML = '&#9745;';
 
 		// change button 
@@ -276,7 +286,7 @@
 	function updateMeetingPlan(questionId){
 		questionStatus = document.querySelector('#librekast-question-status-'+questionId);
 		questionStatus.innerHTML = '&#9989;';
-		document.querySelector('#librekast-question-'+questionId).classList.add('bg-red-200');
+		document.querySelector('#librekast-question-'+questionId).classList.add('bg-red-200','dark:bg-pour1nf0-pink-400');
 		questionGo = document.querySelector('#librekast-question-go-'+questionId);
 		// questionGo.classList.remove('hidden');
 		questionGo.innerHTML = "&#9199;";
@@ -297,7 +307,6 @@
 
 
 	function showResultsPoll(resultsArray){
-		// anychart.theme(anychart.themes.darkBlue); //TODO : dark mode
 		document.querySelector("#question-content").innerText = '';
 
 		var chart = anychart.column();
@@ -306,11 +315,13 @@
 			a = [resultsArray[i].text,resultsArray[i].votes];
 			chartData.push(a);
 		}
+		if(document.querySelector('#darkmode-button').value == 'night'){
+			anychart.theme(anychart.themes.darkBlue);
+		}
 		chart.data(chartData);
 		chart.container("question-content");
 
 		chart.draw();
-		// TODO : this is a dirty fix
 		quickNdirtyExpandGraphHeight(300);
 	}
 
@@ -318,7 +329,7 @@
 		for(i in resultsArray){
 			if(resultsArray[i].isTrue){
 				let s = document.createElement("span");
-				s.innerHTML = "The answer was <b>"+resultsArray[i].text+"</b>";
+				s.innerHTML = "The answer was <b>"+resultsArray[i].text+"</b><br/>";
 				questionDesc.appendChild(s);
 			}
 		}
@@ -351,6 +362,9 @@
 		document.querySelector('#question-div').appendChild(ncontent);
 
 		var chart = anychart.tagCloud(wordCloudData);
+		if(document.querySelector('#darkmode-button').value == 'night'){
+			anychart.theme(anychart.themes.darkBlue);
+		}
 		chart.angles([0]);
 		chart.container("question-content");
 		chart.draw();
@@ -368,6 +382,9 @@
 		// console.log('created content');
 
 		var chart = anychart.tagCloud(wordCloudData);
+		if(document.querySelector('#darkmode-button').value == 'night'){
+			anychart.theme(anychart.themes.darkBlue);
+		}
 		chart.angles([0]);
 		chart.container("question-content");
 		chart.draw();
@@ -392,8 +409,8 @@
 			c.innerText = choicesArray[i].text;
 			c.id = 'choice-'+choicesArray[i].id;
 			c.value = choicesArray[i].id;
-			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white");
-			c.classList.add("text-blue-600","text-center","py-2","px-4","my-2","rounded");
+			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white","dark:bg-pour1nf0-blue-700","dark:hover:bg-pour1nf0-blue-200");
+			c.classList.add("text-blue-600","dark:text-gray-200","text-center","py-2","px-4","my-2","rounded");
 			c.classList.add("librekast-choice");
 			content.children[0].appendChild(c);
 		}
@@ -417,29 +434,33 @@
 		u.innerText = chatMessage['author'];
 		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
 		if(chatMessage['source']=='y'){
-			u.classList.add("librekast-youtube-username","text-red-700");
+			u.classList.add("librekast-youtube-username","text-red-700","dark:text-red-500");
 			u.classList.remove('text-blue-700');
 			{% if meeting.platform == 'MX' %}
 			let youtubeIcon = document.createElement('img');
 			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-			youtubeIcon.src = 'https://restream.io/img/api/platforms/platform-5.png';
+			youtubeIcon.src = "{% static 'youtube-icon.png' %}";
 			l.appendChild(youtubeIcon);
 			{% endif %}
 		}
 		if(chatMessage['source']=='t'){
-			u.classList.add("librekast-twitch-username","text-purple-700");
+			u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
 			u.classList.remove('text-blue-700');
 			{% if meeting.platform == 'MX' %}
 			let twitchIcon = document.createElement('img');
 			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-			twitchIcon.src = 'https://restream.io/img/api/platforms/platform-1.png';
+			twitchIcon.src = "{% static 'twitch-icon.png' %}";
 			l.appendChild(twitchIcon);
 			{% endif %}
 		}
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg")
-		if(chatMessage['text'].startsWith(botMsgPrefix)){
+		if(t.innerText.startsWith(botMsgPrefix)){
 			t.classList.add("librekast-bot-message","italic");
+			let botIcon = document.createElement('img');
+			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+			botIcon.src = "{% static 'bot-icon.png' %}";
+			l.appendChild(botIcon);
 		}
 		l.appendChild(u);
 		l.appendChild(t);
