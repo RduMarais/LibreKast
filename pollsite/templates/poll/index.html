@@ -8,13 +8,13 @@
 {% block content  %}
 
 {% if meetings %}
-<h1 class="text-3xl text-center">{% trans "Join a Meeting" %}</h1>
+<h1 class="text-3xl text-center mt-4">{% trans "Join a Meeting" %}</h1>
 <section class="text-gray-700 body-font overflow-hidden">
     <div class="container px-5 py-24 mx-auto">
         <div class="-my-8">
             {% for meeting in meetings %}
-            <div class="py-8 flex flex-wrap md:flex-no-wrap">
-                <div class="md:w-64 md:mb-0 mb-6 fle x-shrink-0 flex flex-col">
+            <div class="py-8 flex md:flex-no-wrap">
+                <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
                     {% if meeting.image %}
                     <img src="{{ meeting.image.url }}" style="margin-right:20px">
                     {% else %}

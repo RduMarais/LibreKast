@@ -65,7 +65,7 @@ v0.3.0 : main functionalities
  * [x] back : have home and additional pages as models
  * [x] front : remove dashboard unused code
  * [x] front : custom tailwinds css file
- * [ ] front : dashboard dark mode
+ * [x] front : dashboard dark mode
  * [ ] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] Youtube : setup oauth redirection for API
@@ -81,6 +81,7 @@ v0.3.0 : main functionalities
  * [ ] BUG : fix youtube chat "The live chat is no longer live."
  * [ ] BUG : fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : APIs can be null
+ * [x] BUG : use Cross API for Youtube
  * [x] BUG : Librekast
  * [x] BUG : content 1st §
  * [x] back : admin URL

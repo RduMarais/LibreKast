@@ -19,7 +19,7 @@
 <body class="dark:bg-pour1nf0-back-400 dark:text-gray-100">
     <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
 
-    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500 md:mb-4">
+    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500">
         <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <a href="/" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
                 <img style="max-height:30px; width: auto;" src="{% static 'LibreKast.png' %}">
@@ -36,7 +36,7 @@
             <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();" value="day">&#9790;</button>
             {% if show_admin %}
             <a href="/{{admin_url}}" <button
-                class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 dark:bg-pour1nf0-blue-500 dark:hover:bg-pour1nf0-blue-200 rounded text-base mt-2 md:mt-0">{% trans "Admin" %}
+                class="inline-flex items-center bg-gray-300 border-0 py-1 px-3 focus:outline-none hover:bg-gray-500 dark:bg-gray-800 dark:hover:bg-gray-300 rounded text-base mt-2 md:mt-0 dark:text-gray-700 ">{% trans "Admin" %}
                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     class="w-4 h-4 ml-1" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"></path>

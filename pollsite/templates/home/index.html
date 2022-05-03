@@ -6,7 +6,7 @@
 {% load static %}
 
 {% block content  %}
-<section class="text-gray-500 bg-pour1nf0-blue-900 body-font">
+<section class="text-gray-300 dark:text-gray-400 bg-pour1nf0-blue-900 body-font dark:bg-pour1nf0-back-700">
     <div class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
         <div
             class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
@@ -82,7 +82,7 @@
     </div>
 </section>
 
-<section class="text-gray-700 body-font bg-blue-900">
+<section class="text-gray-300 body-font bg-pour1nf0-blue-900 dark:text-gray-400 dark:bg-pour1nf0-back-700">
 
     <div class="container px-5 py-24 mx-auto">
         <a name="Contributors"></a>
@@ -91,7 +91,7 @@
 
             <h1 class="text-2xl font-medium title-font mb-4 text-white">{{hpe.teamTitle}}</h1>
             <br>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-gray-500">{{hpe.teamDesc}}</p>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-gray-300 dark:text-gray-400">{{hpe.teamDesc}}</p>
         </div>
         <div class="flex flex-wrap -m-4 text-center">
             {% for member in team %}
@@ -102,7 +102,7 @@
                     <div class="w-full">
                         <h2 class="title-font font-medium text-lg text-gray-100">{{member.title}}</h2>
                         <h3 class="text-gray-500 mb-3">{{member.role}}</h3>
-                        <p class="mb-4 text-gray-500">{{member.bio}}
+                        <p class="mb-4 text-gray-500 dark:text-gray-400">{{member.bio}}
                         </p>
                         <span class="inline-flex">
                             <a class="text-gray-500">
