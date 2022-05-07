@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html class="{% if darkmode %}dark{% endif %}" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -33,7 +33,7 @@
                 <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
                 {% endfor %}
             </nav>
-            <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();" value="day">&#9790;</button>
+            <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();" {% if darkmode %}value="night">&#9788;{% else %}value="day">&#9790;{% endif %}</button>
             {% if show_admin %}
             <a href="/{{admin_url}}" <button
                 class="inline-flex items-center bg-gray-300 border-0 py-1 px-3 focus:outline-none hover:bg-gray-500 dark:bg-gray-800 dark:hover:bg-gray-300 rounded text-base mt-2 md:mt-0 dark:text-gray-700 ">{% trans "Admin" %}
@@ -74,6 +74,9 @@
     <script>
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "{% url 'home:darkmode' %}", true);
+            xhr.send();
             btn = document.querySelector('#darkmode-button');
             if(btn.value=='night'){
                 btn.innerHTML = '&#9790;';

@@ -134,7 +134,7 @@
 				<img class="w-4" src="{% static 'twitch-icon.png' %}">
 				{% endif %}
 			  	{% if attendee.is_subscriber %}
-			  	<img class="w-4" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Twemoji12_1f947.svg/240px-Twemoji12_1f947.svg.png">
+			  	<img class="w-4" src="{% static 'sub-icon.png' %}">
 				{% endif %}
 			  </td>
 			  {% endif %}
@@ -198,11 +198,17 @@
 			row.appendChild(username);
 			row.appendChild(userscore);
 			if(meetingPlatform != 'IRL'){
-				let isSub = document.createElement('td');
+				let userBadges = document.createElement('td');
 				if(scoresArray[i].is_sub){
-					isSub.innerText = '&#9745;';
+					userBadges.innerHTML += '<img class="w-4" src="{% static 'sub-icon.png' %}">';
 				}
-				row.appendChild(isSub);
+				if(scoresArray[i].yt){
+					userBadges.innerHTML += '<img class="w-4" src="{% static 'youtube-icon.png' %}">';
+				}
+				if(scoresArray[i].tw){
+					userBadges.innerHTML = '<img class="w-4" src="{% static 'twitch-icon.png' %}">';
+				}
+				row.appendChild(userBadges);
 			}
 			tableBody.appendChild(row);
 		}

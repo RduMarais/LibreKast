@@ -224,10 +224,11 @@ YTAPI_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.
 
 #### SECURITY SETTINGS
 
-# default security settings 
+# recommended security settings 
 SOCKET_ENCRYPTION = True 
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE='Lax'
+SESSION_COOKIE_HTTPONLY=True
 SESSION_COOKIE_SECURE = True
 OAUTHLIB_INSECURE_TRANSPORT = False
 

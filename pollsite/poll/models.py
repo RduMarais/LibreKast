@@ -103,7 +103,7 @@ class Attendee(models.Model):
 	name = models.CharField(_('Your Name'), max_length=50, default='Anonymous')
 	score = models.IntegerField(_('Score'),default=0)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-	is_subscriber = models.BooleanField(_('[YouTube only] is sponsor'),default=False)
+	is_subscriber = models.BooleanField(_('Subscriber/sponsor'),default=False)
 	is_twitch = models.BooleanField(_('is Twitch user'),default=False)
 	is_youtube = models.BooleanField(_('is Youtube user'),default=False)
 

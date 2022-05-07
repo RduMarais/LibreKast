@@ -124,7 +124,7 @@ class MeetingConsumer(WebsocketConsumer):
 			async_to_sync(self.add_word(word,self.attendee))
 			async_to_sync(self.notify_add_word(word))
 		elif(message_in == "get-scoreboard"):
-			async_to_sync(self.send_scoreboard())
+			self.send_scoreboard()
 		elif(message_in == "admin-send-scoreboard"):
 			if(self.is_user_authenticated()):
 				async_to_sync(self.send_group_scoreboard())
@@ -419,6 +419,8 @@ class MeetingConsumer(WebsocketConsumer):
 				'name':user.name,
 				'score':user.score,
 				'is_sub':user.is_subscriber,
+				'yt':user.is_youtube,
+				'tw':user.is_twitch,
 			}
 			message_out['scores'].append(score_obj)
 		self.send(text_data=json.dumps(message_out))

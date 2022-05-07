@@ -9,4 +9,5 @@ def base_context(request):
         'show_admin' : settings.SHOW_ADMIN,
         'admin_url' : settings.ADMIN_URL,
         'bot_msg_prefix' : settings.BOT_MSG_PREFIX,
+        'darkmode': request.session.get('dark'),
     }

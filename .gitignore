@@ -10,6 +10,7 @@ pollsite/home/migrations/*
 !pollsite/static/youtube-icon.png
 !pollsite/static/twitch-icon.png
 !pollsite/static/bot-icon.png
+!pollsite/static/sub-icon.png
 !pollsite/static/favicon.ico
 !pollsite/static/license.html
 !pollsite/static/style.css
