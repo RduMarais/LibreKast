@@ -16,8 +16,7 @@ from .models import Choice, Question, Meeting,Attendee,Vote,YoutubeAPI,PeriodicB
 
 
 # This class is designed to create a simple handler for managing Youtube live stream chat message with an API key
-# I put this class in a separate file to show the difference : YoutubeHandler is the thread to bot and interact with the API,
-# YoutubeLIstener is the thread to use public data (public or non-referenced lives) in read-only mode
+# this uses both pytchat to fetch chat (read-only) and youtube API to post messages
 # all application logic lies in the consumers.py file
 
 PRINT_MESSAGES = True
@@ -176,21 +175,24 @@ class YoutubeHandler(threading.Thread):
 
 	# Uses OAuth API
 	def send_message(self,message):
-		request = self.youtube_api_client.liveChatMessages().insert(
-			part="snippet",
-			body={
-			  "snippet": {
-				"liveChatId": self.liveChatID,
-				"type": "textMessageEvent",
-				"textMessageDetails": {
-				  "messageText": message
+		try:
+			request = self.youtube_api_client.liveChatMessages().insert(
+				part="snippet",
+				body={
+				  "snippet": {
+					"liveChatId": self.liveChatID,
+					"type": "textMessageEvent",
+					"textMessageDetails": {
+					  "messageText": message
+					}
+				  }
 				}
-			  }
-			}
-		)
-		response = request.execute()
-		# if(settings.DEBUG):
-		# 	print(response)
+			)
+			response = request.execute()
+		except:
+			print("Error posting message on youtube live chat")
+			if(response):
+				print(response)
 
 	# Uses OAuth API
 	def periodically_send_bots(self):
