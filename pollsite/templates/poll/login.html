@@ -5,18 +5,18 @@
 
 {% block content  %}
 <div class="mt-4 pt-2 mx-auto text-gray-900 text-center">
-<h1 class="text-2xl">{{ meeting.title }}</h1>
+<h1 class="text-2xl dark:text-white">{{ meeting.title }}</h1>
 </div>
 
 <div id="login_form" class="lg:w-1/5 mt-5 mb-8 pt-2 mx-auto border border-width-2 border-solid border-blue-500 rounded">
     <form class="text-center pb mt-2 mb-4 mx-auto text-gray-900" action="{% url 'poll:login' meeting.id %}" method="post"> 
         {% csrf_token %}
         <div class="form-field-wrapper mb-4 mx-2 py">
-            <p class="text-gray-900 text-center my-2">{% trans "Choose a username" %}</p>
+            <p class="text-gray-900 dark:text-gray-200 text-center my-2">{% trans "Choose a username" %}</p>
             {{ form.username }}
         </div>
         <div class="form-field-wrapper mx-2 py">
-            <p class="text-gray-900 text-center my-2">{% trans "Meeting code" %}</p>
+            <p class="text-gray-900 dark:text-gray-200 text-center my-2">{% trans "Meeting code" %}</p>
             {{ form.meeting_code }}
         </div>
         <br>

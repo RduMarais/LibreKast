@@ -7,6 +7,7 @@
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-cartesian.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
 <script src="https://cdn.anychart.com/themes/2.0.0/dark_blue.min.js"></script>
+<script src="https://cdn.anychart.com/themes/2.0.0/dark_glamour.min.js"></script>
 {% endblock  %}
 
 {% block title %}Dashboard{% endblock  %}
@@ -53,7 +54,7 @@
 			<tbody>
 				{% for question in meeting.question_set.all %}
 				<tr id="librekast-question-{{question.id}}">
-				  <td>{{ question.title }}</td>
+				  <td class="break-words">{{ question.title }}</td>
 				  <td>
 				  	{% if question.question_type == 'WC' %}{% trans "Word Cloud" %}{%endif%}
 				  	{% if question.question_type == 'PL' %}{% trans "Poll" %}{%endif%}
@@ -123,7 +124,7 @@
 			{% if attendees %}
 			{% for attendee in attendees %}
 			<tr>
-			  <td class="{% if attendee.is_youtube %}text-red-700 dark:text-red-500{% endif %}{% if attendee.is_twitch %}text-purple-700 dark:text-pour1nf0-purple-100{% endif %}">{{attendee.name}}</td>
+			  <td class="{% if attendee.is_youtube %}text-red-700 dark:text-red-500{% endif %}{% if attendee.is_twitch %}text-purple-700 dark:text-pour1nf0-purple-100{% endif %} break-words">{{attendee.name}}</td>
 			  <td>{{attendee.score}}</td>
 			  {% if meeting.platform != 'IRL' %}
 			  <td>
@@ -193,6 +194,7 @@
 			let username = document.createElement('td');
 			let userscore = document.createElement('td');
 			username.innerText = scoresArray[i].name;
+			username.classList.add("break-words");
 			userscore.innerText = scoresArray[i].score;
 			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
 			row.appendChild(username);
@@ -203,9 +205,11 @@
 					userBadges.innerHTML += '<img class="w-4" src="{% static 'sub-icon.png' %}">';
 				}
 				if(scoresArray[i].yt){
+					username.classList.add("text-red-700","dark:text-red-500");
 					userBadges.innerHTML += '<img class="w-4" src="{% static 'youtube-icon.png' %}">';
 				}
 				if(scoresArray[i].tw){
+					username.classList.add("text-purple-700","dark:text-pour1nf0-purple-100");
 					userBadges.innerHTML = '<img class="w-4" src="{% static 'twitch-icon.png' %}">';
 				}
 				row.appendChild(userBadges);
@@ -323,6 +327,7 @@
 		}
 		if(document.querySelector('#darkmode-button').value == 'night'){
 			anychart.theme(anychart.themes.darkBlue);
+			// anychart.theme(anychart.themes.darkGlamour);
 		}
 		chart.data(chartData);
 		chart.container("question-content");
@@ -369,7 +374,8 @@
 
 		var chart = anychart.tagCloud(wordCloudData);
 		if(document.querySelector('#darkmode-button').value == 'night'){
-			anychart.theme(anychart.themes.darkBlue);
+			// anychart.theme(anychart.themes.darkBlue);
+			anychart.theme(anychart.themes.darkGlamour);
 		}
 		chart.angles([0]);
 		chart.container("question-content");
@@ -389,7 +395,8 @@
 
 		var chart = anychart.tagCloud(wordCloudData);
 		if(document.querySelector('#darkmode-button').value == 'night'){
-			anychart.theme(anychart.themes.darkBlue);
+			anychart.theme(anychart.themes.darkGlamour);
+			// anychart.theme(anychart.themes.darkBlue);
 		}
 		chart.angles([0]);
 		chart.container("question-content");
@@ -415,7 +422,7 @@
 			c.innerText = choicesArray[i].text;
 			c.id = 'choice-'+choicesArray[i].id;
 			c.value = choicesArray[i].id;
-			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white","dark:bg-pour1nf0-blue-700","dark:hover:bg-pour1nf0-blue-200");
+			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white","dark:bg-pour1nf0-blue-400","dark:hover:bg-pour1nf0-blue-200");
 			c.classList.add("text-blue-600","dark:text-gray-200","text-center","py-2","px-4","my-2","rounded");
 			c.classList.add("librekast-choice");
 			content.children[0].appendChild(c);
@@ -460,7 +467,7 @@
 			{% endif %}
 		}
 		t.innerText = chatMessage['text'];
-		t.classList.add("librekast-chatlog-msg")
+		t.classList.add("librekast-chatlog-msg","break-words");
 		if(t.innerText.startsWith(botMsgPrefix)){
 			t.classList.add("librekast-bot-message","italic");
 			let botIcon = document.createElement('img');

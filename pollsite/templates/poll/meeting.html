@@ -5,13 +5,15 @@
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
+<!-- <script src="https://cdn.anychart.com/themes/2.0.0/dark_blue.min.js"></script> -->
+ <script src="https://cdn.anychart.com/themes/2.0.0/dark_glamour.min.js"></script>
 {% endblock  %}
 
 {% block title  %}Meeting{% endblock  %}
 
 {% block content  %}
 <section class="text-center" name="meeting_details">
-	<h1 class="text-3xl text-center">{{ meeting.title }}</h1>
+	<h1 class="text-3xl text-center mt-4">{{ meeting.title }}</h1>
 	<div class="mr-2 text-right text-xs">
 		<p>{{ attendee.name }} : <span id="my-score">{{ attendee.score }}</span> points</p>
 	</div>
@@ -20,8 +22,8 @@
 <section class="text-gray-900 body-font overflow-hidden" name="current-question">
 	<div class="container px-5 py-2 mx-auto" id="question-div">
 		<div class="mt-2 mb-4 text-center">
-			<span id="current-question-id" class="text-2xl" name="current-question-id" value=""></span>
-			<div id="question-description" class="leading-relaxed text-center text-center"></div>
+			<span id="current-question-id" class="text-2xl dark:text-white" name="current-question-id" value=""></span>
+			<div id="question-description" class="leading-relaxed text-center dark:text-gray-300"></div>
 		</div>
 	</div>
 	<div class="container px-5 py-24 mx-auto text-center" id="start-div">
@@ -32,13 +34,13 @@
 <section class="text-gray-900 body-font overflow-hidden" name="previous_questions">
 	<div class="container px-5 py-24 mx-auto">
 		<div id="previous-questions-container" class="-my-8">
-			<h3 class="text-2xl text-center">{% trans "Previous questions" %}</h3>
+			<h3 class="text-xl text-center dark:text-gray-300">{% trans "Previous questions" %}</h3>
 			<ul id="previous-questions-list">
 			{% for question in previous_question_list %}
 			<li class="py-1 flex flex-wrap md:flex-no-wrap">
 				<div class="md:flex-grow">
-					<h2 class="text-1xl font-medium text-gray-900 title-font">{{question.title }}
-					<a href="{% url 'poll:results' question.id %}" class="text-blue-500 inline-flex items-center mx-4 text-sm">
+					<h2 class="text-1xl font-medium text-gray-900 dark:text-gray-300 title-font">{{question.title }}
+					<a href="{% url 'poll:results' question.id %}" class="text-blue-500 hover:text-pour1nf0-pink-600 dark:text-pour1nf0-blue-200 dark:hover:text-pour1nf0-pink-300 inline-flex items-center mx-4 text-sm">
 						{% trans "See results" %} >
 					</a>
 					</h2>
@@ -100,10 +102,10 @@
 		let d = document.createElement('div');
 		l.classList.add('md:flex-grow');
 		let h = document.createElement('h2');
-		h.classList.add('text-1xl','font-medium','text-gray-900','title-font');
+		h.classList.add('text-1xl','font-medium','text-gray-900','title-font','dark:text-gray-300');
 		// TODO votes et id
 		id = questionTitle.getAttribute('question-id');
-		h.innerHTML = questionTitle.innerText+'<a href="/poll/'+id+'/results/" class="text-blue-500 inline-flex items-center mx-4 text-sm">See results ></a>';
+		h.innerHTML = questionTitle.innerText+'<a href="/poll/'+id+'/results/" class="text-blue-500 hover:text-pour1nf0-pink-600 dark:text-pour1nf0-blue-200 dark:hover:text-pour1nf0-pink-300 inline-flex items-center mx-4 text-sm dark:">See results ></a>';
 
 		d.appendChild(h);
 		l.appendChild(d);
@@ -137,6 +139,7 @@
 	}
 
 	function updateScoreboard(scoresArray){
+		resetQuestionContent();
 		questionTitle.textContent = 'Score Board';
 		questionTitle.setAttribute("question-id",'scoreboard');
 		questionTitle.classList.add('librekast-scoreboard');
@@ -144,8 +147,9 @@
 
 		scoretable = document.createElement('table');
 		scoretable.classList.add('table-auto','border-separate','border','border-solid','border-green-900','divide-solid','divide-y-2','divide-x-2','divide-green-800','mx-auto','text-center');
+		scoretable.classList.add('dark:bg-pour1nf0-purple-900');
 		tableHead = document.createElement('thead');
-		tableHead.innerHTML = '<tr class="bg-green-300"><th>Username</th><th>Score</th></tr>';
+		tableHead.innerHTML = '<tr class="bg-green-300 dark:bg-pour1nf0-purple-400"><th>Username</th><th>Score</th></tr>';
 		tableBody = document.createElement('tbody');
 		tableBody.textContent ='';
 		for(i in scoresArray){
@@ -185,16 +189,19 @@
 				choice.classList.add('font-bold',"librekast-choice");
 				choice.classList.remove("bg-blue-500");
 				choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
+				choice.classList.add("dark:text-gray-100");
 			} else if(choice.classList.contains("hover:bg-"+choiceColors[i]+"-700") && choice.classList.contains("text-white")) {
 				// if the user has not selected anything
 				choice.classList.remove("hover:bg-"+choiceColors[i]+"-700");
 				choice.classList.remove("bg-"+choiceColors[i]+"-400");
 				choice.classList.replace("text-white","text-"+choiceColors[i]+"-900");
+				choice.classList.add("dark:text-gray-300");
 			} else {
 				choice.classList.remove("bg-blue-200");
 				choice.classList.replace("text-blue-600","text-"+choiceColors[i]+"-900");
+				choice.classList.add("dark:text-gray-300");
 			}
-			choice.classList.add("relative","max-w-xl","overflow-hidden");
+			choice.classList.add("relative","overflow-hidden");
 			choice.classList.remove("py-2");
 			let back = document.createElement("div");
 			back.id = "bar-background-"+resultsArray[i].id;
@@ -204,7 +211,7 @@
 			let bar = document.createElement("div");
 			bar.id="bar-"+resultsArray[i].id;
 			bar.className="h-full";
-			bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar");
+			bar.classList.add("bg-"+choiceColors[i]+"-400","relative","w-0","librekast-bar","dark:text-pour1nf0-dark-500");
 			percent = (resultsArray[i].votes / total_votes) *100 ;
 			bar.style.width = percent + "%";
 			bar.innerText = resultsArray[i].votes + " votes";
@@ -214,7 +221,7 @@
 		}
 		let p = document.createElement("p");
 		p.className = "mx-4";
-		p.classList.add('my-4','text-center');
+		p.classList.add('my-4','text-center','dark:text-gray-500');
 		p.innerText = total_votes+" votes";
 		p.id = 'total-votes';
 		document.querySelector("#question-content").appendChild(p);
@@ -318,12 +325,13 @@
 		wordCloudData = questionObj['choices'];
 
 		// show form 
-		wcForm = document.createElement("div"); // not a form it's dynamic
+		wcForm = document.createElement("div");
 		wcForm.id = "question-form";
 		wcForm.classList.add("inline-flex","w-full","border");
 		wcInput = document.createElement("input");
 		wcButton = document.createElement("button");
 		wcButton.classList.add("w-1/12","pt-2","p-1","bg-indigo-300","hover:bg-indigo-100","text-indigo-800");
+		wcButton.classList.add("dark:bg-pour1nf0-purple-300","dark:hover:bg-pour1nf0-purple-100","dark:text-gray-300");
 		wcButton.innerText = "ADD";
 		wcButton.id = "librekast-add";
 		wcButton.onclick=function(item){
@@ -332,6 +340,7 @@
 		}
 		wcInput.id="librekast-input";
 		wcInput.classList.add("w-full","px-4","py-2","focus:outline-none","focus:text-gray-600");
+		wcInput.classList.add("dark:text-gray-200","dark:bg-pour1nf0-back-100");
 		wcInput.onkeypress = function(event){
 			if(event.keyCode == 13){
 				wcSendWord(wcInput.value);
@@ -350,6 +359,10 @@
 
 		var chart = anychart.tagCloud(wordCloudData);
 		// chart.title(questionObj['title']);
+		if(document.querySelector('#darkmode-button').value == 'night'){
+			// anychart.theme(anychart.themes.darkBlue);
+			anychart.theme(anychart.themes.darkGlamour);
+		}
 		chart.angles([0]);
 		chart.container("question-content");
 		chart.draw();

@@ -68,17 +68,13 @@ v0.3.0 : main functionalities
  * [x] front : dashboard dark mode
  * [x] front : home dark mode
  * [ ] front : meeting dark mode
- * [ ] Youtube : setup oauth redirection for API
- * [ ] Youtube : setup creds renewal
  * [x] Youtube : regular messages bots
  * [x] front : bot message icon
  * [x] front : static platform icon
  * [X] Twitch : regular messages bots
    * commands sent from Youtube bot
- * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
- * [ ] BUG : fix youtube chat message polling that answers past commands 
+ * [x] BUG : front : fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : fix youtube chat "The live chat is no longer live."
- * [ ] BUG : front :  fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : APIs can be null
  * [x] BUG : use Cross API for Youtube
  * [x] BUG : Librekast
@@ -103,12 +99,14 @@ v0.4.0 : more functionnalities
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
- * [ ] Sound Bots
  * [ ] Revolution bots
+ * [ ] Revolution bots (with sound)
+ * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 
 v0.5.0 : installation and Quality of Life
 
  * [x] install script
+ * [ ] Youtube : setup oauth redirection for API
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
  * [ ] back : join during a question

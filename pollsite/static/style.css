@@ -633,6 +633,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-bottom: 1.5rem;
 }
 
+.mr-4 {
+  margin-right: 1rem;
+}
+
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -709,6 +713,18 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 0.5rem;
 }
 
+.max-h-full {
+  max-height: 100%;
+}
+
+.max-h-10 {
+  max-height: 2.5rem;
+}
+
+.max-h-24 {
+  max-height: 6rem;
+}
+
 .w-4 {
   width: 1rem;
 }
@@ -763,6 +779,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .flex-shrink-0 {
   flex-shrink: 0;
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 
 .basis-3\/4 {
@@ -839,6 +859,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   overflow: hidden;
 }
 
+.break-words {
+  overflow-wrap: break-word;
+}
+
 .break-all {
   word-break: break-all;
 }
@@ -897,9 +921,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(0 90 149 / var(--tw-bg-opacity));
 }
 
-.bg-gray-200 {
+.bg-gray-300 {
   --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
 
 .bg-blue-500 {
@@ -975,11 +999,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-indigo-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(165 180 252 / var(--tw-bg-opacity));
-}
-
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
 
 .bg-pour1nf0-pink-50 {
@@ -1227,6 +1246,61 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(0 4 22 / var(--tw-bg-opacity));
 }
 
+.bg-indigo-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
+}
+
+.bg-blue-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
+.bg-purple-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(192 132 252 / var(--tw-bg-opacity));
+}
+
+.bg-pink-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 114 182 / var(--tw-bg-opacity));
+}
+
+.bg-violet-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(167 139 250 / var(--tw-bg-opacity));
+}
+
+.bg-sky-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(56 189 248 / var(--tw-bg-opacity));
+}
+
+.bg-indigo-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(199 210 254 / var(--tw-bg-opacity));
+}
+
+.bg-purple-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 213 255 / var(--tw-bg-opacity));
+}
+
+.bg-pink-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(251 207 232 / var(--tw-bg-opacity));
+}
+
+.bg-violet-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(221 214 254 / var(--tw-bg-opacity));
+}
+
+.bg-sky-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 230 253 / var(--tw-bg-opacity));
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1402,6 +1476,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 
 .text-gray-400 {
@@ -1714,11 +1793,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(229 231 235 / var(--tw-text-opacity));
 }
 
-.text-gray-300 {
-  --tw-text-opacity: 1;
-  color: rgb(209 213 219 / var(--tw-text-opacity));
-}
-
 .text-gray-600 {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
@@ -1759,6 +1833,31 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(243 232 255 / var(--tw-text-opacity));
 }
 
+.text-indigo-900 {
+  --tw-text-opacity: 1;
+  color: rgb(49 46 129 / var(--tw-text-opacity));
+}
+
+.text-blue-900 {
+  --tw-text-opacity: 1;
+  color: rgb(30 58 138 / var(--tw-text-opacity));
+}
+
+.text-pink-900 {
+  --tw-text-opacity: 1;
+  color: rgb(131 24 67 / var(--tw-text-opacity));
+}
+
+.text-violet-900 {
+  --tw-text-opacity: 1;
+  color: rgb(76 29 149 / var(--tw-text-opacity));
+}
+
+.text-sky-900 {
+  --tw-text-opacity: 1;
+  color: rgb(12 74 110 / var(--tw-text-opacity));
+}
+
 .underline {
   -webkit-text-decoration-line: underline;
           text-decoration-line: underline;
@@ -1790,6 +1889,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-gray-300:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-blue-600:hover {
@@ -2077,6 +2181,31 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(0 4 22 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(67 56 202 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-purple-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(126 34 206 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-pink-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(190 24 93 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-violet-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(109 40 217 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-sky-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(3 105 161 / var(--tw-bg-opacity));
+}
+
 .hover\:text-gray-900:hover {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -2085,6 +2214,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.hover\:text-pour1nf0-pink-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(194 36 99 / var(--tw-text-opacity));
 }
 
 .hover\:text-pour1nf0-pink-50:hover {
@@ -2115,11 +2249,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:text-pour1nf0-pink-500:hover {
   --tw-text-opacity: 1;
   color: rgb(204 46 109 / var(--tw-text-opacity));
-}
-
-.hover\:text-pour1nf0-pink-600:hover {
-  --tw-text-opacity: 1;
-  color: rgb(194 36 99 / var(--tw-text-opacity));
 }
 
 .hover\:text-pour1nf0-pink-700:hover {
@@ -2467,14 +2596,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(28 44 62 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-pour1nf0-blue-500 {
+.dark .dark\:bg-gray-800 {
   --tw-bg-opacity: 1;
-  background-color: rgb(36 130 189 / var(--tw-bg-opacity));
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-back-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(43 58 80 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-pour1nf0-back-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(23 38 60 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-pink-900 {
@@ -2512,9 +2646,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(214 56 119 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-pour1nf0-blue-700 {
+.dark .dark\:bg-pour1nf0-blue-400 {
   --tw-bg-opacity: 1;
-  background-color: rgb(16 110 169 / var(--tw-bg-opacity));
+  background-color: rgb(46 140 199 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-pour1nf0-purple-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(147 58 186 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-pour1nf0-back-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(83 98 120 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-pink-50 {
@@ -2567,11 +2711,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(157 68 196 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-pour1nf0-purple-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(147 58 186 / var(--tw-bg-opacity));
-}
-
 .dark .dark\:bg-pour1nf0-purple-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(127 38 166 / var(--tw-bg-opacity));
@@ -2607,14 +2746,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(56 150 209 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-pour1nf0-blue-400 {
+.dark .dark\:bg-pour1nf0-blue-500 {
   --tw-bg-opacity: 1;
-  background-color: rgb(46 140 199 / var(--tw-bg-opacity));
+  background-color: rgb(36 130 189 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-blue-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(26 120 179 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-pour1nf0-blue-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(16 110 169 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-blue-800 {
@@ -2632,11 +2776,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(93 108 130 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:bg-pour1nf0-back-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(83 98 120 / var(--tw-bg-opacity));
-}
-
 .dark .dark\:bg-pour1nf0-back-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(73 88 110 / var(--tw-bg-opacity));
@@ -2650,11 +2789,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .dark .dark\:bg-pour1nf0-back-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(33 48 70 / var(--tw-bg-opacity));
-}
-
-.dark .dark\:bg-pour1nf0-back-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(23 38 60 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:bg-pour1nf0-back-800 {
@@ -2722,6 +2856,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 
+.dark .dark\:text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
 .dark .dark\:text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
@@ -2742,9 +2881,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(168 85 247 / var(--tw-text-opacity));
 }
 
+.dark .dark\:text-pour1nf0-purple-100 {
+  --tw-text-opacity: 1;
+  color: rgb(167 78 206 / var(--tw-text-opacity));
+}
+
 .dark .dark\:text-gray-200 {
   --tw-text-opacity: 1;
   color: rgb(229 231 235 / var(--tw-text-opacity));
+}
+
+.dark .dark\:text-pour1nf0-blue-200 {
+  --tw-text-opacity: 1;
+  color: rgb(66 160 219 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-pour1nf0-pink-50 {
@@ -2797,11 +2946,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(177 88 216 / var(--tw-text-opacity));
 }
 
-.dark .dark\:text-pour1nf0-purple-100 {
-  --tw-text-opacity: 1;
-  color: rgb(167 78 206 / var(--tw-text-opacity));
-}
-
 .dark .dark\:text-pour1nf0-purple-200 {
   --tw-text-opacity: 1;
   color: rgb(157 68 196 / var(--tw-text-opacity));
@@ -2850,11 +2994,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .dark .dark\:text-pour1nf0-blue-100 {
   --tw-text-opacity: 1;
   color: rgb(76 170 229 / var(--tw-text-opacity));
-}
-
-.dark .dark\:text-pour1nf0-blue-200 {
-  --tw-text-opacity: 1;
-  color: rgb(66 160 219 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-pour1nf0-blue-300 {
@@ -3007,11 +3146,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
-.dark .dark\:text-gray-700 {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
 .dark .dark\:text-gray-800 {
   --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity));
@@ -3030,6 +3164,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .dark .dark\:text-purple-900 {
   --tw-text-opacity: 1;
   color: rgb(88 28 135 / var(--tw-text-opacity));
+}
+
+.dark .dark\:text-purple-400 {
+  --tw-text-opacity: 1;
+  color: rgb(192 132 252 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-red-100 {
@@ -3052,14 +3191,24 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(126 34 206 / var(--tw-text-opacity));
 }
 
-.dark .dark\:hover\:bg-pour1nf0-blue-200:hover {
+.dark .dark\:hover\:bg-gray-300:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(66 160 219 / var(--tw-bg-opacity));
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:hover\:bg-pour1nf0-purple-200:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(157 68 196 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:hover\:bg-pour1nf0-blue-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(66 160 219 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:hover\:bg-pour1nf0-purple-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(167 78 206 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:hover\:bg-pour1nf0-pink-50:hover {
@@ -3115,11 +3264,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .dark .dark\:hover\:bg-pour1nf0-purple-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(177 88 216 / var(--tw-bg-opacity));
-}
-
-.dark .dark\:hover\:bg-pour1nf0-purple-100:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(167 78 206 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:hover\:bg-pour1nf0-purple-300:hover {
@@ -3307,6 +3451,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(26 120 179 / var(--tw-text-opacity));
 }
 
+.dark .dark\:hover\:text-pour1nf0-pink-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(224 66 129 / var(--tw-text-opacity));
+}
+
 .dark .dark\:hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -3325,11 +3474,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .dark .dark\:hover\:text-pour1nf0-pink-200:hover {
   --tw-text-opacity: 1;
   color: rgb(234 76 139 / var(--tw-text-opacity));
-}
-
-.dark .dark\:hover\:text-pour1nf0-pink-300:hover {
-  --tw-text-opacity: 1;
-  color: rgb(224 66 129 / var(--tw-text-opacity));
 }
 
 .dark .dark\:hover\:text-pour1nf0-pink-400:hover {
@@ -3662,10 +3806,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 
 @media (min-width: 768px) {
-  .md\:mb-4 {
-    margin-bottom: 1rem;
-  }
-
   .md\:mb-0 {
     margin-bottom: 0px;
   }
@@ -3680,6 +3820,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .md\:mt-0 {
     margin-top: 0px;
+  }
+
+  .md\:mb-4 {
+    margin-bottom: 1rem;
   }
 
   .md\:flex {

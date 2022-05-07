@@ -127,14 +127,14 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send_scoreboard()
 		elif(message_in == "admin-send-scoreboard"):
 			if(self.is_user_authenticated()):
-				async_to_sync(self.send_group_scoreboard())
+				self.send_group_scoreboard()
 		elif(message_in == "admin-get-current-question"):
 				question = self.meeting.current_question()
 				self.send_current_question(question)
 		elif(message_in == "admin-question-start"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
-				async_to_sync(self.send_group_question(question))
+				self.send_group_question(question)
 				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_yt_polling(question)
 				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
@@ -150,15 +150,15 @@ class MeetingConsumer(WebsocketConsumer):
 		elif(message_in == "admin-question-results"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
-				async_to_sync(self.send_group_results(question))
+				self.send_group_results(question)
 				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_yt_polling(question)
 				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_tw_polling(question)
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
-				async_to_sync(self.next_question())
-				async_to_sync(self.notify_next_question())
+				self.next_question()
+				self.notify_next_question()
 		elif(message_in == "chat-subscribe"):
 			self.subscribe_to_chat()
 		else:

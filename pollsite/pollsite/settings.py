@@ -210,7 +210,8 @@ BOT_MSG_PREFIX = '[BOT] '
 
 # How many seconds between the automated messages 
 # If you expect N people to show up in the stream, I recommend something like : 60*(4+100/N) seconds
-PERIODIC_BOT_DELAY = 850
+PERIODIC_BOT_DELAY = 20
+# PERIODIC_BOT_DELAY = 850
 
 TWITCH_NICKNAME = 'LibreKast_Bot'
 
