@@ -11,7 +11,7 @@ TWITCH_MSG_PERIOD = 5
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
 	# quick fix for periodic messages
-	periodic_bot_iterator = 0
+	# periodic_bot_iterator = 0
 
 	def __init__(self,channel,twitch_api):
 		self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
@@ -24,20 +24,22 @@ class TwitchHandler(threading.Thread):
 		if(settings.DEBUG):
 			print('debug : twitch chat listening')
 
-
-	def send_periodic_bots(self):
-		self.chat.send(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
-		self.print_message({
-			'author':settings.TWITCH_NICKNAME,
-			'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message,
-			'source':'t'})
-		self.periodic_bot_iterator = self.periodic_bot_iterator + 1 % len(self.meetingConsumer.meeting.periodicbot_set.all())
+	# relies on YouTube Handler
+	def send_periodic_bots(self,periodic_bot_iterator):
+		self.chat.send(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message)
+		# the message is printed on youtube
+		# self.print_message({
+		# 	'author':settings.TWITCH_NICKNAME,
+		# 	'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message,
+		# 	'source':'t'})
+		
 
 	def print_message(self,chatlog):
 		self.meetingConsumer.notify_chat(chatlog)
 
 	def show_message(self,message: twitch.chat.Message) -> None:
-		# print(f'author {message.sender}, text: {message.text}')
+		# if(settings.DEBUG):
+		# 	print(f'debug : TW MSG : {message.sender} says : {message.text}')
 		self.print_message({'author':message.sender,'text':message.text,'source':'t'})
 
 	def handle_question(self,message: twitch.chat.Message) -> None:
@@ -87,9 +89,6 @@ class TwitchHandler(threading.Thread):
 		self.chat.subscribe(self.handle_question)
 		if(settings.DEBUG):
 			print('debug : twitch poll running')
-		# while(True):
-		# 	print('-- debug : loop running')
-		# 	time.sleep(1)
 
 	def stop(self):
 		self.terminate()

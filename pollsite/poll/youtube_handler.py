@@ -3,6 +3,8 @@ import time
 import json
 import os
 
+import pytchat
+
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -24,22 +26,27 @@ class YoutubeHandler(threading.Thread):
 	meetingConsumer = None
 	time_iterator = 0
 	periodic_bot_iterator = 0
-	  
+	youtube_api_client = None
+	
 	def __init__(self,youtube_api,yt_id):
 		threading.Thread.__init__(self)
-		self._running = True
-		self._polling = False
-		if(settings.OAUTHLIB_INSECURE_TRANSPORT):
-			os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+		self._running = True  # is the handler running and fetching chat message
+		self._polling = False # is the handler listening for answers to LibreKast questions
+		self.listener = pytchat.create(video_id=yt_id,interruptable=False)
 
-		self.youtube_api_client = self.get_youtube_api_client(youtube_api)
+		if(youtube_api):
+			if(settings.OAUTHLIB_INSECURE_TRANSPORT):
+				os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+			self.youtube_api_client = self.get_youtube_api_client(youtube_api)
 		
-		self.liveChatID = self.get_chat_id(yt_id)
-		self.nextPageToken = None
-		print('debug : YT API INIT DONE')
+			self.liveChatID = self.get_chat_id(yt_id)
+			self.nextPageToken = None
+			print('debug : YT API INIT DONE')
+		else:
+			print('debug : no YT API : only listening')
 
 
-
+	# Setup OAuth API
 	def get_youtube_api_client(self,youtube_api):
 		creds = None
 		# case : the user has already connected once
@@ -80,7 +87,7 @@ class YoutubeHandler(threading.Thread):
 
 		return googleapiclient.discovery.build("youtube", "v3", credentials=creds)
 
-
+	# Setup OAuth API
 	def get_chat_id(self,liveID):
 		print('debug : fetch chat ID')
 		request_chat_id = self.youtube_api_client.liveBroadcasts().list(
@@ -94,6 +101,8 @@ class YoutubeHandler(threading.Thread):
 		return livechatID
 
 
+	# TODO to be removed
+	# Uses OAuth API
 	def fetch_chat_message(self):
 		request_chatlog = None
 		if(self.nextPageToken):
@@ -129,37 +138,43 @@ class YoutubeHandler(threading.Thread):
 	def terminate(self):
 		self._running = False
 
-	def parse_message(self,msg):
-		attendee = self.meetingConsumer.check_attendee(msg['author'],is_subscriber=False,is_youtube=True)
+	# Uses PytChat listener
+	def parse_message(self,chat_msg):
+		attendee = self.meetingConsumer.check_attendee(chat_msg.author.name,is_subscriber=chat_msg.author.isChatSponsor,is_youtube=True)
 
 		question_type = self.meetingConsumer.meeting.current_question().question_type
 
 		if(question_type == 'WC'):
-			self.meetingConsumer.add_word(msg['text'][1:],attendee) # TODO add attendee
-			self.meetingConsumer.notify_add_word(msg['text'][1:])
+			self.meetingConsumer.add_word(chat_msg.message[1:],attendee) # TODO add attendee
+			self.meetingConsumer.notify_add_word(chat_msg.message[1:])
 			if(settings.DEBUG):
-				print('debug : WordCloud added message '+msg['text'][1:])
+				print('debug : WordCloud added message '+chat_msg.message[1:])
 		elif(question_type == 'PL' or question_type == 'QZ'):
 			if(settings.DEBUG):
-				print('debug : Poll/Quizz adding vote '+msg['text'][1:]+ ' from user '+msg['author'])
-			choiceset = self.meetingConsumer.meeting.current_question().choice_set.filter(slug=msg['text'][1:])
+				print('debug : Poll/Quizz adding vote '+chat_msg.message[1:]+ ' from user '+chat_msg.author.name)
+			choiceset = self.meetingConsumer.meeting.current_question().choice_set.filter(slug=chat_msg.message[1:])
 			if(choiceset):
 				poll_choice = {'choice': choiceset[0].id} # this gets choice ID
 				self.meetingConsumer.receive_vote(poll_choice,attendee)
 			else : 
 				if(settings.DEBUG):
-					print('debug : no poll choice for vote '+msg['text'][1:]+ ' from user '+msg['author'])
+					print('debug : no poll choice for vote '+chat_msg.message[1:]+ ' from user '+chat_msg.author.name)
 
+	# Uses PytChat listener
+	def print_message(self,chat_msg):
+		if(chat_msg.author.isChatSponsor):
+			self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'ys'})
+		else:
+			self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'y'})
 
-	def print_message(self,msg):
-		self.meetingConsumer.notify_chat({'author':msg['author'],'text':msg['text'],'source':'y'})
-
-	def bot_listen(self,msg):
-		command = self.meetingConsumer.meeting.messagebot_set.filter(command=msg['text'].split()[0][1:]).filter(is_active=True)
+	# Uses PytChat listener
+	def bot_listen(self,chat_msg):
+		command = self.meetingConsumer.meeting.messagebot_set.filter(command=chat_msg.message.split()[0][1:]).filter(is_active=True)
 		if(command):
 			print('debug : command activated : '+command[0].message)
 			self.send_message(settings.BOT_MSG_PREFIX+command[0].message)
 
+	# Uses OAuth API
 	def send_message(self,message):
 		request = self.youtube_api_client.liveChatMessages().insert(
 			part="snippet",
@@ -174,30 +189,38 @@ class YoutubeHandler(threading.Thread):
 			}
 		)
 		response = request.execute()
-		if(settings.DEBUG):
-			print(response)
+		# if(settings.DEBUG):
+		# 	print(response)
 
-	def send_periodic_bots(self):
+	# Uses OAuth API
+	def periodically_send_bots(self):
+		self.time_iterator = (self.time_iterator + 1) % 3600
 		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meetingConsumer.meeting.periodicbot_set.all()):
-			# send jth bot message
+			# send bot message number *periodic_bot_iterator*
 			self.send_message(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+			# For Youtube & Twitch multi stream, the periodic bots are set here
+			if(self.meetingConsumer.twHandler):
+				self.meetingConsumer.twHandler.send_periodic_bots(self.periodic_bot_iterator)
 			# iterate over periodic_bot_iterator
 			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meetingConsumer.meeting.periodicbot_set.all())
-		self.time_iterator = self.time_iterator + 2 % 3600
 
+
+	# Main function runningand syncrhonizing both PytChat Listener and OAuth messages
 	def run(self):
-		print('debug : YT chat listening')
-		# self._running = True # else it will not allow 2 starts in a meeting
-		print('##### polling....')
-		i = 0
-		while(self._running):
-			for c in self.fetch_chat_message():
-				if(c['text'].startswith(settings.INTERACTION_CHAR) and self._polling):
+		print('debug : YT chat : listening')
+		# this is basically one iteration per second
+		while(self._running and self.listener.is_alive()):
+			for c in self.listener.get().sync_items():
+				# listen for answers to activities
+				if(c.message.startswith(settings.INTERACTION_CHAR) and self._polling):
 					self.parse_message(c)
+				# show mesages in dashboard
 				if(PRINT_MESSAGES):
 					self.print_message(c)
-				if(c['text'].startswith('!')):
+				# send bot command (requires OAuth)
+				if(c.message.startswith('!') and self.youtube_api_client):
 					self.bot_listen(c)
-			self.send_periodic_bots()
-			time.sleep(2)
+			# regularly sends a message in a set of predefined messages (requires OAuth)
+			if(self.youtube_api_client):
+				self.periodically_send_bots() # iterates and send message if needed
 

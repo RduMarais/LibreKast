@@ -66,20 +66,19 @@ v0.3.0 : main functionalities
  * [x] front : remove dashboard unused code
  * [x] front : custom tailwinds css file
  * [x] front : dashboard dark mode
- * [ ] front : home dark mode
+ * [x] front : home dark mode
  * [ ] front : meeting dark mode
  * [ ] Youtube : setup oauth redirection for API
  * [ ] Youtube : setup creds renewal
  * [x] Youtube : regular messages bots
- * [ ] front : bot message icon
- * [ ] front : static platform icon
- * [ ] Twitch : regular messages bots
-   * either i start a new thread from the twitch handler
-   * either i find a more pythonesque way to handle this
+ * [x] front : bot message icon
+ * [x] front : static platform icon
+ * [X] Twitch : regular messages bots
+   * commands sent from Youtube bot
  * [ ] BUG : solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : fix youtube chat message polling that answers past commands 
- * [ ] BUG : fix youtube chat "The live chat is no longer live."
- * [ ] BUG : fix bug in dashboard where chat log gets outside of the chat section 
+ * [x] BUG : fix youtube chat "The live chat is no longer live."
+ * [ ] BUG : front :  fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : APIs can be null
  * [x] BUG : use Cross API for Youtube
  * [x] BUG : Librekast
@@ -104,15 +103,16 @@ v0.4.0 : more functionnalities
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
- * [ ] Bots sonores
- * [ ] Bots réguliers
+ * [ ] Sound Bots
+ * [ ] Revolution bots
 
 v0.5.0 : installation and Quality of Life
 
+ * [x] install script
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation
  * [ ] back : join during a question
- * [x] install script
+ * [ ] refactor : use proper logging
  * [ ] docker wrapping
  * [ ] readthedocs
  * [ ] dulicate question and meetings

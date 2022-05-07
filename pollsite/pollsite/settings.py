@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
+#### ENVIRONMENT SETTINGS
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -22,32 +24,31 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # for docker deployment :
 isDocker = os.getenv('IS_DOCKER', default=False)
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
-# TODO when deploying
 SECRET_KEY = os.environ.get("SECRET_KEY", default='3zaz_n48y63wv5xl(s9=zfrkixc-p10p1g^thb=eqs*=c3t0gp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# TODO when deploying
 DEBUG = os.environ.get("DEBUG",default=False)
 
 ADMIN_URL = os.environ.get("ADMIN_URL",default='admin')
+# Add DONT_SHOW_ADMIN env variable to remove the admin button
 SHOW_ADMIN = not os.environ.get("DONT_SHOW_ADMIN",default=False)
 
-
-# TODO when deploying add your hostname
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-# TODO ADD this variable to your env vars (ex : 'librekast.pour-info.tech')
+
+# Add this variable to your env vars (ex : 'librekast.pour-info.tech')
 if(os.environ.get("ALLOWED_HOSTS_LOCAL")):
     ALLOWED_HOSTS.append(os.environ.get("ALLOWED_HOSTS_LOCAL"))
+
+
+
+#### APPLICATION SETTINGS
 
 # migration to django > 3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # For channels deploymment
 ASGI_APPLICATION = 'pollsite.asgi.application'
-
-
 
 # Application definition
 
@@ -65,7 +66,6 @@ INSTALLED_APPS = [
     'markdownfield',
     'adminsortable',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,12 +98,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pollsite.wsgi.application'
-
+# LibreKast uses ASGI for channels (websockets support)
+# WSGI_APPLICATION = 'pollsite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -131,7 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+
+#### Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -146,6 +146,9 @@ USE_TZ = True
 
 LOCALE_PATHS = BASE_DIR + "/lang",
 
+
+
+#### Static and media
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -172,15 +175,17 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 
 # For Markdown formatting
-# TODO if need to change before deployment
+# TODO if needed to change before deployment
 SITE_URL = "http://localhost"
 
-# Channels configuration
+
+
+#### Channels configuration
+
 if(isDocker):
     channel_host = ('app-redis', 6379)
 else:
     channel_host = ('127.0.0.1', 6379)
-
 
 CHANNEL_LAYERS = {
     'default': {
@@ -192,21 +197,30 @@ CHANNEL_LAYERS = {
 }
 
 
-### TWITCH & YOUTUBE API SETTINGS
+
+#### TWITCH & YOUTUBE API SETTINGS
 
 # This char is the one that will trigger the parsing
 # I recommend using '#', @ is for testing purposes
 # on Youtube, "@" is for tagging people and "!"" for bots
 INTERACTION_CHAR = "#" 
-TWITCH_NICKNAME = 'LibreKast_Bot'
+
+# Define how you want to specify that your message is sent by a bot on Twitch and Youtube
 BOT_MSG_PREFIX = '[BOT] '
-PERIODIC_BOT_DELAY = 240
+
+# How many seconds between the automated messages 
+# If you expect N people to show up in the stream, I recommend something like : 60*(4+100/N) seconds
+PERIODIC_BOT_DELAY = 850
+
+TWITCH_NICKNAME = 'LibreKast_Bot'
 
 YOUTUBE_REDIRECT_URIS = ["http://localhost", "urn:ietf:wg:oauth:2.0:oob"]
 YOUTUBE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
 YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 # YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 YTAPI_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/youtube.force-ssl"]
+
+
 
 #### SECURITY SETTINGS
 

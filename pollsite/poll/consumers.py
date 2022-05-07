@@ -95,7 +95,7 @@ class MeetingConsumer(WebsocketConsumer):
 		self.send(text_data=json.dumps(message))
 
 
-	# receive message from client
+	# handle message received from the client
 	# This is the API
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
@@ -104,7 +104,9 @@ class MeetingConsumer(WebsocketConsumer):
 		if(settings.DEBUG):
 			print('RECV : '+message_in)
 
-		# THE MAIN APP LOGIC is here
+		####################################
+		#### THE MAIN APP LOGIC is here ####
+		####################################
 		if(message_in == "debug-question-start"):
 			question = self.meeting.current_question()
 			self.send_group_question(question)
@@ -484,39 +486,35 @@ class MeetingConsumer(WebsocketConsumer):
 # the polling process is defined in another class for clarity of threading
 # but it calls the methods from this class receive_vote() and add_word() for each message
 
-# Youtube Live compatibility
 
+# Youtube Live compatibility
 	def init_yt_polling(self):
 		if(not self.meeting.stream_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
 			raise KeyError('There should be a Youtube live/video ID defined')
 		self.ytHandler = None
-		if(self.meeting.youtube_api):
-			print('debug : YT API identified')
-			self.ytHandler = YoutubeHandler(self.meeting.youtube_api,self.meeting.stream_id) 
-		else:
-			print('debug : no YT API')
-			self.ytHandler = YoutubeListener(self.meeting.stream_id) 
+		self.ytHandler = YoutubeHandler(self.meeting.youtube_api,self.meeting.stream_id) 
 		self.ytHandler.meetingConsumer = self
 		self.ytHandler.start()
 
 	def start_yt_polling(self,question):
-		# self.ytHandler.question_type = question.question_type
+		if(not hasattr(self,'ytHandler')):
+			raise KeyError('There should be a YoutubeHandler object')
 		self.ytHandler._polling = True
+
+	def stop_yt_polling(self,question):
+		if(not hasattr(self,'ytHandler')):
+			raise KeyError('There should be a YoutubeHandler object')
+		self.ytHandler._polling = False
 
 	def terminate_yt_polling(self):
 		if(hasattr(self,'ytHandler')):
 			self.ytHandler.terminate()
 			self.ytHandler = None
 
-	def stop_yt_polling(self,question):
-		if(not hasattr(self,'ytHandler')):
-			raise KeyError('There should be a YoutubeHandler or YoutubeListener object')
-		self.ytHandler._polling = False
 
 
 # Twitch Streams compatibility
-
 	def init_tw_polling(self):
 		if(not self.meeting.channel_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}))
@@ -532,15 +530,13 @@ class MeetingConsumer(WebsocketConsumer):
 			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.run()
 
-	def terminate_tw_polling(self):
-		if(hasattr(self,'twHandler')):
-			self.twHandler.terminate()
-			self.twHandler = None
-		# self.twHandler = None
-
 	def stop_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
 			raise KeyError('There should be a TwitchHandler object')
 		self.twHandler.stop()
-		# self.twHandler.terminate()
+
+	def terminate_tw_polling(self):
+		if(hasattr(self,'twHandler')):
+			self.twHandler.terminate()
+			self.twHandler = None
 
