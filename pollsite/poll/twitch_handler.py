@@ -1,6 +1,7 @@
 import threading
 import twitch
-import time
+import datetime
+from django.utils import timezone
 from django.conf import settings
 from .models import Choice, Question, Meeting,Attendee,Vote
 
@@ -27,7 +28,7 @@ class TwitchHandler(threading.Thread):
 	# relies on YouTube Handler
 	def send_periodic_bots(self,periodic_bot_iterator):
 		self.chat.send(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message)
-		# the message is printed on youtube
+		# the message is already printed on youtube, but if needed :
 		# self.print_message({
 		# 	'author':settings.TWITCH_NICKNAME,
 		# 	'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message,
@@ -67,14 +68,47 @@ class TwitchHandler(threading.Thread):
 
 
 	def bot_listen(self,message: twitch.chat.Message) -> None:
-		if(settings.DEBUG):
-			print('debug : listening for bot commands')
 		if message.text.startswith('!'):
+			# is this a command bot
 			command = self.meetingConsumer.meeting.messagebot_set.filter(command=message.text.split()[0][1:]).filter(is_active=True)
 			if(command):
 				print('debug : command activated : '+command[0].message)
 				self.chat.send(settings.BOT_MSG_PREFIX+command[0].message)
 				self.print_message({'author':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+command[0].message,'source':'t'})
+			
+			# is this a revolution bot
+			revolution = self.meetingConsumer.meeting.revolutionbot_set.filter(command=message.text.split()[0][1:]).filter(is_active=True)
+			if(revolution):
+				print('debug : revolution bot +1 '+revolution[0].command)
+				print('debug : buffer :'+str(revolution[0].buffer))
+				# triggers = revolution[0].buffer['triggers']
+				now = timezone.now()
+				spam = False
+				for t in revolution[0].buffer['triggers']:
+					if((now - datetime.datetime.fromisoformat(t['time'])).seconds >= revolution[0].threshold_delay):
+						revolution[0].buffer['triggers'].remove(t)
+						print('debug : removed last from buffer')
+					elif(t['name']==message.sender):
+						spam=True 		# the reason this is not a break is bc I want to still browse the array to remove the older triggers
+						print('debug : spam identified')
+				if(not spam):
+					if(len(revolution[0].buffer['triggers']) >= revolution[0].threshold_number):
+						print('debug : is it a revolution ?')
+						# prevent a revolution to be re-triggered instantly previous revolution
+						if((revolution[0].buffer['last_revolution']=='') or ((now - datetime.datetime.fromisoformat(revolution[0].buffer['last_revolution'])).seconds >= revolution[0].threshold_delay)):
+
+							# ITS HAPPENING HERE
+							print('debug : revolution started !'+revolution[0].message)
+							self.chat.send(settings.BOT_MSG_PREFIX+revolution[0].message)
+							self.print_message({'sender':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+revolution[0].message,'source':'t'})
+							revolution[0].buffer['last_revolution'] = now.isoformat()
+							revolution[0].buffer['triggers'] = []
+
+					revolution[0].buffer['triggers'].append({'name':message.sender,'time':now.isoformat()})
+					print('debug : added last to buffer')
+				revolution[0].save()
+
+				
 
 
 

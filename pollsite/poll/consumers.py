@@ -9,7 +9,6 @@ import threading
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
-from .youtube_listener import YoutubeListener
 from .youtube_handler import YoutubeHandler
 from .twitch_handler import TwitchHandler
 

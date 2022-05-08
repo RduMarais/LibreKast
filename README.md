@@ -67,11 +67,11 @@ v0.3.0 : main functionalities
  * [x] front : custom tailwinds css file
  * [x] front : dashboard dark mode
  * [x] front : home dark mode
- * [ ] front : meeting dark mode
+ * [x] front : meeting dark mode
  * [x] Youtube : regular messages bots
  * [x] front : bot message icon
  * [x] front : static platform icon
- * [X] Twitch : regular messages bots
+ * [x] Twitch : regular messages bots
    * commands sent from Youtube bot
  * [x] BUG : front : fix bug in dashboard where chat log gets outside of the chat section 
  * [x] BUG : fix youtube chat "The live chat is no longer live."
@@ -114,6 +114,7 @@ v0.5.0 : installation and Quality of Life
  * [ ] docker wrapping
  * [ ] readthedocs
  * [ ] dulicate question and meetings
+ * [ ] make twitch and youtube an interface and have bot logic in a separate file
 
 #### code architecture
 
@@ -171,6 +172,12 @@ git clone https://github.com/RduMarais/LibreKast.git
 The requirements listed are the versions I used to test & develop the app. Feel free to tamper with the versions, just keep in mind that different package versions have not been tested !
 
 ```bash
+# debian/Ubuntu etc
+sudo apt-get install libmagic1
+# MacOs : 
+brew install libmagic
+
+# install python packages 
 pip install -r requirements.txt
 ```
 

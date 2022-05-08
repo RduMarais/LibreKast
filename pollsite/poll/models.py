@@ -1,8 +1,11 @@
 from django.db import models
 import datetime
+import magic
+import json
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 
 from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
@@ -24,6 +27,8 @@ LIVE_TYPE = (
 	)
 
 
+#### APIs
+
 # For security purposes, the twitch API is stored as an object
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
@@ -39,6 +44,7 @@ class YoutubeAPI(models.Model):
 	client_secret = models.CharField(_('OAuth Client Secret'),max_length=40)
 	authorized_credentials = models.TextField('This should not be accessed manually',max_length=1000,blank=True,default='')
 
+##### MAIN APP LOGIC MODEL
 
 # represents an occurence of a presentation. 
 class Meeting(models.Model):
@@ -84,6 +90,8 @@ class Meeting(models.Model):
 			return MeetingEnd
 
 
+##### BOTS
+
 class MessageBot(models.Model):
 	command = models.CharField(_('command to trigger the message'),max_length=10) 
 	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
@@ -95,6 +103,31 @@ class PeriodicBot(models.Model):
 	message = models.CharField(_('Message to send regularly'),max_length=150)
 	is_active = models.BooleanField(_('is this message activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+
+class RevolutionBot(models.Model):
+	command = models.CharField(_('command to trigger the message'),max_length=15) 
+	message = models.CharField(_('Message to send when the threshold is reached'),max_length=150)
+	threshold_delay = models.IntegerField(_('Time window in seconds to send the command'),default=200)
+	threshold_number = models.IntegerField(_('Number of commands to be sent'),default=5)
+	is_active = models.BooleanField(_('is this command activated'),default=False)
+	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+	buffer = models.JSONField(_('internal state of the bot'),default=dict({'triggers':[],'last_revolution':[]}),encoder=DjangoJSONEncoder)
+	# i'd like to add a FileField but I need to validate it
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True)
+
+	def save(self, *args, **kwargs):
+		if(self.alert):
+			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
+			if(file_type == 'video/mp4'):
+				super(RevolutionBot, self).save(*args, **kwargs)
+			else:
+				raise ValidationError({'title': "This file format is not allowed"})
+		else:
+			super(RevolutionBot, self).save(*args, **kwargs)
+
+
+
+##### IRL Meetings models
 
 # model to hold the attendee's name 
 #   (which allows to create a top and them to give themselves cool names)
@@ -151,8 +184,6 @@ class Question(SortableMixin):
 	def save(self, *args, **kwargs):
 		choices = self.choice_set.all()
 		is_quizz=False
-		# if(len(choices)==0):
-		# 	self.question_type = "WC"
 		for choice in choices:
 			if(choice.isTrue):
 				is_quizz = True
@@ -168,7 +199,6 @@ class Question(SortableMixin):
 class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	choice_text = models.CharField(max_length=200)
-	# votes = models.IntegerField(default=0)
 	slug = models.CharField(_('(For Youtube live) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
 

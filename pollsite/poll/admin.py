@@ -8,7 +8,7 @@ from django.conf import settings
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
 from .models import Question,Choice,Meeting,Attendee
-from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot
+from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot
 
 # administration of choices once in Question admin panel
 class ChoiceInline(admin.TabularInline):
@@ -118,6 +118,11 @@ class PeriodBotAdmin(admin.ModelAdmin):
 	list_display =('name','is_active','meeting')
 	list_editable = ('is_active',)
 
+class RevolutionBotAdmin(admin.ModelAdmin):
+	list_display =('command','is_active','meeting')
+	list_editable = ('is_active',)
+	exclude = ('buffer',)
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Attendee, ScoreBoard)
@@ -126,3 +131,4 @@ admin.site.register(TwitchAPI,TwitchAPIAdmin)
 admin.site.register(YoutubeAPI,YTAPIAdmin)
 admin.site.register(MessageBot,MsgBotAdmin)
 admin.site.register(PeriodicBot,PeriodBotAdmin)
+admin.site.register(RevolutionBot,RevolutionBotAdmin)
