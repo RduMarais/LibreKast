@@ -103,6 +103,10 @@ class TwitchHandler(threading.Thread):
 							self.print_message({'sender':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+revolution[0].message,'source':'t'})
 							revolution[0].buffer['last_revolution'] = now.isoformat()
 							revolution[0].buffer['triggers'] = []
+							print('debug : reset buffer')
+							if(revolution[0].alert):
+								print('debug : will send alert')
+								self.meetingConsumer.send_bot_alert(revolution[0])
 
 					revolution[0].buffer['triggers'].append({'name':message.sender,'time':now.isoformat()})
 					print('debug : added last to buffer')

@@ -111,19 +111,15 @@ class RevolutionBot(models.Model):
 	threshold_number = models.IntegerField(_('Number of commands to be sent'),default=5)
 	is_active = models.BooleanField(_('is this command activated'),default=False)
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-	buffer = models.JSONField(_('internal state of the bot'),default=dict({'triggers':[],'last_revolution':[]}),encoder=DjangoJSONEncoder)
+	buffer = models.JSONField(_('internal state of the bot'),default=dict({'triggers':[],'last_revolution':''}),encoder=DjangoJSONEncoder)
 	# i'd like to add a FileField but I need to validate it
 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True)
 
-	def save(self, *args, **kwargs):
+	def clean(self):
 		if(self.alert):
 			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
-			if(file_type == 'video/mp4'):
-				super(RevolutionBot, self).save(*args, **kwargs)
-			else:
-				raise ValidationError({'title': "This file format is not allowed"})
-		else:
-			super(RevolutionBot, self).save(*args, **kwargs)
+			if(file_type != 'video/mp4'):
+				raise ValidationError({'alert': "This file format is not allowed"})
 
 
 

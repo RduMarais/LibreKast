@@ -482,6 +482,19 @@ class MeetingConsumer(WebsocketConsumer):
 				self.channel_name
 			)
 
+	def send_bot_alert(self,revolutionbot):
+		print('debug : sent bot alert')
+		if(self.meeting.platform != 'IRL'):
+			if(settings.DEBUG):
+				print('debug : sending revolution alert')
+			message_out = {
+				'message' : "bot-alert",
+				'content': revolutionbot.message,
+				'alert': revolutionbot.alert.url,
+			}
+			self.send(text_data=json.dumps(message_out))
+
+
 
 ### LIVE STREAMS
 # the polling process is defined in another class for clarity of threading
