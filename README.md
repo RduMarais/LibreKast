@@ -42,65 +42,28 @@ You can find screenshots :
  * [of quizz correction](screenshots/quizz.png)
  * [of home page](screenshots/home.png)
 
-## Project state
-
-v0.3.0 : main functionalities
-
- * [x] FR translation templates
- * [x] FR translation models
- * [x] FR translation JS code
- * [x] OBS dedicated chatlog page
- * [x] Twitch : Fetch chat messages
- * [x] Twitch : Change Youtube code to support same threading model
- * [x] Twitch : Add chat in dashboard
- * [x] Twitch : Twitch support for answers
- * [x] Twitch : API as model
- * [x] Twitch : proper error catching
- * [x] Twitch : proper error catching when stream is done
- * [x] back : join admin open with attendee_id
- * [x] back : centralize interaction char in settings
- * [x] back : rebuild Youtube chat log to use Youtube Live Stream API (except when no API)
- * [x] back : websocket + web exchnge to get Youtube API rolling
- * [x] back : fix bots is_active
- * [x] back : have home and additional pages as models
- * [x] front : remove dashboard unused code
- * [x] front : custom tailwinds css file
- * [x] front : dashboard dark mode
- * [x] front : home dark mode
- * [x] front : meeting dark mode
- * [x] Youtube : regular messages bots
- * [x] front : bot message icon
- * [x] front : static platform icon
- * [x] Twitch : regular messages bots
-   * commands sent from Youtube bot
- * [x] BUG : front : fix bug in dashboard where chat log gets outside of the chat section 
- * [x] BUG : fix youtube chat "The live chat is no longer live."
- * [x] BUG : APIs can be null
- * [x] BUG : use Cross API for Youtube
- * [x] BUG : Librekast
- * [x] BUG : content 1st §
- * [x] back : admin URL
-
+## Project roadmap
 
 v0.4.0 : more functionnalities
 
- * [ ] front : go back button in dashboard
- * [ ] back : go back button in dashboard
- * [ ] back : generate QR code
- * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] add Image slides
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
+ * [ ] back : go back button in dashboard
+ * [ ] back : generate QR code
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
+ * [x] Youtube : Revolution bots support
+ * [x] Youtube : handle refresh token renewal
+ * [ ] Twitch : add attendee is subscriber attribute in dashboard
+ * [ ] front : Revolution bots (with sound)
+ * [ ] front : go back button in dashboard
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
- * [ ] Revolution bots
- * [ ] Revolution bots (with sound)
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 
 v0.5.0 : installation and Quality of Life

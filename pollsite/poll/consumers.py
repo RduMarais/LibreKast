@@ -1,11 +1,15 @@
 # chat/consumers.py
 import json
+import threading
+import datetime
+from django.utils import timezone
+from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from bleach import clean
-from django.conf import settings
-import threading
+
+from google.auth.exceptions import RefreshError
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
@@ -61,13 +65,15 @@ class MeetingConsumer(WebsocketConsumer):
 		else:
 			self.send(text_data=json.dumps({'message':'error no login'}))
 		
-		# ADMIN settings
+		# ADMIN settings : this is executed ONLY ONCE PER MEETING
 		if(self.is_user_authenticated() and not hasattr(self, 'isAdmin')): 
 			# check isAdmin ensures that there is always only one consumer for twitch and Youtube (but there may be several admins in the meeting)
 			self.isAdmin = True
 			# INIT live stream
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
 				self.init_yt_polling()
+				self.time_iterator = 0
+				self.periodic_bot_iterator = 0
 			if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
 				self.init_tw_polling()
 
@@ -500,6 +506,62 @@ class MeetingConsumer(WebsocketConsumer):
 # the polling process is defined in another class for clarity of threading
 # but it calls the methods from this class receive_vote() and add_word() for each message
 
+# Threshold/Revolution Bots logic
+	def listen_revolution_bot(self,command, sender):
+		revolution = self.meeting.revolutionbot_set.filter(command=command).filter(is_active=True)
+		if(revolution):
+			print('debug : revolution bot +1 '+revolution[0].command)
+			print('debug : buffer :'+str(revolution[0].buffer))
+			now = timezone.now()
+			spam = False
+			for t in revolution[0].buffer['triggers']:
+				# remove older messages
+				if((now - datetime.datetime.fromisoformat(t['time'])).seconds >= revolution[0].threshold_delay):
+					revolution[0].buffer['triggers'].remove(t)
+					print('debug : removed old msg from buffer')
+				elif(t['name']==sender):
+					spam=True 		# the reason this is not a break is bc I want to still browse the array to remove the older triggers
+					print('debug : spam identified')
+			if(not spam):
+				revolution[0].buffer['triggers'].append({'name':sender,'time':now.isoformat()})
+				if(len(revolution[0].buffer['triggers']) > revolution[0].threshold_number):
+					print('debug : is it a revolution ?')
+					# prevent a revolution to be re-triggered instantly previous revolution
+					if((revolution[0].buffer['last_revolution']=='') or ((now - datetime.datetime.fromisoformat(revolution[0].buffer['last_revolution'])).seconds >= revolution[0].threshold_delay)):
+
+						# ITS HAPPENING HERE
+						print('debug : revolution started ! '+revolution[0].message)
+						# send on youtube and twitch and show them in the librekast chat 
+						if(hasattr(self,'ytHandler') and (self.meeting.platform == 'YT' or self.meeting.platform == 'MX')):
+							self.ytHandler.send_message(settings.BOT_MSG_PREFIX+revolution[0].message)
+						if(hasattr(self,'twHandler') and (self.meeting.platform == 'TW' or self.meeting.platform == 'MX')):
+							self.twHandler.send_message(settings.BOT_MSG_PREFIX+revolution[0].message)
+							if(self.meeting.platform == 'TW'):
+								# print the revolution message in librekast chat if youtube handler has not already done it
+								self.twHandler.print_message({'sender':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+revolution[0].message,'source':'t'})
+						# reset revolution state
+						revolution[0].buffer['last_revolution'] = now.isoformat()
+						revolution[0].buffer['triggers'] = []
+						print('debug : reset buffer')
+						if(revolution[0].alert):
+							self.send_bot_alert(revolution[0])
+				print('debug : added last to buffer')
+			revolution[0].save()
+
+	def periodic_bot(self):
+		self.time_iterator = (self.time_iterator + 1) % 3600
+		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.all()):
+			# On Youtube send bot message number *periodic_bot_iterator*
+			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+			if(self.meeting.platform == 'MX' and hasattr(self,'twHandler')):
+				# On Twitch send bot message number *periodic_bot_iterator*
+				self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+				# no need to print the message in librekast chat as youtube bot already prints it 
+			# iterate over periodic_bot_iterator
+			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.all())
+
+
+
 
 # Youtube Live compatibility
 	def init_yt_polling(self):
@@ -507,9 +569,13 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
 			raise KeyError('There should be a Youtube live/video ID defined')
 		self.ytHandler = None
-		self.ytHandler = YoutubeHandler(self.meeting.youtube_api,self.meeting.stream_id) 
-		self.ytHandler.meetingConsumer = self
-		self.ytHandler.start()
+		try:
+			self.ytHandler = YoutubeHandler(self.meeting.youtube_api,self.meeting.stream_id) 
+			self.ytHandler.meetingConsumer = self
+			self.ytHandler.start()
+		except RefreshError:
+			self.send(text_data=json.dumps({'message':'admin-error','text':'You need another YT API credential'}))
+			self.ytHandler = 'RefreshError'
 
 	def start_yt_polling(self,question):
 		if(not hasattr(self,'ytHandler')):
