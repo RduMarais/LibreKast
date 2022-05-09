@@ -31,6 +31,7 @@ echo "\n### 5. Starting REDIS ###\n"
 docker run -p 6379:6379 -d redis:5
 
 echo "\n### 6. Checking that everything is allright ###\n"
+python -c 'import magic' 2&> /dev/null || echo '! IMPORTANT !\nimport libmagic on linux with \n $sudo apt-get install libmagic1 \nor on MacOS with \nbrew install libmagic'
 python manage.py test
 
 
