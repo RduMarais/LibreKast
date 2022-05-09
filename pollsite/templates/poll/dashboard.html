@@ -84,7 +84,10 @@
 	<div class = "w-full items-center m-2 p-1">
 		<div class="text-center mt-2 mx-2" id="chatlog-title">
 			<div class="basis-3/4 inline"><span class="text-2xl mr-2">{% trans "Chat Log" %}</span></div>
-			<div class="basis-1/4 inline"><button class="bg-gray-500 px-1 rounded py" onclick="navigator.clipboard.writeText('{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url 'poll:chatlog' meeting.id %}')">{% trans "URL" %}</button></div>
+			<div class="basis-1/4 inline">
+				<button class="bg-gray-500 px-1 rounded py" onclick="copyToClipboard('{% url 'poll:chatlog' meeting.id %}','{% trans 'Chat log' %}');">{% trans "Chat" %}</button>
+				<button class="bg-pour1nf0-dark-100 px-1 rounded py" onclick="copyToClipboard('{% url 'poll:alerts' meeting.id %}','{% trans 'Animations' %}');">{% trans "Alerts" %}</button>
+			</div>
 		</div>
 		<div class="border border-blue-200 bg-blue-100 dark:border-pour1nf0-blue-700 dark:bg-pour1nf0-dark-100" id="chatlog-content">
 		</div>
@@ -185,6 +188,16 @@
 
 	function quickNdirtyExpandGraphHeight(height){
 		document.querySelector('.anychart-ui-support').height.baseVal.valueAsString = height;
+	}
+
+	function copyToClipboard(targetUrl,targetName){
+		navigator.clipboard.writeText('{{ request.scheme }}://{{ request.META.HTTP_HOST }}'+targetUrl);
+		let copyNotif = document.createElement('small');
+		copyNotif.innerText = targetName + '{% trans " copied in the clipboard" %}'
+		copyNotif.id = 'copy-notification-box'
+		document.querySelector('#chatlog-title').appendChild(document.createElement('br'));
+		document.querySelector('#chatlog-title').appendChild(copyNotif);
+		setTimeout(function(){document.querySelector('#copy-notification-box').remove();}, 2000);
 	}
 
 	function updateScoreboard(scoresArray){
@@ -436,7 +449,7 @@
 	{% if meeting.platform != 'IRL' %}
 
 	function playRevolutionAlert(alert){
-		videoPlayer = '<video id="librekast-alert" controls><source src="'+alert['url']+'" type="video/mp4" />'
+		videoPlayer = '<video id="librekast-alert" controls><source src="'+alert['url']+'" type="video/webm;video/mp4" />'
 		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
 		document.querySelector('#librekast-alertbox video').autoplay=true;
 	}

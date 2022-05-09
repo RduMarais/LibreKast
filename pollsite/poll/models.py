@@ -119,7 +119,8 @@ class RevolutionBot(models.Model):
 	def clean(self):
 		if(self.alert):
 			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
-			if(file_type != 'video/mp4'):
+			authorized_formats = ['video/mp4','video/quicktime','video/webm']
+			if(file_type not in authorized_formats):
 				raise ValidationError({'alert': "This file format is not allowed"})
 
 

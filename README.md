@@ -55,10 +55,11 @@ v0.4.0 : more functionnalities
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
  * [x] Youtube : Revolution bots support
- * [ ] Youtube : Bug : has several subscirber
+ * [x] Youtube : Bug : has several subscirber
  * [x] Youtube : handle refresh token renewal
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
- * [ ] front : Revolution bots (with sound)
+ * [x] front : Revolution bots (with sound)
+ * [x] front : Revolution bots (with transparency)
  * [ ] front : go back button in dashboard
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular

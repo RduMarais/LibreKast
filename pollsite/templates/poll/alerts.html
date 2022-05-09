@@ -32,12 +32,13 @@
 
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
-		questionDesc.innerHTML = "";		resetQuestionContent();
+		questionDesc.innerHTML = "";
+		resetQuestionContent();
 	}
 
 
 	function playRevolutionAlert(alert){
-		videoPlayer = '<video id="librekast-alert" autoplay style="width:100vw;"><source src="'+alert['url']+'" type="video/mp4" />'
+		videoPlayer = '<video id="librekast-alert" autoplay style="width:100vw;"><source src="'+alert['url']+'" type="video/mp4;video/quicktime" />'
 		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
 		document.querySelector('#librekast-alertbox video').autoplay=true;
 	}
