@@ -1,0 +1,74 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"href="{% static 'favicon.ico' %}">
+
+    <title>LibreKast - Alerts</title>
+</head>
+
+
+<body class="dark:bg-pour1nf0-back-400 dark:text-gray-100">
+	<div class="" id="librekast-alertbox" style="">
+
+	</div>
+
+<script>
+	var meetingPlatform = '{{meeting.platform}}' ; 
+
+	{% if meeting.platform != 'IRL' %}
+
+	const meeting_id = {{ meeting.id }};
+	const dashboardSocket = new WebSocket(
+		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
+		+ window.location.host
+		+ '/ws/'
+		+ meeting_id
+		+ '/'
+	);
+
+	function showWait(){
+		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
+		questionDesc.innerHTML = "";		resetQuestionContent();
+	}
+
+
+	function playRevolutionAlert(alert){
+		videoPlayer = '<video id="librekast-alert" autoplay style="width:100vw;"><source src="'+alert['url']+'" type="video/mp4" />'
+		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
+		document.querySelector('#librekast-alertbox video').autoplay=true;
+	}
+
+
+	// main fuction : receive messages
+	dashboardSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		console.log('received : '+e.data);
+
+		if(data['message']==='question-go'){
+			console.log('go');
+			// updateMeetingPlan(data['question'].id)
+		} else if(data['message']==='revolution-alert'){
+			playRevolutionAlert(data['alert']);
+		} else if(data['message']==='error no login'){
+			dashboardSocket.send(JSON.stringify({
+				'message': "chat-subscribe", 
+			}));
+		}else if(data['message']==='admin-error'){
+			alert(data['text']);
+		}
+		
+	};
+
+	dashboardSocket.onclose = function(e) {
+	};
+
+	// start chat
+	
+	{% endif %}
+
+</script>
+</body>

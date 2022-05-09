@@ -207,6 +207,7 @@ INTERACTION_CHAR = "#"
 
 # Define how you want to specify that your message is sent by a bot on Twitch and Youtube
 BOT_MSG_PREFIX = '[BOT] '
+REVOLUTION_AUTPLAY_HEADER = "Feature-Policy: autoplay 'self'"
 
 # How many seconds between the automated messages 
 # If you expect N people to show up in the stream, I recommend something like : 60*(4+100/N) seconds

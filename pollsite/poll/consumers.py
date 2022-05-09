@@ -22,6 +22,7 @@ from .twitch_handler import TwitchHandler
 # * _admin : admins only (used for live results)
 # * _chat : anyone that wants to get the live chat (used for live chat, obviously)
 class MeetingConsumer(WebsocketConsumer):
+	isAdmin = False
 
 	def check_attendee(self,username,is_subscriber=False,is_twitch=False,is_youtube=False):
 		attendee = None
@@ -66,10 +67,11 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps({'message':'error no login'}))
 		
 		# ADMIN settings : this is executed ONLY ONCE PER MEETING
-		if(self.is_user_authenticated() and not hasattr(self, 'isAdmin')): 
-			# check isAdmin ensures that there is always only one consumer for twitch and Youtube (but there may be several admins in the meeting)
-			self.isAdmin = True
+		if(self.is_user_authenticated() and not self.meeting._is_running): 
 			# INIT live stream
+			self.meeting._is_running = True
+			self.meeting.save()
+			self.isAdmin = True # to keep track of who is the first to start the meeting
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
 				self.init_yt_polling()
 				self.time_iterator = 0
@@ -87,6 +89,10 @@ class MeetingConsumer(WebsocketConsumer):
 			self.terminate_yt_polling()
 		if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
 			self.terminate_tw_polling()
+		if(self.isAdmin):
+			self.meeting._is_running = False
+			self.meeting.save()
+
 
 	# Receive message from meeting group
 	def meeting_message(self, event):
@@ -96,7 +102,6 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def admin_message(self,event):
 		message = event['message']
-		# if(self.isAdmin):
 		self.send(text_data=json.dumps(message))
 
 
@@ -493,12 +498,20 @@ class MeetingConsumer(WebsocketConsumer):
 		if(self.meeting.platform != 'IRL'):
 			if(settings.DEBUG):
 				print('debug : sending revolution alert')
-			message_out = {
-				'message' : "bot-alert",
-				'content': revolutionbot.message,
-				'alert': revolutionbot.alert.url,
-			}
-			self.send(text_data=json.dumps(message_out))
+			# message_out = {
+			# }
+			# notify the group admin so the alerts in OBS can have it
+			async_to_sync(self.channel_layer.group_send)(
+				self.meeting_group_name+'_chat',
+				{
+					'type': 'admin_message', # is it though ?
+					'message': {
+						'message':'revolution-alert',
+						'alert':{'url':revolutionbot.alert.url,'text':revolutionbot.message},
+					}
+				}
+			)
+
 
 
 

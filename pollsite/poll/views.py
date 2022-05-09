@@ -30,14 +30,20 @@ def index(request):
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	attendees = meeting.attendee_set.all().order_by('-score')
-	wss=settings.SOCKET_ENCRYPTION
-	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees,'wss':wss})
+	# wss=settings.SOCKET_ENCRYPTION
+	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
 
 # TODO this page is not protected, for simplicity. But the data shown here are actually public on YT and Twitch
 def chat(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	wss=settings.SOCKET_ENCRYPTION
-	return render(request,'poll/chatlog.html',{'meeting':meeting,'wss':wss})
+	# wss=settings.SOCKET_ENCRYPTION
+	return render(request,'poll/chatlog.html',{'meeting':meeting})
+
+def alerts(request,meeting_id):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	# wss=settings.SOCKET_ENCRYPTION
+	return render(request,'poll/alerts.html',{'meeting':meeting})
+
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results
@@ -53,7 +59,7 @@ def meeting(request, meeting_id):
 			'attendee':attendee,
 			'current_question': meeting.current_question(),
 			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order'),
-			'wss':settings.SOCKET_ENCRYPTION 
+			# 'wss':settings.SOCKET_ENCRYPTION 
 		}
 		return render(request, 'poll/meeting.html', context)
 

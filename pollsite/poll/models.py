@@ -64,6 +64,7 @@ class Meeting(models.Model):
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
+	_is_running = models.BooleanField('internal state',default=False)
 
 	class Meta:
 		verbose_name = _('Meeting')
