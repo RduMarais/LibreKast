@@ -26,6 +26,11 @@ LIVE_TYPE = (
 		('MX',_('Twitch AND Youtube')),		# TODO
 	)
 
+def get_meeting_directory(instance, filename):
+	return 'meetings/meeting_{0}/{1}'.format(instance.id, filename)
+
+def get_bot_directory(instance, filename):
+	return 'bots/bot_revolution_{0}/{1}'.format(instance.command, filename)
 
 #### APIs
 
@@ -57,7 +62,7 @@ class Meeting(models.Model):
 	reward_fastest = models.BooleanField(_('Reward the fastest answers'),default=False)
 	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
-	image = models.ImageField(_('Image for your meeting'),null = True,blank=True)
+	image = models.ImageField(_('Image for your meeting'),null = True,blank=True,upload_to=get_meeting_directory)
 	chat_log_size = models.IntegerField(_('Max chat messages to show'),default=8)
 	obs_chat_log_size = models.IntegerField(_('Max chat messages for OBS'),default=12)
 	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
@@ -65,6 +70,7 @@ class Meeting(models.Model):
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	_is_running = models.BooleanField('internal state',default=False)
+	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 
 	class Meta:
 		verbose_name = _('Meeting')
@@ -91,6 +97,7 @@ class Meeting(models.Model):
 			return MeetingEnd
 
 
+
 ##### BOTS
 
 class MessageBot(models.Model):
@@ -114,7 +121,7 @@ class RevolutionBot(models.Model):
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 	buffer = models.JSONField(_('internal state of the bot'),default=dict({'triggers':[],'last_revolution':''}),encoder=DjangoJSONEncoder)
 	# i'd like to add a FileField but I need to validate it
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_bot_directory)
 
 	def clean(self):
 		if(self.alert):

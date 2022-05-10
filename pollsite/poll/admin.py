@@ -56,7 +56,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
 	readonly_fields =['participants','is_ongoing']
 	inlines = [QuestionsOrder]
-	list_display = ('title', 'activities','participants','is_ongoing','platform')
+	list_display = ('title', 'activities','participants','is_ongoing','platform','get_qrcode')
 	search_fields = ['title','description']
 
 	def is_ongoing(self,obj):
@@ -69,6 +69,17 @@ class MeetingAdmin(NonSortableParentAdmin):
 			return 'Future Meeting'
 		else:
 			return 'Schedule Error'
+
+	def get_qrcode(self,obj):
+		if(obj.qrcode):
+			link=obj.qrcode.url
+			return format_html('<button onclick="window.open(\'%s\')">QR</button>' % link)
+		else:
+			link=reverse("poll:qr", args=[obj.id])
+			# js_req = 'const qrReq = new XMLHttpRequest();qrReq.open("GET", "'+link+'");qrReq.send();qrReq.onload = function() { if (qrReq.status === 200){console.log(qrReq.responseText); window.open(qrReq.responseText);} }'
+			return format_html('<button type="submit" formaction="%s">create QR</button>' % link)
+
+
 
 # Attendee score table
 class ScoreBoard(admin.ModelAdmin):

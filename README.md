@@ -78,6 +78,8 @@ v0.5.0 : installation and Quality of Life
  * [ ] refactor : use proper logging
  * [ ] docker wrapping
  * [ ] readthedocs
+ * [ ] documentation on Google & Twitch API
+ * [ ] documentation on OBS integration
  * [ ] dulicate question and meetings
  * [ ] make twitch and youtube an interface and have bot logic in a separate file
 

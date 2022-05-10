@@ -13,7 +13,7 @@
 {% block title %}Dashboard{% endblock  %}
 
 {% block content  %}
-<section class="text-center pb-2 mb-2" name="meeting_details">
+<section class="text-center pb-2 mb-2" name="meeting_details" id="meeting-title">
 	<h1 class="text-3xl dark:text-white text-center mt-4">{% trans "Meeting Dashboard" %} : {{ meeting.title }}</h1>
 </section>
 <div class="md:flex">
@@ -32,8 +32,13 @@
 </section>
 
 <section class="w-full md:w-1/4 body-font md:border md:border-red-200" name="meeting-plan-section">
-	<div class="text-2xl text-center mt-2 mx-2" id="meeting-div">
-		{% trans "Meeting plan" %}
+	<div class="text-center w-full m-2" id="meeting-div">
+		<div class="basis-3/4 inline">
+			<span class="text-2xl text-center p-2">{% trans "Meeting plan" %}</span>
+		</div>
+		<div class="basis-1/4 inline text-center">
+			<button class="bg-pour1nf0-pink-500 px-2 py-1 rounded py" onclick="getQRCode()">QR</button>
+		</div>
 	</div>
 	<div class = "w-full items-center m-2 p-1">
 		<div id="meeting-controls" class="items-center text-center mb-2">
@@ -180,6 +185,19 @@
 		}
 	}
 
+	function getQRCode(){
+		// send request to prepare the QR code
+		const createRequest = new XMLHttpRequest()
+		createRequest.open("GET", "{% url 'poll:qr' meeting.id %}")
+		createRequest.send()
+		createRequest.onload = function() {
+			if (createRequest.status === 200) {
+			    console.log(createRequest.responseText)
+			    window.open(createRequest.responseText);
+			  }
+		}
+	}
+		
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
 		questionDesc.innerHTML = "";		resetQuestionContent();

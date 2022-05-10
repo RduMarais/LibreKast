@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse, request
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.models import Q
@@ -6,8 +6,12 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
+from django.core.files.storage import get_storage_class
+from django.core.files import File
 
 import datetime
+import qrcode
+from io import BytesIO
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .forms import WordForm,LoginForm
@@ -44,6 +48,16 @@ def alerts(request,meeting_id):
 	# wss=settings.SOCKET_ENCRYPTION
 	return render(request,'poll/alerts.html',{'meeting':meeting})
 
+def qr(request,meeting_id):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	if(not meeting.qrcode):
+		print('debug : creating qr code')
+		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=('1',))))
+		blob = BytesIO()
+		img.save(blob, 'JPEG') # because we dont want to handle folder existence/creation so we dont save it on disk
+		meeting.qrcode.save(f'meeting_{meeting_id}_qrcode.png', File(blob), save=True)
+		print('debug : file created')
+	return HttpResponse(meeting.qrcode.url)
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results

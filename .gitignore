@@ -3,6 +3,10 @@
 __pycache__
 .DS_Store
 pollsite/media/*
+pollsite/media/meetings/*
+!pollsite/media/meetings/
+pollsite/media/bots/*
+!pollsite/media/bots/
 pollsite/static/*
 pollsite/poll/migrations/*
 pollsite/home/migrations/*
