@@ -28,6 +28,12 @@ To connect to a meeting, participants only need to go to Meetings > choose the m
 
 You can connect in the admin interface with user : `defaultsuperuser` and password `LibreKast`. To pass some questions, just mark them as done in the admin panel. Every request gets the next question by fetching the first question in order that has no already be done.
 
+There are several ways you can add bots in your meetings : 
+
+ * **Periodic bots** : these will regularly send a message in the one you define in the administration interface. The duration between 2 messages is defined in the instance settings.
+ * **Message bots** : they will answer a message starting with "!" (or the character you define in the instance settings).
+ * **Revolution bots** : They will keep track of the messages calling them (with the default character "!") and once the number of commands sent is more than a threshold, it sends a message, and starts an animation in the dashboard (the animation can be shown over OBS). The animation is a webm video (you may have to setup your proxy to allow certain file sizes). 
+
 #### demo
 
  * Admin : `defaultsuperuser` : `LibreKast`
@@ -50,7 +56,10 @@ v0.4.0 : more functionnalities
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
+ * [ ] back : periodic bots filter with is_active
  * [ ] back : go back button in dashboard
+ * [ ] back : current question state
+ * [ ] back : joining during a question
  * [ ] back : generate QR code
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
@@ -62,11 +71,15 @@ v0.4.0 : more functionnalities
  * [x] front : Revolution bots (with transparency)
  * [ ] front : go back button in dashboard
  * [ ] front : have a nicer dashboard
+ * [ ] front : make responsive home
+ * [ ] front : make responsive meetings
+ * [ ] front : make responsive meeting index
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
+ * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
 v0.5.0 : installation and Quality of Life
 
