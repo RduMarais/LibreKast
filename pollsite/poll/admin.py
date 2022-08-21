@@ -7,7 +7,7 @@ from django.conf import settings
 
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
-from .models import Question,Choice,Meeting,Attendee
+from .models import Question,Choice,Meeting,Attendee,Flag
 from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot
 
 # administration of choices once in Question admin panel
@@ -43,6 +43,16 @@ class QuestionsOrder(SortableStackedInline):
 	classes = ['collapse']
 
 
+# Management of meeting's flags
+class FlagInline(admin.TabularInline):
+	model = Flag
+	extra = 0
+	# readonly_fields = ['finds']
+	fields = (('code','name','points'))
+	classes = ['collapse']
+	show_change_link = True
+
+
 # Meeting admin panel
 class MeetingAdmin(NonSortableParentAdmin):
 	fieldsets = [
@@ -56,7 +66,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 	# if(obj.platform == 'YT'):
 	# 	fieldsets[2][1]['fields'].append('stream_url')
 	readonly_fields =['participants','is_ongoing']
-	inlines = [QuestionsOrder]
+	inlines = [QuestionsOrder,FlagInline]
 	list_display = ('title', 'activities','participants','is_ongoing','platform','get_qrcode')
 	search_fields = ['title','description']
 
@@ -114,6 +124,10 @@ class VoteAdmin(admin.ModelAdmin):
 		else:
 			return obj.user.name
 
+class FlagAdmin(admin.ModelAdmin):
+	list_display =('name','code','points','meeting')
+	readonly_fields =['qrcode']
+
 class TwitchAPIAdmin(admin.ModelAdmin):
 	list_display = ('name','description')
 
@@ -144,3 +158,5 @@ admin.site.register(YoutubeAPI,YTAPIAdmin)
 admin.site.register(MessageBot,MsgBotAdmin)
 admin.site.register(PeriodicBot,PeriodBotAdmin)
 admin.site.register(RevolutionBot,RevolutionBotAdmin)
+admin.site.register(Flag,FlagAdmin)
+

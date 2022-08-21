@@ -13,7 +13,7 @@ import datetime
 import qrcode
 from io import BytesIO
 
-from .models import Choice, Question, Meeting,Attendee,Vote
+from .models import Choice,Question,Meeting,Attendee,Vote,Flag
 from .forms import WordForm,LoginForm
 
 def get_previous_user_answers(attendee,question):
@@ -34,18 +34,26 @@ def index(request):
 def dashboard(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	attendees = meeting.attendee_set.all().order_by('-score')
-	# wss=settings.SOCKET_ENCRYPTION
 	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
 
 # TODO this page is not protected, for simplicity. But the data shown here are actually public on YT and Twitch
 def chat(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	# wss=settings.SOCKET_ENCRYPTION
 	return render(request,'poll/chatlog.html',{'meeting':meeting})
+
+# Standalone view for QRcode flag
+# TODO : make this add points to the participant
+def flag(request,meeting_id,flag_code):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	flag=None
+	try:
+		flag = meeting.flag_set.get(code=flag_code)
+	except Flag.DoesNotExist:
+		flag=None
+	return render(request,'poll/flag.html',{'meeting':meeting,'flag':flag})
 
 def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	# wss=settings.SOCKET_ENCRYPTION
 	return render(request,'poll/alerts.html',{'meeting':meeting})
 
 def qr(request,meeting_id):
@@ -73,7 +81,6 @@ def meeting(request, meeting_id):
 			'attendee':attendee,
 			'current_question': meeting.current_question(),
 			'previous_question_list': meeting.question_set.filter(is_done=True).order_by('question_order'),
-			# 'wss':settings.SOCKET_ENCRYPTION 
 		}
 		return render(request, 'poll/meeting.html', context)
 

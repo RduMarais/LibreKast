@@ -209,6 +209,10 @@ class Flag(models.Model):
 	points = models.IntegerField(_('Points for reward'))
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	desc_img = models.ImageField(_('Image to show on flag completion'),null=True,blank=True,upload_to=get_meeting_directory)
+	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+
+	# def finds(self):
+	# 	return len(self.vote_set.all())
 
 
 # for Polls & Quizzes, choices are written by the admin.
