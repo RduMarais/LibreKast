@@ -58,11 +58,11 @@ v0.4.0 : more functionnalities
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
+ * [x] back : generate QR code
  * [ ] back : periodic bots filter with is_active
  * [ ] back : go back button in dashboard
  * [ ] back : current question state
  * [ ] back : joining during a question
- * [ ] back : generate QR code
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
  * [x] Youtube : Revolution bots support
@@ -73,15 +73,25 @@ v0.4.0 : more functionnalities
  * [x] front : Revolution bots (with transparency)
  * [ ] front : go back button in dashboard
  * [ ] front : have a nicer dashboard
- * [ ] front : make responsive home
- * [ ] front : make responsive meetings
- * [ ] front : make responsive meeting index
+ * [x] front : make responsive home
+ * [x] front : make responsive meetings
+ * [x] front : make responsive meeting index
  * [ ] front : change admin interface to be modular
  * [ ] front : create a meeting admin interface
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+
+v0.4.1 : Flag feature
+
+ * [x] back : add display flags and prefixes
+ * [ ] back : add flag model
+ * [ ] back : add flag GET API
+ * [ ] back : generate Flag QR
+ * [ ] back : count flag as vote and bonus points
+ * [ ] front : flag page 
+ * [x] front : flag input on meetings
 
 v0.5.0 : installation and Quality of Life
 

@@ -71,6 +71,8 @@ class Meeting(models.Model):
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	_is_running = models.BooleanField('internal state',default=False)
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
+	show_flags = models.BooleanField(_('Display the text inputs for flag bonus points'),default=False)
+	flags_prefix = models.CharField(_('prefix for flags'),default='LibreKast',max_length=20,blank=True)
 
 	class Meta:
 		verbose_name = _('Meeting')
@@ -198,6 +200,16 @@ class Question(SortableMixin):
 
 	recent.admin_order_field = 'pub_date'
 	recent.boolean = True
+
+class Flag(models.Model):
+	code = models.CharField(_('flag text to find'), default='Pour1nf0', max_length=50)
+	name = models.CharField(_('Flag name'), max_length=50)
+	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
+	desc_rendered = RenderedMarkdownField()
+	points = models.IntegerField(_('Points for reward'))
+	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
+	desc_img = models.ImageField(_('Image to show on flag completion'),null=True,blank=True,upload_to=get_meeting_directory)
+
 
 # for Polls & Quizzes, choices are written by the admin.
 #   for Word clouds, choices are user input
