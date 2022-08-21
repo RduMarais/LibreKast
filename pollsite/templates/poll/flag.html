@@ -20,6 +20,11 @@
         {{ flag.desc_rendered | safe }}
     </p>
     <p class="text-gray-500 dark:text-gray-400">{% trans 'You just got' %} + {{flag.points}} {% trans 'points' %}</p>
+    {% if attendee %}
+    <p>NAME : {{ attendee.name }}</p>
+    {% else %}
+    <p>NAME NOT FOUND</p>
+    {% endif %}
 </div>
 
 {% else %}

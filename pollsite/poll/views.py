@@ -45,17 +45,25 @@ def chat(request,meeting_id):
 # TODO : make this add points to the participant
 def flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	if(not 'attendee_id' in request.session):
+		form = LoginForm()
+		# TODO : redirect after
+		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
+		attendee = None
+	else:
+		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 	flag=None
 	try:
 		flag = meeting.flag_set.get(code=flag_code)
 	except Flag.DoesNotExist:
 		flag=None
-	return render(request,'poll/flag.html',{'meeting':meeting,'flag':flag})
+	return render(request,'poll/flag.html',{'meeting':meeting,'flag':flag,'attendee':attendee})
 
 def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/alerts.html',{'meeting':meeting})
 
+# Create a QR code picture for a specific meeting
 def qr_meeting(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	if(not meeting.qrcode):
@@ -69,6 +77,7 @@ def qr_meeting(request,meeting_id):
 		print('debug : file created')
 	return HttpResponse(meeting.qrcode.url)
 
+# Create a QR code picture for a specific flag
 def qr_flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	try:
