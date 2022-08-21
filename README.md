@@ -54,14 +54,13 @@ You can find screenshots :
 
 v0.4.0 : more functionnalities
 
- * [ ] add Image slides
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
  * [x] back : generate QR code
  * [ ] back : periodic bots filter with is_active
- * [ ] back : go back button in dashboard
  * [ ] back : current question state
+ * [ ] back : go back button in dashboard
  * [ ] back : joining during a question
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
@@ -72,14 +71,13 @@ v0.4.0 : more functionnalities
  * [x] front : Revolution bots (with sound)
  * [x] front : Revolution bots (with transparency)
  * [ ] front : go back button in dashboard
- * [ ] front : have a nicer dashboard
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
+ * [ ] front : create a dedicated meeting admin interface
+ * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
- * [ ] front : create a meeting admin interface
- * [ ] front : type de question : appréciation /100 (échelle)
- * [ ] front : type de question : vote bayésien = plusieurs appréciation sur 5)
+ * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
@@ -89,11 +87,19 @@ v0.4.1 : Flag feature
  * [x] back : add flag model
  * [x] back : add flag GET API
  * [x] back : generate Flag QR
- * [ ] back : count flag as vote and bonus points
+ * [x] back : link flag with participant session
+ * [ ] back : count flag as vote 
+ * [ ] back : add bonus points for flags
+ * [x] back : flag input on meetings
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
- * [ ] back : refactor QR code creation
+ * [ ] back : refactor QR code creation processes
+
+v0.4.2 : 
+
+ * [ ] add Image slides
+ * [ ] front : type de question : appréciation /100 (échelle)
 
 v0.5.0 : installation and Quality of Life
 
