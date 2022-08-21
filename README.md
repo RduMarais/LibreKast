@@ -86,12 +86,14 @@ v0.4.0 : more functionnalities
 v0.4.1 : Flag feature
 
  * [x] back : add display flags and prefixes
- * [ ] back : add flag model
- * [ ] back : add flag GET API
- * [ ] back : generate Flag QR
+ * [x] back : add flag model
+ * [x] back : add flag GET API
+ * [x] back : generate Flag QR
  * [ ] back : count flag as vote and bonus points
- * [ ] front : flag page 
+ * [x] front : flag page 
+ * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
+ * [ ] back : refactor QR code creation
 
 v0.5.0 : installation and Quality of Life
 
