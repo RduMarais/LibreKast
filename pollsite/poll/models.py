@@ -1,11 +1,14 @@
 from django.db import models
-import datetime
-import magic
-import json
 from django.utils import timezone
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import request
+import datetime
+import magic
+import json
+import qrcode
 
 from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
@@ -213,6 +216,22 @@ class Flag(models.Model):
 
 	# def finds(self):
 	# 	return len(self.vote_set.all())
+
+	def clean(self):
+		if(not self.code.isalnum()):
+			raise ValidationError(_('code must be alphanumeric'))
+		super().clean()
+
+	def save(self, *args, **kwargs):
+		self.full_clean()
+	# 	flag_url = request.build_absolute_uri(reverse('poll:flag',args=('1','2')))
+	# 	img = qrcode.make(flag_url)
+	# 	blob = BytesIO()
+	# 	# because we dont want to handle folder existence/creation so we dont save it on disk
+	# 	img.save(blob, 'JPEG') 
+	# 	meeting.qrcode.save(f'meeting_{flag.meeting_id}_flag_{flag.code}.png', File(blob), save=True)
+	# 	print('debug : Flag QR file created')
+		super(Flag, self).save(*args, **kwargs)
 
 
 # for Polls & Quizzes, choices are written by the admin.

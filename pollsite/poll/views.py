@@ -56,10 +56,25 @@ def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/alerts.html',{'meeting':meeting})
 
-def qr(request,meeting_id):
+def qr_meeting(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	if(not meeting.qrcode):
 		print('debug : creating qr code')
+		# 'make' creates the code from a string
+		# 'reverse' returns the relative url for the view poll with meeting 1
+		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=('1',))))
+		blob = BytesIO()
+		img.save(blob, 'JPEG') # because we dont want to handle folder existence/creation so we dont save it on disk
+		meeting.qrcode.save(f'meeting_{meeting_id}_qrcode.png', File(blob), save=True)
+		print('debug : file created')
+	return HttpResponse(meeting.qrcode.url)
+
+def qr_flag(request,meeting_id,flag_code):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	if(not meeting.qrcode):
+		print('debug : creating qr code')
+		# 'make' creates the code from a string
+		# 'reverse' returns the relative url for the view poll with meeting 1
 		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=('1',))))
 		blob = BytesIO()
 		img.save(blob, 'JPEG') # because we dont want to handle folder existence/creation so we dont save it on disk
