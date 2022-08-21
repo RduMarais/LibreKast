@@ -18,35 +18,37 @@
 
 <body class="dark:bg-pour1nf0-back-400 dark:text-gray-100">
 
-    <header class="text-gray-700 body-font dark:text-white dark:bg-pour1nf0-dark-500">
+    <header class="body-font text-white bg-pour1nf0-dark-500">
     <div class="container mx-auto flex flex-wrap p-5 md:flex-row items-center">
             <a href="{% url 'home:index' %}" class="flex title-font items-center">
                 <img class="h-12 w-auto p-1" src="{% static 'LibreKast.png' %}">
                 <span class="px-2 text-white self-center text-lg font-semibold whitespace-nowrap">LibreKast</span>
             </a>
-            <nav class="hidden md:ml-auto md:mr-auto md:flex md:flex-wrap items-center text-base justify-center dark:text-white" id="fullscreen-menu">
-                <a href="/poll" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{% trans "Meetings" %}</a>
-                <a href="/#HowTo" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{% trans "About LibreKast" %}</a>
+            <nav class="hidden md:ml-auto md:mr-auto md:flex md:flex-wrap items-center text-base justify-center" id="fullscreen-menu">
+                <a href="{% url 'poll:index' %}" class="mr-5 text-gray-300 hover:text-pour1nf0-blue-600">{% trans "Meetings" %}</a>
+                <a href="{% url 'home:index' %}/#HowTo" class="mr-5 text-gray-300 hover:text-pour1nf0-blue-600">{% trans "About LibreKast" %}</a>
                 {% for add_page in pages %}
-                <a href="{% url 'home:page' add_page.name %}" class="mr-5 hover:text-gray-900 dark:text-gray-300 dark:hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
+                <a href="{% url 'home:page' add_page.name %}" class="mr-5 text-gray-300 hover:text-pour1nf0-blue-600">{{ add_page.topTitle_ln1 }}</a>
                 {% endfor %}
+            </nav>
+            <div class="hidden md:ml-auto md:mr-auto md:flex md:flex-wrap items-right text-right justify-center" id="fullscreen-menu-opts">
                 <button class="inline-flex items-center text-white bg-pour1nf0-blue-900 hover:bg-gray-300 rounded py-1 px-3" id="darkmode-button" onclick="toggleDarkMode();" {% if darkmode %}value="night">&#9788;{% else %}value="day">&#9790;{% endif %}</button>
                 {% if show_admin %}
                 <a href="/{{admin_url}}"> 
-                    <button class="inline-flex items-center bg-gray-300 border-0 py-1 px-3 focus:outline-none hover:bg-gray-500 dark:bg-gray-800 dark:hover:bg-gray-300 rounded text-base mt-2 md:mt-0 dark:text-gray-700 ">{% trans "Admin" %}
+                    <button class="inline-flex items-center border-0 py-1 px-3 focus:outline-none bg-gray-700 hover:bg-gray-300 rounded text-base mt-2 md:mt-0 text-gray-300 hover:text-gray-700">{% trans "Admin" %}
                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         class="w-4 h-4 ml-1" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
                     </button> 
                 </a>
+            </div>
                 {% endif %}
-            </nav>
             <div class="md:hidden sticky right-0 ml-2">
                 <button id="mobile-menu-collapse" type="button" class="inline-flex items-center ml-3 text-lg focus:outline-none focus:ring-2 text-gray-400 hover:bg-gray-700 focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">&#9776;               
                 </button>
             </div>
-        <div class="hidden w-full md:block md:w-auto" id="mobile-menu">
+        <div class="hidden w-full md:hidden md:block md:w-auto" id="mobile-menu">
             <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium text-center">
                 <li>
                 <a href="{% url 'poll:index' %}" class="pour-info_nav_item block py-2 pr-4 pl-3 border-b md:border-0 md:px-0 text-gray-400 hover:text-white hover:bg-transparent border-gray-700">{% trans "Meetings" %}</a>

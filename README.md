@@ -16,6 +16,8 @@ There are 4 types of question you can show in the app :
  * **poll** : asks a question. on question close, shows the number of votes each choice got.
  * **Quizz** : asks a question. One of the answers is marked as 'correct', all attendants that chose the correct answer receive 1 point, the first one to answer receives an additionnal point.
 
+Moreover, there are **flags**, that can be submitted by participants to earn points, both in their interface or as QR codes.
+
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
 There are 3 types of meetings : 

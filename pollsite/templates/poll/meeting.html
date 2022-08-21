@@ -32,10 +32,13 @@
 </section>
 
 <section class="text-gray-900 body-font overflow-hidden" name="previous_questions">
-	<div class="container px-5 py-24 mx-auto">
+	<div class="container px-5 pt-24 pb-12 mx-auto">
 		<div id="previous-questions-container" class="-my-8">
-			<h3 class="text-xl text-center dark:text-gray-300">{% trans "Previous questions" %}</h3>
-			<ul id="previous-questions-list">
+			<h3 class="text-xl text-center dark:text-gray-300">
+				{% trans "Previous questions" %}
+				<button id="previous-questions-collapse">&#9776;</button>
+			</h3>
+			<ul id="previous-questions-list" class="hidden">
 			{% for question in previous_question_list %}
 			<li class="py-1 flex flex-wrap md:flex-no-wrap">
 				<div class="md:flex-grow">
@@ -439,6 +442,11 @@
 		startDivNode.remove()
 		showWait();
 	};
+
+	// previous questions list
+	document.getElementById("previous-questions-collapse").onclick = function toggleMenu() {
+        document.getElementById("previous-questions-list").classList.toggle("hidden");
+    };
 
 </script>
 
