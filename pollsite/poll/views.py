@@ -71,16 +71,21 @@ def qr_meeting(request,meeting_id):
 
 def qr_flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	if(not meeting.qrcode):
-		print('debug : creating qr code')
-		# 'make' creates the code from a string
-		# 'reverse' returns the relative url for the view poll with meeting 1
-		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=('1',))))
-		blob = BytesIO()
-		img.save(blob, 'JPEG') # because we dont want to handle folder existence/creation so we dont save it on disk
-		meeting.qrcode.save(f'meeting_{meeting_id}_qrcode.png', File(blob), save=True)
-		print('debug : file created')
-	return HttpResponse(meeting.qrcode.url)
+	try:
+		flag = meeting.flag_set.get(code=flag_code)
+		if(not flag.qrcode):
+			print('debug : creating FLAG qr code')
+			# 'make' creates the code from a string
+			# 'reverse' returns the relative url for the view poll with meeting 1
+			img = qrcode.make(request.build_absolute_uri(reverse('poll:flag',args=(meeting_id,flag.code))))
+			blob = BytesIO()
+			# because we dont want to handle folder existence/creation so we dont save it on disk
+			img.save(blob, 'JPEG') 
+			flag.qrcode.save(f'meeting_{meeting_id}_flag_{flag.code}_qrcode.png', File(blob), save=True)
+			print('debug : FLAG qr file created')
+		return HttpResponse(flag.qrcode.url)
+	except:
+		return HttpResponse("not ok")
 
 
 # Once you enter a meeting, this is the page displaying the current question and previous results

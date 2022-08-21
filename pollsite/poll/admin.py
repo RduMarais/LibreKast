@@ -124,18 +124,18 @@ class VoteAdmin(admin.ModelAdmin):
 			return obj.user.name
 
 class FlagAdmin(admin.ModelAdmin):
-	list_display =('name','code','points','meeting')
+	list_display =('name','code','points','meeting','get_qrcode')
 	readonly_fields =['qrcode']
 	fields = ['code','points','name','desc','meeting','desc_img']
 
-	# def get_qrcode(self,obj):
-	# 	if(obj.qrcode):
-	# 		link=obj.qrcode.url
-	# 		return format_html('<button onclick="window.open(\'%s\')">QR</button>' % link)
-	# 	else:
-	# 		link=reverse("poll:qr", args=[obj.id])
-	# 		# js_req = 'const qrReq = new XMLHttpRequest();qrReq.open("GET", "'+link+'");qrReq.send();qrReq.onload = function() { if (qrReq.status === 200){console.log(qrReq.responseText); window.open(qrReq.responseText);} }'
-	# 		return format_html('<button type="submit" formaction="%s">create QR</button>' % link)
+	def get_qrcode(self,obj):
+		if(obj.qrcode):
+			link=obj.qrcode.url
+			return format_html('<button onclick="window.open(\'%s\')">QR</button>' % link)
+		else:
+			link=reverse("poll:qr_flag", args=[obj.meeting.id,obj.code])
+			# js_req = 'const qrReq = new XMLHttpRequest();qrReq.open("GET", "'+link+'");qrReq.send();qrReq.onload = function() { if (qrReq.status === 200){console.log(qrReq.responseText); window.open(qrReq.responseText);} }'
+			return format_html('<button type="submit" formaction="%s">create QR</button>' % link)
 
 
 
