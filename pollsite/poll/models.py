@@ -210,7 +210,7 @@ class Flag(models.Model):
 	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
 	points = models.IntegerField(_('Reward on validation'),default=1)
-	first_blood = models.IntegerField(_('Reward for first participant to validate'),default=1)
+	first_blood_reward = models.IntegerField(_('Reward for first participant to validate'),default=1)
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	desc_img = models.ImageField(_('Image to show on flag completion'),null=True,blank=True,upload_to=get_meeting_directory)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
@@ -227,6 +227,11 @@ class Flag(models.Model):
 		self.full_clean()
 		super(Flag, self).save(*args, **kwargs)
 
+class FlagAttempt(models.Model):
+	code = models.CharField(_('flag text submitted'), default='Pour1nf0', max_length=50)
+	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
+	correct_flag = models.ForeignKey(Flag,null=True,on_delete=models.CASCADE)
+	is_first_blood = models.BooleanField(default=False)
 
 # for Polls & Quizzes, choices are written by the admin.
 #   for Word clouds, choices are user input

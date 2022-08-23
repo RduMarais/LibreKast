@@ -4,24 +4,24 @@
 {% block title  %}Flag{% endblock  %}
 
 {% block content  %}
-{% if flag %}
+{% if flagAttempt.correct_flag %}
 <div class="mt-4 pt-2 mx-auto text-gray-900 text-center mb-4">
     <h1 class="text-2xl dark:text-white">{% trans 'Congratulations ! Flag found' %}</h1>
-    <h2 class="text-2xl text-pour1nf0-pink-800 dark:text-pour1nf0-pink-500">{{ flag.name }}</h3>
+    <h2 class="text-2xl text-pour1nf0-pink-800 dark:text-pour1nf0-pink-500">{{ flagAttempt.correct_flag.name }}</h3>
     <h4 class="text-lg dark:text-gray-300">{{ meeting.title }}</h2>
 </div>
 
 
 <div id="flag-body" class="mx-auto mb-4 text-center">
-    {% if flag.desc_img %}
-    <img src="{{ flag.desc_img.url }}" class="mr-4">
+    {% if flagAttempt.correct_flag.desc_img %}
+    <img src="{{ flagAttempt.correct_flag.desc_img.url }}" class="mr-4">
     {% endif %}
     <p>
-        {{ flag.desc_rendered | safe }}
+        {{ flagAttempt.correct_flag.desc_rendered | safe }}
     </p>
-    <p class="text-gray-500 dark:text-gray-400">{% trans 'You just got' %} + {{flag.points}} {% trans 'points' %}</p>
-    {% if attendee %}
-    <p>NAME : {{ attendee.name }}</p>
+    <p class="text-gray-500 dark:text-gray-400">{% trans 'You just got' %} + {{ flagAttempt.correct_flag.points }} {% trans 'points' %}</p>
+    {% if flagAttempt.user %}
+    <p>NAME : {{ flagAttempt.user.name }}</p>
     {% else %}
     <p>NAME NOT FOUND</p>
     {% endif %}
@@ -30,13 +30,20 @@
 {% else %}
 
 <div class="mt-4 pt-2 mx-auto text-gray-900 text-center mb-4">
-    <h1 class="text-2xl dark:text-white">{% trans 'Sorry, this is not a valid flag' %}</h1>
+    <h1 class="text-2xl dark:text-white">{% trans 'Sorry, try again !' %}</h1>
     <h4 class="text-lg dark:text-gray-300">{{ meeting.title }}</h2>
 </div>
 
 
 <div id="flag-body" class="mx-auto mb-4 text-center">
+    <p>{% trans 'You submitted the following flag' %} : {{ flagAttempt.code }}</p>
+    {% if error == 'not found' %}
     <p>{% trans 'The flag you sumbitted is not recognized as a known valid flag' %}</p>
+    {% elif error == 'already flagged' %}
+    <p>{% trans 'You already validated this flag' %}</p>
+    {% else %}
+    <p>{% trans 'Sorry, something went wrong' %}</p>
+    {% endif %}
 </div>
 
 {% endif %}

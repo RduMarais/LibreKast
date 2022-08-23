@@ -13,7 +13,7 @@ import datetime
 import qrcode
 from io import BytesIO
 
-from .models import Choice,Question,Meeting,Attendee,Vote,Flag
+from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt
 from .forms import WordForm,LoginForm
 
 def get_previous_user_answers(attendee,question):
@@ -52,12 +52,22 @@ def flag(request,meeting_id,flag_code):
 		attendee = None
 	else:
 		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
-	flag=None
+	flag_attempt = FlagAttempt(code=flag_code,user=attendee)
+	error = None
 	try:
 		flag = meeting.flag_set.get(code=flag_code)
+		# check if user has already flagged
+		if( attendee.flagattempt_set.filter(correct_flag=flag)):
+			error = 'already flagged'
+			# return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':'already flagged'})
+		else:
+			flag_attempt.correct_flag = flag
+			attendee.score = attendee.score + flag.points
+			attendee.save()
 	except Flag.DoesNotExist:
-		flag=None
-	return render(request,'poll/flag.html',{'meeting':meeting,'flag':flag,'attendee':attendee})
+		error = 'not found'
+	flag_attempt.save()
+	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
 def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)

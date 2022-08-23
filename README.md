@@ -89,12 +89,14 @@ v0.4.1 : Flag feature
  * [x] back : generate Flag QR
  * [x] back : link flag with participant session
  * [ ] back : count flag as vote 
+   * vote is for choice so i need smthing else
  * [ ] back : add bonus points for flags
  * [x] back : flag input on meetings
+ * [ ] back : refactor QR code creation processes
+ * [ ] back : redirection on login
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
- * [ ] back : refactor QR code creation processes
 
 v0.4.2 : 
 
