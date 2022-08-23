@@ -45,16 +45,15 @@ def chat(request,meeting_id):
 # TODO : make this add points to the participant
 def flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	error = None
+	flag_attempt = None
 	if(not 'attendee_id' in request.session):
 		form = LoginForm()
 		# TODO : redirect after
 		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
-		attendee = None
-	else:
-		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
-	flag_attempt = FlagAttempt(code=flag_code,user=attendee)
-	error = None
 	try:
+		attendee = meeting.attendee_set.get(pk=request.session['attendee_id'])
+		flag_attempt = FlagAttempt(code=flag_code,user=attendee)
 		flag = meeting.flag_set.get(code=flag_code)
 		# check if user has already flagged
 		if( attendee.flagattempt_set.filter(correct_flag=flag)):
@@ -64,9 +63,11 @@ def flag(request,meeting_id,flag_code):
 			flag_attempt.correct_flag = flag
 			attendee.score = attendee.score + flag.points
 			attendee.save()
+		flag_attempt.save()
 	except Flag.DoesNotExist:
 		error = 'not found'
-	flag_attempt.save()
+	except Attendee.DoesNotExist:
+		error = 'other meeting'
 	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
 def alerts(request,meeting_id):

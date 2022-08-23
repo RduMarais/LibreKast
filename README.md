@@ -88,8 +88,7 @@ v0.4.1 : Flag feature
  * [x] back : add flag GET API
  * [x] back : generate Flag QR
  * [x] back : link flag with participant session
- * [ ] back : count flag as vote 
-   * vote is for choice so i need smthing else
+ * [x] back : count flag as vote 
  * [ ] back : add bonus points for flags
  * [x] back : flag input on meetings
  * [ ] back : refactor QR code creation processes

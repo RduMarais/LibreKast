@@ -36,11 +36,15 @@
 
 
 <div id="flag-body" class="mx-auto mb-4 text-center">
+    {% if flagAttempt %}
     <p>{% trans 'You submitted the following flag' %} : {{ flagAttempt.code }}</p>
+    {% endif %}
     {% if error == 'not found' %}
     <p>{% trans 'The flag you sumbitted is not recognized as a known valid flag' %}</p>
     {% elif error == 'already flagged' %}
     <p>{% trans 'You already validated this flag' %}</p>
+    {% elif error == 'other meeting' %}
+    <p>{% trans 'The flag you sumbitted is not recognized as a known valid flag. You may have registered in the wrong meeting.' %}</p>
     {% else %}
     <p>{% trans 'Sorry, something went wrong' %}</p>
     {% endif %}
