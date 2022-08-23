@@ -15,6 +15,7 @@ from io import BytesIO
 
 from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt
 from .forms import WordForm,LoginForm
+from .utils import validate_flag_attempt
 
 def get_previous_user_answers(attendee,question):
 	query = Q(user=attendee)
@@ -45,29 +46,13 @@ def chat(request,meeting_id):
 # TODO : make this add points to the participant
 def flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	error = None
-	flag_attempt = None
 	if(not 'attendee_id' in request.session):
 		form = LoginForm()
 		# TODO : redirect after
 		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
-	try:
-		attendee = meeting.attendee_set.get(pk=request.session['attendee_id'])
-		flag_attempt = FlagAttempt(code=flag_code,user=attendee)
-		flag = meeting.flag_set.get(code=flag_code)
-		# check if user has already flagged
-		if( attendee.flagattempt_set.filter(correct_flag=flag)):
-			error = 'already flagged'
-			# return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':'already flagged'})
-		else:
-			flag_attempt.correct_flag = flag
-			attendee.score = attendee.score + flag.points
-			attendee.save()
-		flag_attempt.save()
-	except Flag.DoesNotExist:
-		error = 'not found'
-	except Attendee.DoesNotExist:
-		error = 'other meeting'
+
+	(flag_attempt,error) = validate_flag_attempt(meeting,request.session['attendee_id'],flag_code)
+
 	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
 def alerts(request,meeting_id):
