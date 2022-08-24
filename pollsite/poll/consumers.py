@@ -15,6 +15,7 @@ from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler
 from .twitch_handler import TwitchHandler
+from .utils import validate_flag_attempt
 
 
 # there are 3 group channels joined if needed : 
@@ -111,8 +112,8 @@ class MeetingConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
 		
-		# if(settings.DEBUG):
-		print('RECV : '+message_in)
+		if(settings.DEBUG):
+			print('RECV : '+message_in)
 
 		####################################
 		#### THE MAIN APP LOGIC is here ####
@@ -171,6 +172,10 @@ class MeetingConsumer(WebsocketConsumer):
 				self.notify_next_question()
 		elif(message_in == "chat-subscribe"):
 			self.subscribe_to_chat()
+		elif(message_in == "submit-flag"):
+			if(settings.DEBUG):
+				print('starting flag submission')
+			self.submit_flag(text_data_json,self.attendee)
 		else:
 			message_out = {'message':'error'}
 			self.send(text_data=json.dumps(message_out))
@@ -512,6 +517,46 @@ class MeetingConsumer(WebsocketConsumer):
 					}
 				}
 			)
+
+	def submit_flag(self,text_data_json,attendee):
+		flag_attempt_text = text_data_json['flag']
+		print(f'user {attendee.name} submitted flag : {flag_attempt_text}')
+		(flag_attempt,error) = validate_flag_attempt(self.meeting,attendee,flag_attempt_text)
+		message_out = {}
+		if(flag_attempt.correct_flag):
+			message_out = {
+				'message' : "flag-success",
+				'result':{
+					'name':flag_attempt.correct_flag.name,
+					'points':flag_attempt.correct_flag.points,
+					'desc-rendered':flag_attempt.correct_flag.desc_rendered,
+					'desc-img-url':flag_attempt.correct_flag.desc_img.url if flag_attempt.correct_flag.desc_img else None,
+					'current-score': attendee.score,
+				},
+			}
+		else:
+			message_out = {
+				'message' : "flag-error",
+				'results':{
+					'error':error,
+					'flag-attempt-code':flag_attempt.code,
+				},
+			}
+		print(message_out)
+		self.send(text_data=json.dumps(message_out))
+
+		# notify the group admin
+			# async_to_sync(self.channel_layer.group_send)(
+			# 	self.meeting_group_name+'_chat',
+			# 	{
+			# 		'type': 'admin_message', # is it though ?
+			# 		'message': {
+			# 			'message':'revolution-alert',
+			# 			'alert':{'url':revolutionbot.alert.url,'text':revolutionbot.message},
+			# 		}
+			# 	}
+			# )
+
 
 
 

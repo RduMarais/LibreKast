@@ -51,8 +51,14 @@ def flag(request,meeting_id,flag_code):
 		# TODO : redirect after
 		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 
-	(flag_attempt,error) = validate_flag_attempt(meeting,request.session['attendee_id'],flag_code)
-
+	flag_attempt = None
+	error = None
+	try:
+		attendee = meeting.attendee_set.get(pk=request.session['attendee_id'])
+	except Attendee.DoesNotExist:
+		error = 'other meeting'
+	else:
+		(flag_attempt,error) = validate_flag_attempt(meeting,attendee,flag_code)
 	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
 def alerts(request,meeting_id):

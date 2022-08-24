@@ -33,7 +33,7 @@
 
 {% if meeting.show_flags %}
 <section class="dark:text-gray-200 body-font " name="flag_section">
-	<div class="container px-5 py-4 mx-auto items-center text-center">
+	<div class="container px-5 py-4 mx-auto items-center text-center" id="submit-flag-div">
 		<div class="mx-auto text-center row" id="submit-flag-form">
 			<span>{% trans 'Bonus points' %} :</span>
 			<input type="text" id="submit-flag-input" name="submitFlag" class="w-80 ml-auto mr-0 bg-pour1nf0-purple-900 text-center rounded text-white" onkeypress="clickSubmitFlag(event)"
@@ -335,6 +335,40 @@
 		document.querySelector('#my-score').innerText = score;
 	}
 
+	function flagSuccess(results){
+		flagDiv = document.querySelector('#submit-flag-div');
+		flagBadge = document.createElement("div");
+		flagCongrats = document.createElement("p");
+		flagName = document.createElement("p");
+		flagDesc = document.createElement("div");
+
+		flagBadge.classList.add('my-2');
+		flagCongrats.classList.add('text-xl','my-2','text-pour1nf0-pink-800','dark:text-pour1nf0-pink-300');
+		flagCongrats.innerText="{% trans 'Congratulations ! Flag found' %}"
+		flagName.classList.add('text-gray-700','dark:text-gray-300');
+		flagDesc.classList.add('text-gray-700','dark:text-gray-300');
+		console.log(results);
+		flagName.innerText = results['name']
+		flagDesc.innerHTML = results['desc-rendered']
+
+		flagBadge.appendChild(flagCongrats);
+		flagBadge.appendChild(flagName);
+		flagBadge.appendChild(flagDesc);
+		flagDiv.appendChild(flagBadge);
+		// TODO : afficher l'image
+
+		updateScore(results['current-score']);
+		setTimeout(function(){flagBadge.remove();}, 5000);
+		// {"name": "valdi wi timg 2", "points": 2, "desc-rendered": "<p>frtyuo</p>", "desc-img-url": "/media/meetings/meeting_None/qr.png", "current-score": 16}
+	}
+
+	function flagError(results){
+		flagErrorDiv = document.querySelector('#flag-error');
+		flagErrorDiv.innerText = 'Flag "'+results['flag-attempt-code']+'" '+results['error'];
+		flagErrorDiv.classList.toggle("hidden");
+		setTimeout(function(){flagErrorDiv.classList.toggle("hidden");}, 2000);
+	}
+
 	function wcSendWord(word){
 		questionSocket.send(JSON.stringify({
 			'message': "word-cloud-add", 
@@ -438,6 +472,10 @@
 			updateWordCloud(data['vote']);
 		} else if(data['message']==='update-scoreboard'){
 			updateScoreboard(data['scores']);
+		} else if(data['message']==='flag-success'){
+			flagSuccess(data['result']);
+		} else if(data['message']==='flag-error'){
+			flagError(data['results']);
 		}
 		
 	};
