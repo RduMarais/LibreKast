@@ -91,13 +91,11 @@ v0.4.1 : Flag feature
  * [x] back : count flag as vote 
  * [x] back : flag input on meetings
  * [ ] back : add bonus points for first blood on flags
- * [ ] back : refactor QR code creation processes
- * [ ] back : redirection on login
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
  * [x] front : latest submissions log
- * [ ] front : flag input on meetings display images
+ * [x] front : flag input on meetings display images
  * [ ] front : latest submissions notification
 
 v0.4.2 : 
@@ -105,6 +103,11 @@ v0.4.2 :
  * [ ] add Image slides
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] bleach word cloud
+
+v0.4.3 : 
+
+ * [ ] back : redirection on login
+ * [ ] back : refactor QR code creation processes
 
 v0.5.0 : installation and Quality of Life
 

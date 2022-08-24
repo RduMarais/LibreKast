@@ -343,6 +343,7 @@
 		flagDesc = document.createElement("div");
 
 		flagBadge.classList.add('my-2');
+		flagBadge.id="submit-flag-result-div";
 		flagCongrats.classList.add('text-xl','my-2','text-pour1nf0-pink-800','dark:text-pour1nf0-pink-300');
 		flagCongrats.innerText="{% trans 'Congratulations ! Flag found' %}"
 		flagName.classList.add('text-gray-700','dark:text-gray-300');
@@ -355,11 +356,15 @@
 		flagBadge.appendChild(flagName);
 		flagBadge.appendChild(flagDesc);
 		flagDiv.appendChild(flagBadge);
-		// TODO : afficher l'image
+		if(results['desc-img-url']){
+			flagImg = document.createElement("img");
+			flagImg.src=results['desc-img-url'];
+			flagImg.classList.add('mx-auto','text-center','max-h-24');
+			flagDiv.appendChild(flagImg);
+		}
 
 		updateScore(results['current-score']);
 		setTimeout(function(){flagBadge.remove();}, 5000);
-		// {"name": "valdi wi timg 2", "points": 2, "desc-rendered": "<p>frtyuo</p>", "desc-img-url": "/media/meetings/meeting_None/qr.png", "current-score": 16}
 	}
 
 	function flagError(results){
