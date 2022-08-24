@@ -91,12 +91,13 @@ v0.4.1 : Flag feature
  * [x] back : count flag as vote 
  * [x] back : flag input on meetings
  * [ ] back : add bonus points for first blood on flags
+ * [ ] back : handle prefixes
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
  * [x] front : latest submissions log
  * [x] front : flag input on meetings display images
- * [ ] front : latest submissions notification
+ * [x] front : latest submissions notification
 
 v0.4.2 : 
 
@@ -112,6 +113,7 @@ v0.4.3 :
 v0.5.0 : installation and Quality of Life
 
  * [x] install script
+ * [ ] front : dashboard colors 
  * [ ] Youtube : setup oauth redirection for API
  * [ ] refactor : make question object-oriented in consumers
  * [ ] refactor : code wrapping and documentation

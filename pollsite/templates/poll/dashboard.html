@@ -154,13 +154,15 @@
 		</tbody>
 	</table>
 	</div>
+	{% if meeting.show_flags %}
 	<div class="text-center w-full m-2" id="latest-submissions-div">
 		<div class="basis-3/4 inline">
 			<span class="text-2xl text-center p-2">{% trans "Lastest Submissions" %}</span>
 		</div>
-		<div class="border border-pour1nf0-purple-200 bg-pour1nf0-purple-100 dark:border-pour1nf0-purple-700 dark:bg-pour1nf0-dark-100" id="latest-submissions-content">
+		<div class="border dark:border-pour1nf0-purple-200 dark:bg-pour1nf0-purple-100 dark:bg-pour1nf0-purple-300 dark:backdrop-opacity-20" id="latest-submissions-content">
 		</div>
 	</div>
+	{% endif %}
 
 </section>
 </div>
@@ -471,6 +473,25 @@
 		// chart.draw();
 	}
 
+	function addFlagLog(flagAttempt){
+		console.log('addFlagLog');
+		flagLogSize = 6;
+		let flaglog = document.querySelector('#latest-submissions-content');
+		if(flaglog.childElementCount>=flagLogSize){
+			flaglog.removeChild(flaglog.firstChild);
+		}
+		let l = document.createElement("p");
+		let u = document.createElement("span");
+		let t = document.createElement("span");
+		l.classList.add("librekast-flaglog","mx-2","my-2");
+		u.innerText = flagAttempt['user'];
+		u.classList.add("text-pour1nf0-purple-800","librekast-flaglog-username","font-bold","mr-2");
+		t.innerText = flagAttempt['code']+' ('+flagAttempt['correct']+')';
+		t.classList.add("librekast-flaglog-code");
+		l.appendChild(u);
+		l.appendChild(t);
+		flaglog.appendChild(l);
+	}
 
 	{% if meeting.platform != 'IRL' %}
 
@@ -562,6 +583,9 @@
 			alert(data['text']);
 		}else if(data['message']==='revolution-alert'){
 			playRevolutionAlert(data['alert']);
+		}else if(data['message']==='notify-flag'){
+			console.log('start flag log');
+			addFlagLog(data['flag-attempt']);
 		}
 	};
 

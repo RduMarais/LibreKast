@@ -520,10 +520,13 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def submit_flag(self,text_data_json,attendee):
 		flag_attempt_text = text_data_json['flag']
-		print(f'user {attendee.name} submitted flag : {flag_attempt_text}')
+		if(settings.DEBUG):
+			print(f'user {attendee.name} submitted flag : {flag_attempt_text}')
 		(flag_attempt,error) = validate_flag_attempt(self.meeting,attendee,flag_attempt_text)
 		message_out = {}
+		is_correct = False
 		if(flag_attempt.correct_flag):
+			is_correct = True
 			message_out = {
 				'message' : "flag-success",
 				'result':{
@@ -542,20 +545,23 @@ class MeetingConsumer(WebsocketConsumer):
 					'flag-attempt-code':flag_attempt.code,
 				},
 			}
-		print(message_out)
 		self.send(text_data=json.dumps(message_out))
 
 		# notify the group admin
-			# async_to_sync(self.channel_layer.group_send)(
-			# 	self.meeting_group_name+'_chat',
-			# 	{
-			# 		'type': 'admin_message', # is it though ?
-			# 		'message': {
-			# 			'message':'revolution-alert',
-			# 			'alert':{'url':revolutionbot.alert.url,'text':revolutionbot.message},
-			# 		}
-			# 	}
-			# )
+		async_to_sync(self.channel_layer.group_send)(
+			self.meeting_group_name+'_admin',
+			{
+				'type': 'admin_message', # is it though ?
+				'message': {
+					'message':'notify-flag',
+					'flag-attempt':{
+						'code':flag_attempt_text,
+						'user':attendee.name,
+						'correct':is_correct,
+					},
+				}
+			}
+		)
 
 
 
