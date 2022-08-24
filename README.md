@@ -96,7 +96,8 @@ v0.4.1 : Flag feature
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [ ] front : flag input on meetings
- * [ ] front : latest submissions 
+ * [x] front : latest submissions log
+ * [ ] front : latest submissions notification
 
 v0.4.2 : 
 
