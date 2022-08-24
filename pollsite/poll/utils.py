@@ -15,6 +15,7 @@ def validate_flag_attempt(meeting,attendee_id,attempted_code):
 			flag_attempt.correct_flag = flag
 			attendee.score = attendee.score + flag.points
 			attendee.save()
+		# TODO notify when saving the submission
 		flag_attempt.save()
 	except Flag.DoesNotExist:
 		error = 'not found'

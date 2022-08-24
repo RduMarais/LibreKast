@@ -111,8 +111,8 @@ class MeetingConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
 		
-		if(settings.DEBUG):
-			print('RECV : '+message_in)
+		# if(settings.DEBUG):
+		print('RECV : '+message_in)
 
 		####################################
 		#### THE MAIN APP LOGIC is here ####
@@ -252,6 +252,7 @@ class MeetingConsumer(WebsocketConsumer):
 			# question = Question.objects.get(pk=text_data_json['question'])
 			if(len(get_previous_user_answers(attendee,question))==0):
 				vote=Vote(user=attendee,choice=choice)
+				# TODO notify when saving the submission
 				vote.save()
 
 				if(choice.isTrue and question.question_type =='QZ'):

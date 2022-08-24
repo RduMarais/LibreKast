@@ -108,6 +108,7 @@ class ScoreBoard(admin.ModelAdmin):
 		link=reverse("admin:poll_meeting_change", args=[obj.meeting.id])
 		return format_html('<a href="%s">%s</a>' % (link,obj.meeting.title))
 
+
 class VoteAdmin(admin.ModelAdmin):
 	readonly_fields =['choice', 'user']
 	list_display =('choice', 'get_user','get_question')
@@ -134,7 +135,6 @@ class FlagAdmin(admin.ModelAdmin):
 			return format_html('<button onclick="window.open(\'%s\')">QR</button>' % link)
 		else:
 			link=reverse("poll:qr_flag", args=[obj.meeting.id,obj.code])
-			# js_req = 'const qrReq = new XMLHttpRequest();qrReq.open("GET", "'+link+'");qrReq.send();qrReq.onload = function() { if (qrReq.status === 200){console.log(qrReq.responseText); window.open(qrReq.responseText);} }'
 			return format_html('<button type="submit" formaction="%s">create QR</button>' % link)
 
 

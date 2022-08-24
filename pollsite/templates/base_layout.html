@@ -124,8 +124,7 @@
         document.getElementById("mobile-menu-collapse").onclick = function toggleMenu() {
             document.getElementById("mobile-menu").classList.toggle("hidden");
         };
-        [...document.getElementsByClassName("pour-info_nav_item")].forEach(function(item) {  //TODO
-            console.log(item.getAttribute('href'));
+        [...document.getElementsByClassName("pour-info_nav_item")].forEach(function(item) {
             if(item.getAttribute('href') === window.location.pathname){
                 item.classList.add('pour-info_nav_active');  //TODO
             }

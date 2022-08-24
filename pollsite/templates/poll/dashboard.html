@@ -154,6 +154,14 @@
 		</tbody>
 	</table>
 	</div>
+	<div class="text-center w-full m-2" id="latest-submissions-div">
+		<div class="basis-3/4 inline">
+			<span class="text-2xl text-center p-2">{% trans "Lastest Submissions" %}</span>
+		</div>
+		<div class="border border-pour1nf0-purple-200 bg-pour1nf0-purple-100 dark:border-pour1nf0-purple-700 dark:bg-pour1nf0-dark-100" id="latest-submissions-content">
+		</div>
+	</div>
+
 </section>
 </div>
 
@@ -188,7 +196,7 @@
 	function getQRCode(){
 		// send request to prepare the QR code
 		const createRequest = new XMLHttpRequest()
-		createRequest.open("GET", "{% url 'poll:qr' meeting.id %}")
+		createRequest.open("GET", "{% url 'poll:qr_meeting' meeting.id %}")
 		createRequest.send()
 		createRequest.onload = function() {
 			if (createRequest.status === 200) {

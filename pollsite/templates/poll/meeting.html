@@ -34,21 +34,22 @@
 {% if meeting.show_flags %}
 <section class="dark:text-gray-200 body-font " name="flag_section">
 	<div class="container px-5 py-4 mx-auto items-center text-center">
-		<div class="mx-auto text-center row">
+		<form class="mx-auto text-center row" id="submit-flag-form">
 			<span>{% trans 'Bonus points' %} :</span>
-			<input type="text" name="submit-flag" class="w-80 ml-auto mr-0 bg-pour1nf0-purple-900 text-center rounded text-white"
+			<input type="text" id="submit-flag-input" name="submitFlag" class="w-80 ml-auto mr-0 bg-pour1nf0-purple-900 text-center rounded text-white"
 			{% if meeting.flags_prefix %}
 			placeholder="{% trans 'Flags like' %} {{ meeting.flags_prefix }}{XxXXxXX}" 
 			{% endif %}
 			>
-			<button class="bg-pour1nf0-purple-200 dark:bg-pour1nf0-purple-500 dark:text-pour1nf0-purple-900 text-gray-900 ml-0 mr-auto invisible md:visible md:px-3 rounded">→</button>
-		</div>
+			<button id="submit-flag-btn" class="bg-pour1nf0-purple-200 dark:bg-pour1nf0-purple-500 dark:text-pour1nf0-purple-900 text-gray-900 ml-0 mr-auto invisible md:visible md:px-3 rounded" onclick="document.getElementById('submit-flag-form').submit()">→</button>
+		</form>
+		<div class="my-2 text-pour1nf0-pink-500 hidden" id="flag-error">error : there must be somthing</div>
 	</div>
 </section>
 {% endif %}
 
 <section class="text-gray-900 body-font overflow-hidden" name="previous_questions">
-	<div class="container px-5 pt-24 pb-12 mx-auto">
+	<div class="container px-5 py-8 mx-auto">
 		<div id="previous-questions-container" class="-my-8">
 			<h3 class="text-xl text-center dark:text-gray-300">
 				{% trans "Previous questions" %}
@@ -440,8 +441,7 @@
 		
 	};
 
-	questionSocket.onclose = function(e) {
-	};
+	questionSocket.onclose = function(e) {};
 
 
 	// start function
@@ -463,6 +463,16 @@
 	document.getElementById("previous-questions-collapse").onclick = function toggleMenu() {
         document.getElementById("previous-questions-list").classList.toggle("hidden");
     };
+
+	document.querySelector('#submit-flag-form')?.addEventListener('submit', e => {
+		// for some reason this triggers a refresh
+		e.preventDefault();
+		questionSocket.send(JSON.stringify({
+			'message': 'submit-flag', 
+			'flag': e.currentTarget.submitFlag.value,
+		}));
+		// alert(e.currentTarget.submitFlag.value);
+	});
 
 </script>
 

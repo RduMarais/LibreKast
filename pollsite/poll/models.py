@@ -227,18 +227,28 @@ class Flag(models.Model):
 		self.full_clean()
 		super(Flag, self).save(*args, **kwargs)
 
-class FlagAttempt(models.Model):
-	code = models.CharField(_('flag text submitted'), default='Pour1nf0', max_length=50)
+class Submission(models.Model):
 	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
+	_text = models.CharField(_('Transparent field overwritten by subclasses'), default='', max_length=50)
+
+	class Meta:
+		abstract = True
+
+class FlagAttempt(Submission):
+	code = models.CharField(_('flag text submitted'), default='Pour1nf0', max_length=50)
+	# user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
 	correct_flag = models.ForeignKey(Flag,null=True,on_delete=models.CASCADE)
 	is_first_blood = models.BooleanField(default=False)
+
+	def _text(self):
+		return code
 
 # for Polls & Quizzes, choices are written by the admin.
 #   for Word clouds, choices are user input
 class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	choice_text = models.CharField(max_length=200)
-	slug = models.CharField(_('(For Youtube live) shorter text the participants can type to vote'),max_length=20,blank=True)
+	slug = models.CharField(_('(For Streaming) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
 
 	class Meta:
@@ -253,9 +263,12 @@ class Choice(models.Model):
 
 
 # model to define many-to-many relationship between choices and Attendees
-class Vote(models.Model):
+class Vote(Submission):
 	choice = models.ForeignKey(Choice,on_delete=models.CASCADE)
-	user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
+	# user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
+
+	def _text(self):
+		return choice.choice_text
 
 
 

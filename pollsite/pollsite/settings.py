@@ -99,7 +99,6 @@ TEMPLATES = [
 ]
 
 # LibreKast uses ASGI for channels (websockets support)
-# WSGI_APPLICATION = 'pollsite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
