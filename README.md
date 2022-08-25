@@ -52,7 +52,7 @@ You can find screenshots :
 
 ## Project roadmap
 
-v0.4.0 : more functionnalities
+v0.4.0 : streaming bots functionnalities
 
  * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
@@ -67,10 +67,10 @@ v0.4.0 : more functionnalities
  * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [x] front : Revolution bots (with sound)
  * [x] front : Revolution bots (with transparency)
- * [ ] front : go back button in dashboard
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
+ * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
@@ -92,18 +92,17 @@ v0.4.1 : Flag feature
  * [x] front : flag input on meetings display images
  * [x] front : latest submissions notification
 
-v0.4.2 : 
+v0.4.2 : stateful meeting
 
  * [ ] back : current question state
  * [ ] back : go back button in dashboard
  * [ ] back : joining during a question
- * [ ] add Image slides
+ * [ ] front : go back button in dashboard
  * [ ] front : type de question : appréciation /100 (échelle)
- * [ ] bleach word cloud
- * [ ] fix bug where admin has no 'attendee_id' in session admin
 
-v0.4.3 : 
+v0.4.3 : code quality, error handling and refactor
 
+ * [ ] back : bleach word cloud
  * [ ] back : redirection on login
  * [ ] back : refactor QR code creation processes
 
@@ -114,6 +113,10 @@ v0.4.4 : QoL
  * [ ] front : change admin interface to be modular
 
 v0.4.5 : feature vote bayésien
+
+ * [ ] add Image slides
+
+v0.4.6 : feature vote bayésien
 
  * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
 
