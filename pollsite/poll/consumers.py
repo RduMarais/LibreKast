@@ -3,6 +3,7 @@ import json
 import threading
 import datetime
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
@@ -65,19 +66,22 @@ class MeetingConsumer(WebsocketConsumer):
 			try:
 				self.attendee = Attendee.objects.get(pk=attendee_id)
 			except Attendee.DoesNotExist:
-				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (no attendee found)'}))
+				self.send(text_data=json.dumps({'message':'error','error':_('Warning : no login (no attendee found)')}))
 		elif(self.is_user_authenticated()):
 			try:
 				attendee = Attendee.objects.get(name=self.scope['user'].username)
-				request.session['attendee_id'] = new_attendee.id
-				self.send(text_data=json.dumps({'message':'error','error':'Warning : user is staff -> previous login with staff username used'}))
+				self.scope['session']['attendee_id'] = new_attendee.id
+				self.send(text_data=json.dumps({'message':'error','error':_('Warning : user is staff -> previous login with staff username used')}))
+				self.attendee = attendee
 			except Attendee.DoesNotExist:
-				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (user is staff) -> user created'}))
+				# 
+				self.send(text_data=json.dumps({'message':'error','error':_('Warning : no login (user is staff) -> user created')}))
 				new_attendee = Attendee(name=self.scope['user'].username,meeting=self.meeting,score=0)
 				new_attendee.save()
-				request.session['attendee_id'] = new_attendee.id
+				self.scope['session']['attendee_id'] = new_attendee.id
+				self.attendee = new_attendee
 		else:
-			self.send(text_data=json.dumps({'message':'error','error':'no login (no id in session)'}))
+			self.send(text_data=json.dumps({'message':'error','error':_('no login (no id in session)')}))
 		
 		# ADMIN settings : this is executed ONLY ONCE PER MEETING
 		if(self.is_user_authenticated() and not self.meeting._is_running): 
