@@ -6,7 +6,11 @@
 {% block content  %}
 {% if flagAttempt.correct_flag %}
 <div class="mt-4 pt-2 mx-auto text-gray-900 text-center mb-4">
+    {% if flagAttempt.is_first_blood %}
+    <h1 class="text-2xl dark:text-white">{% trans 'First Blood !' %}</h1>
+    {% else %}
     <h1 class="text-2xl dark:text-white">{% trans 'Congratulations ! Flag found' %}</h1>
+    {% endif %}
     <h2 class="text-2xl text-pour1nf0-pink-800 dark:text-pour1nf0-pink-500">{{ flagAttempt.correct_flag.name }}</h3>
     <h4 class="text-lg dark:text-gray-300">{{ meeting.title }}</h2>
 </div>
@@ -19,7 +23,13 @@
     <p>
         {{ flagAttempt.correct_flag.desc_rendered | safe }}
     </p>
-    <p class="text-gray-500 dark:text-gray-400">{% trans 'You just got' %} + {{ flagAttempt.correct_flag.points }} {% trans 'points' %}</p>
+    <p class="text-gray-500 dark:text-gray-400">{% trans 'You just got' %} + 
+    {% if flagAttempt.is_first_blood %}
+    {{ flagAttempt.correct_flag.points|add:flagAttempt.correct_flag.first_blood_reward }}
+    {% else %}
+    {{ flagAttempt.correct_flag.points }}
+    {% endif %}
+     {% trans 'points' %}{% if flagAttempt.is_first_blood %} {% trans '(first blood)' %}{% endif %}</p>
     {% if flagAttempt.user %}
     <p>NAME : {{ flagAttempt.user.name }}</p>
     {% else %}

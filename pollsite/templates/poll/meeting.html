@@ -352,6 +352,9 @@
 		flagName.innerText = results['name']
 		flagDesc.innerHTML = results['desc-rendered']
 
+		if(results['first-blood']){
+			flagCongrats.innerText = "{% trans 'First blood ! You are the first one to find this flag' %}"
+		}
 		flagBadge.appendChild(flagCongrats);
 		flagBadge.appendChild(flagName);
 		flagBadge.appendChild(flagDesc);

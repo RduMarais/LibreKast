@@ -83,7 +83,7 @@ v0.4.1 : Flag feature
  * [x] back : link flag with participant session
  * [x] back : count flag as vote 
  * [x] back : flag input on meetings
- * [ ] back : add bonus points for first blood on flags
+ * [x] back : add bonus points for first blood on flags
  * [ ] back : handle prefixes
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
@@ -91,6 +91,7 @@ v0.4.1 : Flag feature
  * [x] front : latest submissions log
  * [x] front : flag input on meetings display images
  * [x] front : latest submissions notification
+ * [x] front : add bonus points for first blood on flags
 
 v0.4.2 : stateful meeting
 

@@ -5,7 +5,6 @@ def validate_flag_attempt(meeting,attendee,attempted_code):
 	error = None
 	flag_attempt = None
 	try:
-		# attendee = meeting.attendee_set.get(pk=attendee_id)
 		flag_attempt = FlagAttempt(code=attempted_code,user=attendee)
 		flag = meeting.flag_set.get(code=attempted_code)
 		# check if user has already flagged
@@ -14,8 +13,11 @@ def validate_flag_attempt(meeting,attendee,attempted_code):
 		else:
 			flag_attempt.correct_flag = flag
 			attendee.score = attendee.score + flag.points
+			# check if someone flagged before
+			if(not flag.flagattempt_set.all()):
+				attendee.score = attendee.score + flag.first_blood_reward
+				flag_attempt.is_first_blood = True
 			attendee.save()
-		# TODO notify when saving the submission
 		flag_attempt.save()
 	except Flag.DoesNotExist:
 		error = 'not found'

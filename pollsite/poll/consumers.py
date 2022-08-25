@@ -550,6 +550,7 @@ class MeetingConsumer(WebsocketConsumer):
 					'points':flag_attempt.correct_flag.points,
 					'desc-rendered':flag_attempt.correct_flag.desc_rendered,
 					'desc-img-url':flag_attempt.correct_flag.desc_img.url if flag_attempt.correct_flag.desc_img else None,
+					'first-blood':flag_attempt.correct_flag.is_first_blood,
 					'current-score': attendee.score,
 				},
 			}
