@@ -59,9 +59,6 @@ v0.4.0 : more functionnalities
  * [x] back : setup bots commands for Twitch and Youtube
  * [x] back : generate QR code
  * [ ] back : periodic bots filter with is_active
- * [ ] back : current question state
- * [ ] back : go back button in dashboard
- * [ ] back : joining during a question
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
  * [x] Youtube : Revolution bots support
@@ -74,10 +71,6 @@ v0.4.0 : more functionnalities
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
- * [ ] front : create a dedicated meeting admin interface
- * [ ] front : have a nicer dashboard
- * [ ] front : change admin interface to be modular
- * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
@@ -101,14 +94,28 @@ v0.4.1 : Flag feature
 
 v0.4.2 : 
 
+ * [ ] back : current question state
+ * [ ] back : go back button in dashboard
+ * [ ] back : joining during a question
  * [ ] add Image slides
  * [ ] front : type de question : appréciation /100 (échelle)
  * [ ] bleach word cloud
+ * [ ] fix bug where admin has no 'attendee_id' in session admin
 
 v0.4.3 : 
 
  * [ ] back : redirection on login
  * [ ] back : refactor QR code creation processes
+
+v0.4.4 : QoL
+
+ * [ ] front : create a dedicated meeting admin interface
+ * [ ] front : have a nicer dashboard
+ * [ ] front : change admin interface to be modular
+
+v0.4.5 : feature vote bayésien
+
+ * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
 
 v0.5.0 : installation and Quality of Life
 

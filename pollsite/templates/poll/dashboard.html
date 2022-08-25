@@ -581,6 +581,8 @@
 			addChatLog(data['chat']); 		
 		}else if(data['message']==='admin-error'){
 			alert(data['text']);
+		}else if(data['message']==='error'){
+			alert(data['error']);
 		}else if(data['message']==='revolution-alert'){
 			playRevolutionAlert(data['alert']);
 		}else if(data['message']==='notify-flag'){

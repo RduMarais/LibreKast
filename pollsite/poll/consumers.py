@@ -61,11 +61,14 @@ class MeetingConsumer(WebsocketConsumer):
 		# setup user session
 		if('attendee_id' in self.scope['session']):
 			attendee_id = self.scope['session']['attendee_id']
-			self.attendee = Attendee.objects.get(pk=attendee_id)
+			try:
+				self.attendee = Attendee.objects.get(pk=attendee_id)
+			except:
+				self.send(text_data=json.dumps({'message':'error','error':'no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
 			print(self.scope['user'].username)
 		else:
-			self.send(text_data=json.dumps({'message':'error no login'}))
+			self.send(text_data=json.dumps({'message':'error','error':'no login (no id in session)'}))
 		
 		# ADMIN settings : this is executed ONLY ONCE PER MEETING
 		if(self.is_user_authenticated() and not self.meeting._is_running): 
