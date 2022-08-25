@@ -98,26 +98,27 @@ def qr_flag(request,meeting_id,flag_code):
 # Once you enter a meeting, this is the page displaying the current question and previous results
 def meeting(request, meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	if(request.user.is_authenticated):
+		if(not 'attendee_id' in request.session): # if staff member is not logged in yet
+			try:
+				# a user already exists, just link this user to the session
+				attendee = Attendee.objects.get(name=request.user.username)
+				request.session['attendee_id'] = attendee.id
+			except Attendee.DoesNotExist:
+				# create user if user is from staff 
+				new_attendee = Attendee(name=request.user.username,meeting=meeting,score=0)
+				new_attendee.save()
+				request.session['attendee_id'] = new_attendee.id
 	if(not 'attendee_id' in request.session): # if attendee is not logged in yet
 		form = LoginForm()
 		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 	else:
 		try:
 			attendee = Attendee.objects.get(pk=request.session['attendee_id'])
-		# quick and dirty fix mayybe
+		# TODO : need better error messages
 		except Attendee.DoesNotExist:
-			if(request.user.is_authenticated):
-				try:
-					attendee = Attendee.objects.get(name=request.user.username)
-					request.session['attendee_id'] = attendee.id
-				except Attendee.DoesNotExist:
-					# create user if user is from staff 
-					new_attendee = Attendee(name=request.user.username,meeting=meeting,score=0)
-					new_attendee.save()
-					request.session['attendee_id'] = new_attendee.id
-			else:
-				form = LoginForm()
-				return render(request,'poll/login.html',{'meeting':meeting,'form':form,'error':_("Staff user need to join meeting")})
+			form = LoginForm()
+			return render(request,'poll/login.html',{'meeting':meeting,'form':form,'error':_("User not found. Staff user need to join meeting")})
 		context = {
 			'meeting':meeting,
 			'attendee':attendee,
