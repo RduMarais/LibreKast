@@ -55,6 +55,7 @@ class MeetingConsumer(WebsocketConsumer):
 				self.meeting_group_name+'_chat',
 				self.channel_name
 			)
+			# check if 
 
 		self.accept()
 
@@ -64,10 +65,10 @@ class MeetingConsumer(WebsocketConsumer):
 			try:
 				self.attendee = Attendee.objects.get(pk=attendee_id)
 			except Attendee.DoesNotExist:
-				print(json.dumps(self.scope['session']))
 				self.send(text_data=json.dumps({'message':'error','error':'no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
 			print(self.scope['user'].username)
+			self.send(text_data=json.dumps({'message':'error','error':'no login (user is staff)'}))
 		else:
 			self.send(text_data=json.dumps({'message':'error','error':'no login (no id in session)'}))
 		

@@ -102,7 +102,11 @@ def meeting(request, meeting_id):
 		form = LoginForm()
 		return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 	else:
-		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
+		try:
+			attendee = Attendee.objects.get(pk=request.session['attendee_id'])
+		# quick and dirty fix mayybe
+		except:
+			return render(request,'poll/login.html',{'meeting':meeting,'form':form})
 		context = {
 			'meeting':meeting,
 			'attendee':attendee,
