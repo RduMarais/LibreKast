@@ -69,12 +69,12 @@ class MeetingConsumer(WebsocketConsumer):
 				self.send(text_data=json.dumps({'message':'error','error':_('Warning : no login (no attendee found)')}))
 		elif(self.is_user_authenticated()):
 			try:
-				attendee = Attendee.objects.get(name=self.scope['user'].username)
+				new_attendee = Attendee.objects.get(name=self.scope['user'].username)
 				self.scope['session']['attendee_id'] = new_attendee.id
 				self.send(text_data=json.dumps({'message':'error','error':_('Warning : user is staff -> previous login with staff username used')}))
-				self.attendee = attendee
+				self.attendee = new_attendee
 			except Attendee.DoesNotExist:
-				# 
+				# may conflict if the user checks the meeting afterwards
 				self.send(text_data=json.dumps({'message':'error','error':_('Warning : no login (user is staff) -> user created')}))
 				new_attendee = Attendee(name=self.scope['user'].username,meeting=self.meeting,score=0)
 				new_attendee.save()
