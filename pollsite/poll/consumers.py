@@ -64,6 +64,9 @@ class MeetingConsumer(WebsocketConsumer):
 			try:
 				self.attendee = Attendee.objects.get(pk=attendee_id)
 			except:
+				print(self.scope['session'])
+				for item in self.scope['session']:
+					print('session item : '+str(item))
 				self.send(text_data=json.dumps({'message':'error','error':'no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
 			print(self.scope['user'].username)
