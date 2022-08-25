@@ -68,7 +68,7 @@ class MeetingConsumer(WebsocketConsumer):
 				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
 			print(self.scope['user'].username)
-			self.send(text_data=json.dumps({'message':'error','error':'no login (user is staff)'}))
+			self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (user is staff)'}))
 		else:
 			self.send(text_data=json.dumps({'message':'error','error':'no login (no id in session)'}))
 		
@@ -182,7 +182,7 @@ class MeetingConsumer(WebsocketConsumer):
 				print('starting flag submission')
 			self.submit_flag(text_data_json,self.attendee)
 		else:
-			message_out = {'message':'error'}
+			message_out = {'message':'error','error':_('Something went wrong')}
 			self.send(text_data=json.dumps(message_out))
 
 
