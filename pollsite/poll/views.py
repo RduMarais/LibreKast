@@ -105,9 +105,19 @@ def meeting(request, meeting_id):
 		try:
 			attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 		# quick and dirty fix mayybe
-		except:
-			form = LoginForm()
-			return render(request,'poll/login.html',{'meeting':meeting,'form':form,'error':_("Staff user need to join meeting")})
+		except Attendee.DoesNotExist:
+			if(request.user.is_authenticated):
+				try:
+					attendee = Attendee.objects.get(name=request.user.username)
+					request.session['attendee_id'] = attendee.id
+				except Attendee.DoesNotExist:
+					# create user if user is from staff 
+					new_attendee = Attendee(name=request.user.username,meeting=meeting,score=0)
+					new_attendee.save()
+					request.session['attendee_id'] = new_attendee.id
+			else:
+				form = LoginForm()
+				return render(request,'poll/login.html',{'meeting':meeting,'form':form,'error':_("Staff user need to join meeting")})
 		context = {
 			'meeting':meeting,
 			'attendee':attendee,

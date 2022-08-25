@@ -67,8 +67,15 @@ class MeetingConsumer(WebsocketConsumer):
 			except Attendee.DoesNotExist:
 				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
-			print(self.scope['user'].username)
-			self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (user is staff)'}))
+			try:
+				attendee = Attendee.objects.get(name=self.scope['user'].username)
+				request.session['attendee_id'] = new_attendee.id
+				self.send(text_data=json.dumps({'message':'error','error':'Warning : user is staff -> previous login with staff username used'}))
+			except Attendee.DoesNotExist:
+				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (user is staff) -> user created'}))
+				new_attendee = Attendee(name=self.scope['user'].username,meeting=self.meeting,score=0)
+				new_attendee.save()
+				request.session['attendee_id'] = new_attendee.id
 		else:
 			self.send(text_data=json.dumps({'message':'error','error':'no login (no id in session)'}))
 		
@@ -182,7 +189,7 @@ class MeetingConsumer(WebsocketConsumer):
 				print('starting flag submission')
 			self.submit_flag(text_data_json,self.attendee)
 		else:
-			message_out = {'message':'error','error':_('Something went wrong')}
+			message_out = {'message':'error','error':_('Something went wrong. Please report this to an admin.')}
 			self.send(text_data=json.dumps(message_out))
 
 
