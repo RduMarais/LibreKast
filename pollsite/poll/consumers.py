@@ -65,7 +65,7 @@ class MeetingConsumer(WebsocketConsumer):
 			try:
 				self.attendee = Attendee.objects.get(pk=attendee_id)
 			except Attendee.DoesNotExist:
-				self.send(text_data=json.dumps({'message':'error','error':'no login (no attendee found)'}))
+				self.send(text_data=json.dumps({'message':'error','error':'Warning : no login (no attendee found)'}))
 		elif(self.is_user_authenticated()):
 			print(self.scope['user'].username)
 			self.send(text_data=json.dumps({'message':'error','error':'no login (user is staff)'}))

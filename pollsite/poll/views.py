@@ -106,7 +106,8 @@ def meeting(request, meeting_id):
 			attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 		# quick and dirty fix mayybe
 		except:
-			return render(request,'poll/login.html',{'meeting':meeting,'form':form})
+			form = LoginForm()
+			return render(request,'poll/login.html',{'meeting':meeting,'form':form,'error':_("Staff user need to join meeting")})
 		context = {
 			'meeting':meeting,
 			'attendee':attendee,
