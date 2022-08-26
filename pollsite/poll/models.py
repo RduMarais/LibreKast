@@ -68,8 +68,10 @@ class Meeting(models.Model):
 	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
 	code = models.CharField(_('Security Code for joining the Meeting'), default='Pour1nf0', max_length=50)
+	# Is has started used ?
 	has_started = models.BooleanField(_('Meeting has started'),default=False)
-	reward_fastest = models.BooleanField(_('Reward the fastest answers'),default=False)
+	# TODO : change to integer field 
+	reward_fastest = models.BooleanField(_('Reward for fastest answers'),default=False)
 	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
 	image = models.ImageField(_('Image for your meeting'),null = True,blank=True,upload_to=get_meeting_directory)
@@ -105,10 +107,21 @@ class Meeting(models.Model):
 		if(self.question_set.order_by('question_order').filter(is_done=False)):
 			return self.question_set.order_by('question_order').filter(is_done=False)[0]
 		else:
+			self._state = 'A'
 			MeetingEnd = Question(title=_('This meeting is over'),desc=_("Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)"),
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
 
+	def save(self, *args, **kwargs):
+		if(self.date_start <= timezone.now()):
+			self._state = 'B'
+		if(self.date_start >= timezone.now()):
+			self._state = 'A'
+		# is meeting over already ?
+		questions_queryset = self.question_set.order_by('question_order')
+		if(questions_queryset and not questions_queryset.filter(is_done=False)):
+			self._state = 'A'
+		super(Meeting, self).save(*args, **kwargs)
 
 
 ##### BOTS
