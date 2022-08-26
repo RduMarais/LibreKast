@@ -26,6 +26,10 @@ from .utils import validate_flag_attempt
 class MeetingConsumer(WebsocketConsumer):
 	isAdmin = False
 
+##############################################
+#########       INITIALIZATION       #########
+##############################################
+
 	def check_attendee(self,username,is_subscriber=False,is_twitch=False,is_youtube=False):
 		attendee = None
 		attendee_queryset = self.meeting.attendee_set.all().filter(name=username)
@@ -122,8 +126,13 @@ class MeetingConsumer(WebsocketConsumer):
 		self.send(text_data=json.dumps(message))
 
 
+
+
+##############################################
+#########       RECEIVE method       #########
+##############################################
+
 	# handle message received from the client
-	# This is the API
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
@@ -199,7 +208,9 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 
-###### Functional logic #####
+##############################################
+#########      Functional logic      #########
+##############################################
 
 
 	# for basic access control
@@ -583,8 +594,10 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 
+##############################################
+#########        Live Streams        #########
+##############################################
 
-### LIVE STREAMS
 # the polling process is defined in another class for clarity of threading
 # but it calls the methods from this class receive_vote() and add_word() for each message
 

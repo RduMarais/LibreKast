@@ -24,9 +24,16 @@ QUESTION_TYPES = (
 	)
 LIVE_TYPE = (
 		('IRL',_('Physical Meeting')), 	# beekast-like meeting type
-		('YT',_('Youtube Live Stream')), 	# Work in progress
-		('TW',_('Twitch live')),			# TODO
-		('MX',_('Twitch AND Youtube')),		# TODO
+		('YT',_('Youtube Live Stream')), 
+		('TW',_('Twitch live')),		
+		('MX',_('Twitch AND Youtube')),	
+	)
+STATUS = (
+		('W',_('Waiting for next activity')),
+		('O',_('Activity ongoing')), 	
+		('A',_('Meeting finished')),
+		('B',_('To be started')),	
+		('S',_('Scoreboard display')),	
 	)
 
 def get_meeting_directory(instance, filename):
@@ -73,6 +80,7 @@ class Meeting(models.Model):
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	_is_running = models.BooleanField('internal state',default=False)
+	_state = models.CharField('internal state of the current question',choices=STATUS,default='B',max_length=1)
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	show_flags = models.BooleanField(_('Display the text inputs for flag bonus points'),default=False)
 	flags_prefix = models.CharField(_('prefix for flags'),default='LibreKast',max_length=20,blank=True)
@@ -106,7 +114,7 @@ class Meeting(models.Model):
 ##### BOTS
 
 class MessageBot(models.Model):
-	command = models.CharField(_('command to trigger the message'),max_length=10) 
+	command = models.SlugField(_('command to trigger the message'),max_length=10) 
 	message = models.CharField(_('Message to send when the command is sent'),max_length=150)
 	is_active = models.BooleanField(_('is this command activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
@@ -118,7 +126,7 @@ class PeriodicBot(models.Model):
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 
 class RevolutionBot(models.Model):
-	command = models.CharField(_('command to trigger the message'),max_length=15) 
+	command = models.SlugField(_('command to trigger the message'),max_length=15) 
 	message = models.CharField(_('Message to send when the threshold is reached'),max_length=150)
 	threshold_delay = models.IntegerField(_('Time window in seconds to send the command'),default=200)
 	threshold_number = models.IntegerField(_('Number of commands to be sent'),default=5)
@@ -205,7 +213,7 @@ class Question(SortableMixin):
 	recent.boolean = True
 
 class Flag(models.Model):
-	code = models.CharField(_('flag text to find'), default='Pour1nf0', max_length=50)
+	code = models.SlugField(_('flag text to find'), default='Pour1nf0', max_length=50)
 	name = models.CharField(_('Flag name'), max_length=50)
 	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
@@ -235,7 +243,7 @@ class Submission(models.Model):
 		abstract = True
 
 class FlagAttempt(Submission):
-	code = models.CharField(_('flag text submitted'), default='Pour1nf0', max_length=50)
+	code = models.SlugField(_('flag text submitted'), default='Pour1nf0', max_length=50)
 	# user = models.ForeignKey(Attendee,on_delete=models.CASCADE)
 	correct_flag = models.ForeignKey(Flag,null=True,on_delete=models.CASCADE)
 	is_first_blood = models.BooleanField(default=False)
@@ -248,7 +256,7 @@ class FlagAttempt(Submission):
 class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	choice_text = models.CharField(max_length=200)
-	slug = models.CharField(_('(For Streaming) shorter text the participants can type to vote'),max_length=20,blank=True)
+	slug = models.SlugField(_('(For Streaming) shorter text the participants can type to vote'),max_length=20,blank=True)
 	isTrue = models.BooleanField(default=False)
 
 	class Meta:
