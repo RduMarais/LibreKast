@@ -481,7 +481,7 @@
 		} else if(data['message']==='update-scoreboard'){
 			updateScoreboard(data['scores']);
 		} else if(data['message']==='error'){
-			alert(data['error']);
+			alert(data['error']); // for debug purposes
 		} else if(data['message']==='flag-success'){
 			flagSuccess(data['result']);
 		} else if(data['message']==='flag-error'){

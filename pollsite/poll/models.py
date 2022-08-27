@@ -34,6 +34,8 @@ STATUS = (
 		('A',_('Meeting finished')),
 		('B',_('To be started')),	
 		('S',_('Scoreboard display')),	
+		('R',_('Activity results display')),	
+		('U',_('Undefined')),
 	)
 
 def get_meeting_directory(instance, filename):
@@ -82,7 +84,7 @@ class Meeting(models.Model):
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	_is_running = models.BooleanField('internal state',default=False)
-	_state = models.CharField('internal state of the current question',choices=STATUS,default='B',max_length=1)
+	_question_status = models.CharField('internal state of the current question',choices=STATUS,default='B',max_length=1)
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	show_flags = models.BooleanField(_('Display the text inputs for flag bonus points'),default=False)
 	flags_prefix = models.CharField(_('prefix for flags'),default='LibreKast',max_length=20,blank=True)
@@ -111,18 +113,6 @@ class Meeting(models.Model):
 			MeetingEnd = Question(title=_('This meeting is over'),desc=_("Thanks for using LibreKast. Please feel free to check ![the author's website](https://www.pour-info.tech/)"),
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
-
-	def save(self, *args, **kwargs):
-		if(self.date_start <= timezone.now()):
-			self._state = 'B'
-		if(self.date_start >= timezone.now()):
-			self._state = 'A'
-		# is meeting over already ?
-		questions_queryset = self.question_set.order_by('question_order')
-		if(questions_queryset and not questions_queryset.filter(is_done=False)):
-			self._state = 'A'
-		super(Meeting, self).save(*args, **kwargs)
-
 
 ##### BOTS
 

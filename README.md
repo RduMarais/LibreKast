@@ -95,9 +95,12 @@ v0.4.1 : Flag feature
 
 v0.4.2 : stateful meeting
 
- * [ ] back : current question state
+ * [x] back : current question state
+   * i need more work on async states to have the admin changing the state and the users reading it
+ * [x] back : joining during a question
+ * [x] front : fix error message on connexion
+ * [ ] back : fix the init phase that is executed only once per meeting
  * [ ] back : go back button in dashboard
- * [ ] back : joining during a question
  * [ ] front : go back button in dashboard
  * [ ] front : type de question : appréciation /100 (échelle)
 

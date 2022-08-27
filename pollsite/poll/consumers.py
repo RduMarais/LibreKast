@@ -92,6 +92,7 @@ class MeetingConsumer(WebsocketConsumer):
 			# INIT live stream
 			self.meeting._is_running = True
 			self.meeting.save()
+			self.set_meeting_status('W')
 			self.isAdmin = True # to keep track of who is the first to start the meeting
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
 				self.init_yt_polling()
@@ -113,15 +114,18 @@ class MeetingConsumer(WebsocketConsumer):
 		if(self.isAdmin):
 			self.meeting._is_running = False
 			self.meeting.save()
+			self.set_meeting_status('A')
 
 
 	# Receive message from meeting group
 	def meeting_message(self, event):
 		message = event['message']
+		print('debug : meeting message')
 		# Send message to WebSocket
 		self.send(text_data=json.dumps(message))
 
 	def admin_message(self,event):
+		print('debug : admin message')
 		message = event['message']
 		self.send(text_data=json.dumps(message))
 
@@ -143,65 +147,84 @@ class MeetingConsumer(WebsocketConsumer):
 		####################################
 		#### THE MAIN APP LOGIC is here ####
 		####################################
+		# for debug purposes : starts the current question
 		if(message_in == "debug-question-start"):
-			question = self.meeting.current_question()
-			self.send_group_question(question)
+			if(settings.DEBUG):
+				question = self.meeting.current_question()
+				self.send_group_question(question) # _status = O
+		# user joins the meeting : send the current question if a question is ongoing
+		elif(message_in == "question-start"):
+			self.send_current_question_on_join()
+		# participant sends a vote
 		elif(message_in == "vote"):
 			if(settings.DEBUG):
 				print('debug : json data : '+str(text_data_json))
 			async_to_sync(self.receive_vote(text_data_json,self.attendee))
+		# participant is asking for its score
 		elif(message_in == "get-score"):
 			self.send(text_data=json.dumps({
 				'message':'update-score',
 				'score':self.attendee.score,
 				}))
+		# participant has added a word
 		elif(message_in == "word-cloud-add"):
 			word = clean(text_data_json['word'])
 			async_to_sync(self.add_word(word,self.attendee))
 			async_to_sync(self.notify_add_word(word))
+		# admin is asking for scoreboard update
 		elif(message_in == "get-scoreboard"):
 			self.send_scoreboard()
+		# admin is sending everyone the scoreboard
 		elif(message_in == "admin-send-scoreboard"):
 			if(self.is_user_authenticated()):
-				self.send_group_scoreboard()
+				self.send_group_scoreboard() # _status = S
+		# admin is asking for current question id
 		elif(message_in == "admin-get-current-question"):
 				question = self.meeting.current_question()
 				self.send_current_question(question)
+				self.set_meeting_status('W') # _status = W
+		# admin is sending everyone the current question
 		elif(message_in == "admin-question-start"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
-				self.send_group_question(question)
+				self.send_group_question(question) # _status = O
 				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_yt_polling(question)
 				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_tw_polling(question)
-		elif(message_in == "admin-live-start"):
-			if(self.is_user_authenticated()):
-				question = self.meeting.current_question()
-				async_to_sync(self.start_livestream_poll()) # TODO
-		elif(message_in == "admin-live-stop"):
-			if(self.is_user_authenticated()):
-				question = self.meeting.current_question()
-				async_to_sync(self.stop_livestream_poll()) # TODO
+		# TODO : remove as unused after some tests
+		# elif(message_in == "admin-live-start"):
+		# 	if(self.is_user_authenticated()):
+		# 		question = self.meeting.current_question()
+		# 		async_to_sync(self.start_livestream_poll()) # TODO
+		# elif(message_in == "admin-live-stop"):
+		# 	if(self.is_user_authenticated()):
+		# 		question = self.meeting.current_question()
+		# 		async_to_sync(self.stop_livestream_poll()) # TODO
+		# admin is sending everyone the answers/results
 		elif(message_in == "admin-question-results"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
-				self.send_group_results(question)
+				self.send_group_results(question) # _status = R
 				if((self.meeting.platform == 'YT' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_yt_polling(question)
 				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.stop_tw_polling(question)
+		# admin is resetting everyone's question screen for next question
 		elif(message_in == "admin-question-next"):
 			if(self.is_user_authenticated()):
 				self.next_question()
-				self.notify_next_question()
+				self.notify_next_question() # _status = W
+		# admin asks for chat log
 		elif(message_in == "chat-subscribe"):
 			self.subscribe_to_chat()
+		# participant sends flag submission
 		elif(message_in == "submit-flag"):
 			if(settings.DEBUG):
 				print('starting flag submission')
 			self.submit_flag(text_data_json,self.attendee)
 		else:
+			print('debug : else statement')
 			message_out = {'message':'error','error':_('Something went wrong. Please report this to an admin.')}
 			self.send(text_data=json.dumps(message_out))
 
@@ -222,18 +245,33 @@ class MeetingConsumer(WebsocketConsumer):
 		else:
 			return False
 
+	def set_meeting_status(self,status):
+		self.meeting._question_status = status
+		if(settings.DEBUG):
+			print(f'debug : meeting status set to {status}')
+		self.meeting.save()
+
+	# this function has to perform a "database read" bc the meetging object 
+	#   is queried on join, is user-specific and does not update with the admin's
+	#   meeting object
+	def get_current_meeting_status(self):
+		meet = Meeting.objects.get(pk=self.meeting.id)
+		return meet._question_status
+
 	# sync method
 	def next_question(self):
 		# marks question as done
 		question = self.meeting.current_question()
 		question.is_done = True
-		question.save() 
+		question.save()
 
 
 	def notify_next_question(self):
 		# sends new question id
+		self.set_meeting_status('W')
 		question = self.meeting.current_question()
 		if(not question):
+			# this should not happen as the previous function returns a new 'End' Activity
 			raise ValueError('there is no question')
 		else:
 			message_out = {
@@ -250,10 +288,56 @@ class MeetingConsumer(WebsocketConsumer):
 			}
 		)
 		if(question.id == None):
+			# the question has no 'id' because it is not saved in the database
 			self.notify_end()
 
 
+	def prepare_question(self,question):
+		message_out = {
+			'message' : "question-go",
+			'question':{
+				'title': question.title,
+				'desc': question.desc_rendered,
+				'type': question.question_type,
+				'id': question.id,
+				'choices':[]
+			},
+		}
+		if(question.question_type == 'WC'):
+			for choice in question.choice_set.all():
+				choice_obj = {
+					'x':choice.choice_text,
+					'value':choice.votes(),
+				}
+				message_out['question']['choices'].append(choice_obj)
+		else:
+			for choice in question.choice_set.all():
+				choice_obj = {
+					'id':choice.id,
+					'text':choice.choice_text,
+				}
+				message_out['question']['choices'].append(choice_obj)
+		return message_out
+
+	def prepare_results(self,question):
+		message_out = {
+			'message' : "results",
+			'results': [],
+			'question_type':question.question_type,
+			'total':question.participants(), #shamelessly reuse this function
+		}
+		for choice in question.choice_set.all():
+			choice_obj = {
+				'id':choice.id,
+				'text':choice.choice_text,
+				'votes':choice.votes(),
+				'isTrue':choice.isTrue,
+			}
+			message_out['results'].append(choice_obj)
+		return message_out
+
 	def notify_end(self):
+		self.set_meeting_status('A')
 		message_out = {
 			'message' : "question-go",
 			'question':{
@@ -284,7 +368,6 @@ class MeetingConsumer(WebsocketConsumer):
 			# question = Question.objects.get(pk=text_data_json['question'])
 			if(len(get_previous_user_answers(attendee,question))==0):
 				vote=Vote(user=attendee,choice=choice)
-				# TODO notify when saving the submission
 				vote.save()
 
 				if(choice.isTrue and question.question_type =='QZ'):
@@ -298,9 +381,7 @@ class MeetingConsumer(WebsocketConsumer):
 					# if(self.meeting.platform == 'YT'):
 					# 	if(attendee.isSubscriber)
 					# 	attendee.score +=1
-					# 	attendee.save()
-
-				
+					# 	attendee.save()				
 				if(question.question_type =='QZ'):
 					message_out = {'message':'voted'}
 					self.send(text_data=json.dumps(message_out)) #
@@ -330,6 +411,25 @@ class MeetingConsumer(WebsocketConsumer):
 			vote=Vote(user=attendee,choice=added_word) # the vote is a model to keep traces of the votes
 			vote.save()
 
+	def send_current_question_on_join(self):
+		stat = self.get_current_meeting_status()
+		if(stat =='O'): #Activity ongoing
+			question = self.meeting.current_question()
+			message_out = self.prepare_question(question)
+			self.send(text_data=json.dumps(message_out))
+		elif(stat =='A'): #Meeting finished
+			self.notify_end()
+		elif(stat =='S'): #Scoreboard display
+			self.send_scoreboard()
+		elif(stat =='R'): #Activity results display
+			question = self.meeting.current_question()
+			show_question_message_out = self.prepare_question(question)
+			self.send(text_data=json.dumps(show_question_message_out))
+			show_results_message_out = self.prepare_results(question)
+			self.send(text_data=json.dumps(show_results_message_out))
+		else: #Waiting for next activity / Meeting To be started / undefined
+			self.send(text_data=json.dumps({'message':'question-ready'}))
+
 
 	def send_current_question(self,question):
 		message_out = {
@@ -342,30 +442,10 @@ class MeetingConsumer(WebsocketConsumer):
 
 	# send question to group
 	def send_group_question(self,question):
-		message_out = {
-			'message' : "question-go",
-			'question':{
-				'title': question.title,
-				'desc': question.desc_rendered,
-				'type': question.question_type,
-				'id': question.id,
-				'choices':[]
-			},
-		}
-		if(question.question_type == 'WC'):
-			for choice in question.choice_set.all():
-				choice_obj = {
-					'x':choice.choice_text,
-					'value':choice.votes(),
-				}
-				message_out['question']['choices'].append(choice_obj)
-		else:
-			for choice in question.choice_set.all():
-				choice_obj = {
-					'id':choice.id,
-					'text':choice.choice_text,
-				}
-				message_out['question']['choices'].append(choice_obj)
+		self.set_meeting_status('O')
+		
+		message_out = self.prepare_question(question)
+		
 		async_to_sync(self.channel_layer.group_send)(
 			self.meeting_group_name,
 			{
@@ -375,20 +455,10 @@ class MeetingConsumer(WebsocketConsumer):
 		)
 
 	def send_group_results(self,question):
-		message_out = {
-			'message' : "results",
-			'results': [],
-			'question_type':question.question_type,
-			'total':question.participants(), #shamelessly reuse this function
-		}
-		for choice in question.choice_set.all():
-			choice_obj = {
-				'id':choice.id,
-				'text':choice.choice_text,
-				'votes':choice.votes(),
-				'isTrue':choice.isTrue,
-			}
-			message_out['results'].append(choice_obj)
+		self.set_meeting_status('R')
+
+		message_out = self.prepare_results(question)
+
 		async_to_sync(self.channel_layer.group_send)(
 			self.meeting_group_name,
 			{
@@ -399,6 +469,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 	def send_group_scoreboard(self):
+		self.set_meeting_status('S')
 		message_out = {
 			'message' : "update-scoreboard",
 			'scores': [],
