@@ -73,6 +73,7 @@ v0.4.0 : streaming bots functionnalities
  * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+ * [ ] mse en avant des comms 
 
 v0.4.1 : Flag feature
 
@@ -115,6 +116,7 @@ v0.4.4 : QoL
  * [ ] front : create a dedicated meeting admin interface
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
+ * [ ] back : add env var for redis cache port
 
 v0.4.5 : feature vote bayésien
 

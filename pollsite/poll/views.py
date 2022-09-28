@@ -71,7 +71,7 @@ def qr_meeting(request,meeting_id):
 	if(not meeting.qrcode):
 		# 'make' creates the code from a string
 		# 'reverse' returns the relative url for the view poll with meeting 1
-		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=('1',))))
+		img = qrcode.make(request.build_absolute_uri(reverse('poll:meeting',args=(meeting.id,))))
 		blob = BytesIO()
 		img.save(blob, 'JPEG') # because we dont want to handle folder existence/creation so we dont save it on disk
 		meeting.qrcode.save(f'meeting_{meeting_id}_qrcode.png', File(blob), save=True)
