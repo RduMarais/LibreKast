@@ -1,0 +1,144 @@
+{% load i18n %}
+{% load static %}
+{% comment %} 
+
+This template does not inherit from global template te remove the header and flip the screen.
+
+{% endcomment %}
+<!DOCTYPE html>
+<html class="{% if darkmode %}dark{% endif %}" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet"> -->
+    <link rel="icon"href="{% static 'favicon.ico' %}">
+    <title>LibreKast - Chat log</title>
+</head>
+
+<body style="background-color: black;">
+
+<!-- this is what flips the screen -->
+<div style="-moz-transform: scale(-1, 1); -webkit-transform: scale(-1, 1); -o-transform: scale(-1, 1); -ms-transform: scale(-1, 1); transform: scale(-1, 1);" id="retourne">
+<section class="w-full body-font md:border md:border-red-200" name="meeting-plan-section">
+	{% if meeting.platform != 'IRL' %}
+	<div class = "w-full items-center m-2 p-1">
+		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
+		</div>
+		<div id="#chat-offset">
+		</div>
+		<div class="" id="chatlog-content" style="position:absolute; bottom:0;">
+			<p class="mx-2 my-2 librekast-chatlog"><span class="librekast-chatlog-username text-pour1nf0-blue-200 font-bold mr-2">LibreKast</span><span class="librekast-chatlog-msg text-white librekast-chatlog-init"><i>{% trans "(To get the chat rolling, a Librekast admin must be connected on the dashboard)" %}</i></span></p>
+		</div>
+	</div>
+	{% else %}
+	<div class = "w-full items-center m-2 p-1">
+		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
+			{% trans "No live chat for this meeting" %}
+		</div>
+	</div>
+	{% endif %}
+</section>
+</div>
+
+<script>
+	var body = document.querySelector('.body');
+	body.style = "background-color: black;";
+
+
+	var meetingPlatform = '{{meeting.platform}}' ; 
+	var botMsgPrefix = '{{ bot_msg_prefix }}' ; 
+
+	{% if meeting.platform != 'IRL' %}
+
+	const meeting_id = {{ meeting.id }};
+	const dashboardSocket = new WebSocket(
+		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
+		+ window.location.host
+		+ '/ws/'
+		+ meeting_id
+		+ '/'
+	);
+
+	function addChatLog(chatMessage){
+		let chatLogSize = {{ meeting.obs_chat_log_size }} +1;
+		let chatlog = document.querySelector('#chatlog-content');
+		if(chatlog.childElementCount>=chatLogSize){
+			chatlog.removeChild(chatlog.firstChild);
+		}
+		let l = document.createElement("p");
+		let u = document.createElement("span");
+		let t = document.createElement("span");
+		l.classList.add("librekast-chatlog","mx-2","my-2");
+		u.innerText = chatMessage['author'];
+		u.classList.add("librekast-chatlog-username","font-bold","mr-2");
+		if(chatMessage['source']=='y'){
+			u.classList.add("librekast-youtube-username","text-red-300");
+			{% if meeting.platform == 'MX' %}
+			let youtubeIcon = document.createElement('img');
+			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			youtubeIcon.src = "{% static 'youtube-icon.png' %}";
+			l.appendChild(youtubeIcon);
+			{% endif %}
+		}
+		if(chatMessage['source']=='t'){
+			u.classList.add("librekast-twitch-username","text-purple-300");
+			{% if meeting.platform == 'MX' %}
+			let twitchIcon = document.createElement('img');
+			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			twitchIcon.src = "{% static 'twitch-icon.png' %}";
+			l.appendChild(twitchIcon);
+			{% endif %}
+		}
+		t.innerText = chatMessage['text'];
+		t.classList.add("librekast-chatlog-msg","break-words","text-white");
+		if(chatMessage['text'].startsWith(botMsgPrefix)){
+			t.classList.add("librekast-bot-message","italic");
+			// l.removeChild(l.getElementsByClassName('librekast-chatlog-platform')[0]);
+			let botIcon = document.createElement('img');
+			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+			botIcon.src = "{% static 'bot-icon.png' %}";
+			l.appendChild(botIcon);
+		}
+		l.appendChild(u);
+		l.appendChild(t);
+		chatlog.appendChild(l);
+	}
+
+
+
+	// main fuction : receive messages
+	dashboardSocket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		console.log('received : '+e.data);
+
+		if(data['message']==='question-go'){
+			showQuestionText(data['question']);
+			// updateMeetingPlan(data['question'].id)
+		}else if(data['message']==='error no login'){
+			dashboardSocket.send(JSON.stringify({
+				'message': "chat-subscribe", 
+			}));
+		}else if(data['message']==='notify-chat'){
+			addChatLog(data['chat']); 		
+		}else if(data['message']==='admin-error'){
+			alert(data['text']);
+		}
+		
+	};
+
+	dashboardSocket.onclose = function(e) {
+	};
+
+	// start chat
+	document.querySelector('header').classList.add('hidden');
+	document.querySelector('footer').classList.add('hidden');
+
+	
+	{% endif %}
+
+</script>
+</body>
+</html>

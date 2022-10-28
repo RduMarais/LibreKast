@@ -70,7 +70,7 @@ def alerts(request,meeting_id):
 # Standalone view with chat alerts for teleprompt tablets (with text inverted)
 def prompt(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
-	return render(request,'poll/chatlog.html',{'meeting':meeting})
+	return render(request,'poll/chatlog_prompt.html',{'meeting':meeting})
 
 # Create a QR code picture for a specific meeting
 def qr_meeting(request,meeting_id):
