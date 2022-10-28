@@ -57,24 +57,27 @@ v0.4.0 : streaming bots functionnalities
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
  * [x] back : generate QR code
- * [ ] back : periodic bots filter with is_active
- * [ ] back : error mode setting
- * [ ] Youtube : automatically generate short answer for poll & quizz
- * [ ] Youtube : setup alert for Youtube creds
  * [x] Youtube : Revolution bots support
  * [x] Youtube : Bug : has several subscirber
  * [x] Youtube : handle refresh token renewal
- * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [x] front : Revolution bots (with sound)
  * [x] front : Revolution bots (with transparency)
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
- * [ ] front : error mode -> shw error messages on chat
  * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
+ * [ ] back : periodic bots filter with is_active
+ * [ ] back : refine complete streams initialization process (now only triggered on first init)
+ * [ ] back : error mode setting (if debug)
+ * [ ] front : error mode -> show error messages on chat
+ * [ ] Youtube : automatically generate short answer for poll & quizz
+ * [ ] Youtube : setup alert for Youtube creds
+
+v0.4.1 : fix various bugs
+
+ * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
- * [ ] mse en avant des comms 
 
 v0.4.1 : Flag feature
 

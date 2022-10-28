@@ -43,8 +43,8 @@ class TwitchHandler(threading.Thread):
 		self.meetingConsumer.notify_chat(chatlog)
 
 	def show_message(self,message: twitch.chat.Message) -> None:
-		# if(settings.DEBUG):
-		# 	print(f'debug : TW MSG : {message.sender} says : {message.text}')
+		if(settings.DEBUG):
+			print(f'debug : TW MSG : {message.sender} says : {message.text}')
 		self.print_message({'author':message.sender,'text':message.text,'source':'t'})
 
 	def handle_question(self,message: twitch.chat.Message) -> None:

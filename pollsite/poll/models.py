@@ -54,12 +54,18 @@ class TwitchAPI(models.Model):
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 
+	def __str__(self):
+		return self.name
+
 class YoutubeAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
 	client_id = models.CharField(_('OAuth Client ID'),max_length=90)
 	client_secret = models.CharField(_('OAuth Client Secret'),max_length=40)
 	authorized_credentials = models.TextField('This should not be accessed manually',max_length=1000,blank=True,default='')
+
+	def __str__(self):
+		return self.name
 
 ##### MAIN APP LOGIC MODEL
 

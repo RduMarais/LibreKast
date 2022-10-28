@@ -89,6 +89,8 @@ class MeetingConsumer(WebsocketConsumer):
 		
 		# ADMIN settings : this is executed ONLY ONCE PER MEETING
 		if(self.is_user_authenticated() and not self.meeting._is_running): 
+			if(settings.DEBUG):
+				print('debug : admin init')
 			# INIT live stream
 			self.meeting._is_running = True
 			self.meeting.save()
