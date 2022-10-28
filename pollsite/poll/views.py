@@ -37,7 +37,8 @@ def dashboard(request,meeting_id):
 	attendees = meeting.attendee_set.all().order_by('-score')
 	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
 
-# TODO this page is not protected, for simplicity. But the data shown here are actually public on YT and Twitch
+# Standalone view with chat log for streaming software such as OBS
+# this page is not protected, for simplicity (the data shown here are actually public on YT and Twitch)
 def chat(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/chatlog.html',{'meeting':meeting})
@@ -61,9 +62,15 @@ def flag(request,meeting_id,flag_code):
 		(flag_attempt,error) = validate_flag_attempt(meeting,attendee,flag_code)
 	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
+# Standalone view with chat alerts for streaming software such as OBS
 def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/alerts.html',{'meeting':meeting})
+
+# Standalone view with chat alerts for teleprompt tablets (with text inverted)
+def prompt(request,meeting_id):
+	meeting = get_object_or_404(Meeting, pk=meeting_id)
+	return render(request,'poll/chatlog.html',{'meeting':meeting})
 
 # Create a QR code picture for a specific meeting
 def qr_meeting(request,meeting_id):

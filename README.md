@@ -54,11 +54,11 @@ You can find screenshots :
 
 v0.4.0 : streaming bots functionnalities
 
- * [ ] back : automatically generate short answer for poll & quizz
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
  * [x] back : generate QR code
  * [ ] back : periodic bots filter with is_active
+ * [ ] back : error mode setting
  * [ ] Youtube : automatically generate short answer for poll & quizz
  * [ ] Youtube : setup alert for Youtube creds
  * [x] Youtube : Revolution bots support
@@ -70,6 +70,7 @@ v0.4.0 : streaming bots functionnalities
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
+ * [ ] front : error mode -> shw error messages on chat
  * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
  * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
  * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going

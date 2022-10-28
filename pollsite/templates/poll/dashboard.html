@@ -90,8 +90,9 @@
 		<div class="text-center mt-2 mx-2" id="chatlog-title">
 			<div class="basis-3/4 inline"><span class="text-2xl mr-2">{% trans "Chat Log" %}</span></div>
 			<div class="basis-1/4 inline">
-				<button class="bg-gray-500 px-1 rounded py" onclick="copyToClipboard('{% url 'poll:chatlog' meeting.id %}','{% trans 'Chat log' %}');">{% trans "Chat" %}</button>
-				<button class="bg-pour1nf0-dark-100 px-1 rounded py" onclick="copyToClipboard('{% url 'poll:alerts' meeting.id %}','{% trans 'Animations' %}');">{% trans "Alerts" %}</button>
+				<button class="bg-gray-400 hover:bg-pour1nf0-dark-100 hover:text-white px-1 rounded py" onclick="copyToClipboard('{% url 'poll:chatlog' meeting.id %}','{% trans 'Chat log' %}');">{% trans "Chat" %}</button>
+				<button class="bg-gray-400 hover:bg-pour1nf0-dark-100 hover:text-white px-1 rounded py" onclick="copyToClipboard('{% url 'poll:alerts' meeting.id %}','{% trans 'Animations' %}');">{% trans "Alerts" %}</button>
+				<button class="bg-gray-400 hover:bg-pour1nf0-dark-100 hover:text-white px-1 rounded py" onclick="copyToClipboard('{% url 'poll:prompt' meeting.id %}','{% trans 'Prompt interface' %}');">{% trans "Prompt" %}</button>
 			</div>
 		</div>
 		<div class="border border-blue-200 bg-blue-100 dark:border-pour1nf0-blue-700 dark:bg-pour1nf0-dark-100" id="chatlog-content">
