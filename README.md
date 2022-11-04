@@ -65,6 +65,7 @@ v0.4.0 : streaming bots functionnalities
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
+ * [x] front : created prompting interface
  * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
  * [ ] back : periodic bots filter with is_active
  * [ ] back : refine complete streams initialization process (now only triggered on first init)
@@ -89,7 +90,6 @@ v0.4.1 : Flag feature
  * [x] back : count flag as vote 
  * [x] back : flag input on meetings
  * [x] back : add bonus points for first blood on flags
- * [ ] back : handle prefixes
  * [x] front : flag page 
  * [x] front : flag input on meeting intf
  * [x] front : flag input on meetings
@@ -97,6 +97,7 @@ v0.4.1 : Flag feature
  * [x] front : flag input on meetings display images
  * [x] front : latest submissions notification
  * [x] front : add bonus points for first blood on flags
+ * [ ] back : handle prefixes
 
 v0.4.2 : stateful meeting
 
@@ -122,7 +123,7 @@ v0.4.4 : QoL
  * [ ] front : change admin interface to be modular
  * [ ] back : add env var for redis cache port
 
-v0.4.5 : feature vote bayésien
+v0.4.5 : feature images slides
 
  * [ ] add Image slides
 
