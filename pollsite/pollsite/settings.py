@@ -203,6 +203,7 @@ CHANNEL_LAYERS = {
 # I recommend using '#', @ is for testing purposes
 # on Youtube, "@" is for tagging people and "!"" for bots
 INTERACTION_CHAR = "#" 
+BOT_CHAR = "!" 
 
 # Define how you want to specify that your message is sent by a bot on Twitch and Youtube
 BOT_MSG_PREFIX = '[BOT] '

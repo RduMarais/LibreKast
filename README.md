@@ -57,6 +57,9 @@ v0.4.0 : streaming bots functionnalities
  * [x] back : setup bots commands models
  * [x] back : setup bots commands for Twitch and Youtube
  * [x] back : generate QR code
+ * [x] back : error mode setting (if debug)
+ * [x] back : refine complete streams initialization process (now only triggered on first init)
+ * [x] back : periodic bots filter with is_active
  * [x] Youtube : Revolution bots support
  * [x] Youtube : Bug : has several subscirber
  * [x] Youtube : handle refresh token renewal
@@ -65,20 +68,8 @@ v0.4.0 : streaming bots functionnalities
  * [x] front : make responsive home
  * [x] front : make responsive meetings
  * [x] front : make responsive meeting index
- * [x] front : created prompting interface
+ * [x] front : created prompting interface with background and mirror flip
  * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
- * [ ] back : periodic bots filter with is_active
- * [ ] back : refine complete streams initialization process (now only triggered on first init)
- * [ ] back : error mode setting (if debug)
- * [ ] front : error mode -> show error messages on chat
- * [ ] Youtube : automatically generate short answer for poll & quizz
- * [ ] Youtube : setup alert for Youtube creds
-
-v0.4.1 : fix various bugs
-
- * [ ] Twitch : add attendee is subscriber attribute in dashboard
- * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
- * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
 v0.4.1 : Flag feature
 
@@ -99,13 +90,24 @@ v0.4.1 : Flag feature
  * [x] front : add bonus points for first blood on flags
  * [ ] back : handle prefixes
 
+v0.4.2 : fix various bugs
+
+ * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
+ * [ ] front : error mode -> show error messages on chat
+ * [ ] Youtube : setup alert for Youtube creds
+ * [ ] Youtube : automatically generate short answer for poll & quizz
+ * [ ] Twitch : setup alert for Twitch connexion error
+ * [ ] Twitch : add attendee is subscriber attribute in dashboard
+ * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
+ * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+
 v0.4.2 : stateful meeting
 
  * [x] back : current question state
    * i need more work on async states to have the admin changing the state and the users reading it
  * [x] back : joining during a question
  * [x] front : fix error message on connexion
- * [ ] back : fix the init phase that is executed only once per meeting
+ * [x] back : fix the init phase that is executed only once per meeting
  * [ ] back : go back button in dashboard
  * [ ] front : go back button in dashboard
  * [ ] front : type de question : appréciation /100 (échelle)

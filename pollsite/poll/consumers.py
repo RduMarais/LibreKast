@@ -2,6 +2,9 @@
 import json
 import threading
 import datetime
+import atexit
+
+
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.conf import settings
@@ -19,12 +22,27 @@ from .twitch_handler import TwitchHandler
 from .utils import validate_flag_attempt
 
 
+class MEETING_STATUS:
+	WAITING ='W'
+	ONGOING ='O'
+	AFTER ='A'
+	BEFORE ='B'
+	SCOREBOARD ='S'
+	RESULTS ='R'
+	UNDEFINED ='U'
+
+
+##############################################
+##########       MAIN CLASS       ############
+##############################################
+
 # there are 3 group channels joined if needed : 
 # * meeting_group_name = evryone on the meeting (used for word cloud, results, and the questions content)
 # * _admin : admins only (used for live results)
 # * _chat : anyone that wants to get the live chat (used for live chat, obviously)
 class MeetingConsumer(WebsocketConsumer):
 	isAdmin = False
+
 
 ##############################################
 #########       INITIALIZATION       #########
@@ -64,7 +82,9 @@ class MeetingConsumer(WebsocketConsumer):
 
 		self.accept()
 
-		# setup user session
+		# setup user session : admin dashboard is build over the mechanism (the websocket 'api') for regular users
+		# therefore, the admin should have a session
+		# thus we have to handle a few edge case if the admin has not registered as a participant
 		if('attendee_id' in self.scope['session']):
 			attendee_id = self.scope['session']['attendee_id']
 			try:
@@ -76,6 +96,7 @@ class MeetingConsumer(WebsocketConsumer):
 				new_attendee = Attendee.objects.get(name=self.scope['user'].username)
 				self.scope['session']['attendee_id'] = new_attendee.id
 				self.send(text_data=json.dumps({'message':'error','error':_('Warning : user is staff -> previous login with staff username used')}))
+				if(settings.DEBUG): print('debug : use staff user as dashboard user.')
 				self.attendee = new_attendee
 			except Attendee.DoesNotExist:
 				# if the user checks the meeting afterwards, a new user will be created
@@ -87,21 +108,38 @@ class MeetingConsumer(WebsocketConsumer):
 		else:
 			self.send(text_data=json.dumps({'message':'error','error':_('no login (no id in session)')}))
 		
-		# ADMIN settings : this is executed ONLY ONCE PER MEETING
+		if(settings.DEBUG):
+			print(f'debug : is user is_authenticated ? {self.is_user_authenticated()}')
+			print(f'debug : is meeting running ? {self.meeting._is_running}')
+			print(f'debug : is user the admin ? {self.isAdmin}') ## c'est ça qui plante
+			print(f'debug : what is meeting status ? {self.get_current_meeting_status()}')
+
+		# ADMIN settings : this should be executed ONLY ONCE PER MEETING
+		# these status indicates that no one is handling the meeting
 		if(self.is_user_authenticated() and not self.meeting._is_running): 
-			if(settings.DEBUG):
-				print('debug : admin init')
-			# INIT live stream
+			if(settings.DEBUG): print('debug : admin init : should be executed only once')
 			self.meeting._is_running = True
 			self.meeting.save()
-			self.set_meeting_status('W')
+			self.set_meeting_status(MEETING_STATUS.WAITING)
 			self.isAdmin = True # to keep track of who is the first to start the meeting
+		
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
-				self.init_yt_polling()
-				self.time_iterator = 0
-				self.periodic_bot_iterator = 0
+				if(settings.DEBUG): print('debug : admin init : check for YT handler')
+				if(not hasattr(self,'ytHandler')):
+					self.init_yt_polling()
+					if(settings.DEBUG): print('debug : admin init : starting YT handler')
+					self.time_iterator = 0
+					self.periodic_bot_iterator = 0
+				else:
+					if(settings.DEBUG): print('debug : meeting has already a YT handler')
 			if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
-				self.init_tw_polling()
+				if(settings.DEBUG): print('debug : admin init : check for TW handler')
+				if(not hasattr(self,'twHandler')):
+					self.init_tw_polling()
+					if(settings.DEBUG): print('debug : admin init : starting TW handler')
+				else:
+					if(settings.DEBUG): print('debug : meeting has already a TW handler')
+
 
 	# leave group
 	def disconnect(self, close_code):
@@ -114,9 +152,10 @@ class MeetingConsumer(WebsocketConsumer):
 		if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
 			self.terminate_tw_polling()
 		if(self.isAdmin):
+			self.set_meeting_status(MEETING_STATUS.AFTER)
 			self.meeting._is_running = False
 			self.meeting.save()
-			self.set_meeting_status('A')
+
 
 
 	# Receive message from meeting group
@@ -143,8 +182,7 @@ class MeetingConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		message_in = text_data_json['message']  # this is the format that should be modified
 		
-		if(settings.DEBUG):
-			print('RECV : '+message_in)
+		if(settings.DEBUG): print('RECV : '+message_in)
 
 		####################################
 		#### THE MAIN APP LOGIC is here ####
@@ -159,8 +197,7 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send_current_question_on_join()
 		# participant sends a vote
 		elif(message_in == "vote"):
-			if(settings.DEBUG):
-				print('debug : json data : '+str(text_data_json))
+			if(settings.DEBUG): print('debug : json data : '+str(text_data_json))
 			async_to_sync(self.receive_vote(text_data_json,self.attendee))
 		# participant is asking for its score
 		elif(message_in == "get-score"):
@@ -184,7 +221,7 @@ class MeetingConsumer(WebsocketConsumer):
 		elif(message_in == "admin-get-current-question"):
 				question = self.meeting.current_question()
 				self.send_current_question(question)
-				self.set_meeting_status('W') # _status = W
+				self.set_meeting_status(MEETING_STATUS.WAITING) # _status = W
 		# admin is sending everyone the current question
 		elif(message_in == "admin-question-start"):
 			if(self.is_user_authenticated()):
@@ -194,16 +231,6 @@ class MeetingConsumer(WebsocketConsumer):
 					self.start_yt_polling(question)
 				if((self.meeting.platform == 'TW' or self.meeting.platform == 'MX') and question.question_type != 'TX'):
 					self.start_tw_polling(question)
-		# TODO : remove as unused after some tests
-		# elif(message_in == "admin-live-start"):
-		# 	if(self.is_user_authenticated()):
-		# 		question = self.meeting.current_question()
-		# 		async_to_sync(self.start_livestream_poll()) # TODO
-		# elif(message_in == "admin-live-stop"):
-		# 	if(self.is_user_authenticated()):
-		# 		question = self.meeting.current_question()
-		# 		async_to_sync(self.stop_livestream_poll()) # TODO
-		# admin is sending everyone the answers/results
 		elif(message_in == "admin-question-results"):
 			if(self.is_user_authenticated()):
 				question = self.meeting.current_question()
@@ -222,11 +249,9 @@ class MeetingConsumer(WebsocketConsumer):
 			self.subscribe_to_chat()
 		# participant sends flag submission
 		elif(message_in == "submit-flag"):
-			if(settings.DEBUG):
-				print('starting flag submission')
+			if(settings.DEBUG): print('starting flag submission')
 			self.submit_flag(text_data_json,self.attendee)
 		else:
-			print('debug : else statement')
 			message_out = {'message':'error','error':_('Something went wrong. Please report this to an admin.')}
 			self.send(text_data=json.dumps(message_out))
 
@@ -238,7 +263,7 @@ class MeetingConsumer(WebsocketConsumer):
 ##############################################
 
 
-	# for basic access control
+	# wrapper for basic access control with django built-in functions
 	def is_user_authenticated(self):
 		if(self.scope['user'].is_anonymous):
 			return False
@@ -247,10 +272,10 @@ class MeetingConsumer(WebsocketConsumer):
 		else:
 			return False
 
+	# atomic function to set meeting status
 	def set_meeting_status(self,status):
 		self.meeting._question_status = status
-		if(settings.DEBUG):
-			print(f'debug : meeting status set to {status}')
+		if(settings.DEBUG): print(f'debug : meeting status set to {status}')
 		self.meeting.save()
 
 	# this function has to perform a "database read" bc the meetging object 
@@ -270,7 +295,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def notify_next_question(self):
 		# sends new question id
-		self.set_meeting_status('W')
+		self.set_meeting_status(MEETING_STATUS.WAITING)
 		question = self.meeting.current_question()
 		if(not question):
 			# this should not happen as the previous function returns a new 'End' Activity
@@ -339,7 +364,7 @@ class MeetingConsumer(WebsocketConsumer):
 		return message_out
 
 	def notify_end(self):
-		self.set_meeting_status('A')
+		self.set_meeting_status(MEETING_STATUS.AFTER)
 		message_out = {
 			'message' : "question-go",
 			'question':{
@@ -444,7 +469,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	# send question to group
 	def send_group_question(self,question):
-		self.set_meeting_status('O')
+		self.set_meeting_status(MEETING_STATUS.ONGOING)
 		
 		message_out = self.prepare_question(question)
 		
@@ -457,7 +482,7 @@ class MeetingConsumer(WebsocketConsumer):
 		)
 
 	def send_group_results(self,question):
-		self.set_meeting_status('R')
+		self.set_meeting_status(MEETING_STATUS.RESULTS)
 
 		message_out = self.prepare_results(question)
 
@@ -471,7 +496,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 	def send_group_scoreboard(self):
-		self.set_meeting_status('S')
+		self.set_meeting_status(MEETING_STATUS.SCOREBOARD)
 		message_out = {
 			'message' : "update-scoreboard",
 			'scores': [],
@@ -592,8 +617,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def subscribe_to_chat(self):
 		if(self.meeting.platform != 'IRL'):
-			if(settings.DEBUG):
-				print('debug : socket subscribing to live chat')
+			if(settings.DEBUG): print('debug : socket subscribing to live chat')
 			async_to_sync(self.channel_layer.group_add)(
 				self.meeting_group_name+'_chat',
 				self.channel_name
@@ -602,8 +626,7 @@ class MeetingConsumer(WebsocketConsumer):
 	def send_bot_alert(self,revolutionbot):
 		print('debug : sent bot alert')
 		if(self.meeting.platform != 'IRL'):
-			if(settings.DEBUG):
-				print('debug : sending revolution alert')
+			if(settings.DEBUG): print('debug : sending revolution alert')
 			# message_out = {
 			# }
 			# notify the group admin so the alerts in OBS can have it
@@ -620,8 +643,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 	def submit_flag(self,text_data_json,attendee):
 		flag_attempt_text = text_data_json['flag']
-		if(settings.DEBUG):
-			print(f'user {attendee.name} submitted flag : {flag_attempt_text}')
+		if(settings.DEBUG): print(f'user {attendee.name} submitted flag : {flag_attempt_text}')
 		(flag_attempt,error) = validate_flag_attempt(self.meeting,attendee,flag_attempt_text)
 		message_out = {}
 		is_correct = False
@@ -668,7 +690,7 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 ##############################################
-#########        Live Streams        #########
+#########     Live Streams Bots      #########
 ##############################################
 
 # the polling process is defined in another class for clarity of threading
@@ -686,19 +708,19 @@ class MeetingConsumer(WebsocketConsumer):
 				# remove older messages
 				if((now - datetime.datetime.fromisoformat(t['time'])).seconds >= revolution[0].threshold_delay):
 					revolution[0].buffer['triggers'].remove(t)
-					print('debug : removed old msg from buffer')
+					if(settings.DEBUG): print('debug : removed old msg from buffer')
 				elif(t['name']==sender):
 					spam=True 		# the reason this is not a break is bc I want to still browse the array to remove the older triggers
-					print('debug : spam identified')
+					if(settings.DEBUG): print('debug : spam identified')
 			if(not spam):
 				revolution[0].buffer['triggers'].append({'name':sender,'time':now.isoformat()})
 				if(len(revolution[0].buffer['triggers']) > revolution[0].threshold_number):
-					print('debug : is it a revolution ?')
+					if(settings.DEBUG): print('debug : is it a revolution ?')
 					# prevent a revolution to be re-triggered instantly previous revolution
 					if((revolution[0].buffer['last_revolution']=='') or ((now - datetime.datetime.fromisoformat(revolution[0].buffer['last_revolution'])).seconds >= revolution[0].threshold_delay)):
 
 						# ITS HAPPENING HERE
-						print('debug : revolution started ! '+revolution[0].message)
+						if(settings.DEBUG): print('debug : revolution started ! '+revolution[0].message)
 						# send on youtube and twitch and show them in the librekast chat 
 						if(hasattr(self,'ytHandler') and (self.meeting.platform == 'YT' or self.meeting.platform == 'MX')):
 							self.ytHandler.send_message(settings.BOT_MSG_PREFIX+revolution[0].message)
@@ -713,25 +735,28 @@ class MeetingConsumer(WebsocketConsumer):
 						print('debug : reset buffer')
 						if(revolution[0].alert):
 							self.send_bot_alert(revolution[0])
-				print('debug : added last to buffer')
+				if(settings.DEBUG): print('debug : added last to buffer')
 			revolution[0].save()
 
 	def periodic_bot(self):
 		self.time_iterator = (self.time_iterator + 1) % 3600
-		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.all()):
+		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.filter(is_active=True)):
 			# On Youtube send bot message number *periodic_bot_iterator*
-			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
 			if(self.meeting.platform == 'MX' and hasattr(self,'twHandler')):
 				# On Twitch send bot message number *periodic_bot_iterator*
-				self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.all()[self.periodic_bot_iterator].message)
+				self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
 				# no need to print the message in librekast chat as youtube bot already prints it 
 			# iterate over periodic_bot_iterator
-			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.all())
+			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.filter(is_active=True))
 
 
 
 
-# Youtube Live compatibility
+##############################################
+#########       Youtube Streams      #########
+##############################################
+
 	def init_yt_polling(self):
 		if(not self.meeting.stream_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
@@ -762,7 +787,10 @@ class MeetingConsumer(WebsocketConsumer):
 
 
 
-# Twitch Streams compatibility
+##############################################
+#########       Twitch Streams       #########
+##############################################
+
 	def init_tw_polling(self):
 		if(not self.meeting.channel_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}))
@@ -776,6 +804,7 @@ class MeetingConsumer(WebsocketConsumer):
 	def start_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
 			raise KeyError('There should be a TwitchHandler object')
+		if(settings.DEBUG):print('debug : start polling on twitch')
 		self.twHandler.run()
 
 	def stop_tw_polling(self,question):

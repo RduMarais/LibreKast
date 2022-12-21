@@ -72,7 +72,7 @@ class TwitchHandler(threading.Thread):
 
 
 	def bot_listen(self,message: twitch.chat.Message) -> None:
-		if message.text.startswith('!'):
+		if message.text.startswith(settings.BOT_CHAR): # by default this is '!'
 			# is this a command bot
 			command = message.text.split()[0][1:]
 			commands = self.meetingConsumer.meeting.messagebot_set.filter(command=command).filter(is_active=True)

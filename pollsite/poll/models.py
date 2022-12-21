@@ -30,11 +30,11 @@ LIVE_TYPE = (
 	)
 STATUS = (
 		('W',_('Waiting for next activity')),
-		('O',_('Activity ongoing')), 	
+		('O',_('Activity ongoing')),	
 		('A',_('Meeting finished')),
-		('B',_('To be started')),	
-		('S',_('Scoreboard display')),	
-		('R',_('Activity results display')),	
+		('B',_('To be started')),
+		('S',_('Scoreboard display')),
+		('R',_('Activity results display')),
 		('U',_('Undefined')),
 	)
 

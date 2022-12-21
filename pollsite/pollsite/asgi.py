@@ -17,9 +17,13 @@ from channels.auth import AuthMiddlewareStack
 from channels.sessions import SessionMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 import poll.routing
+import poll.checks
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pollsite.settings')
 
+if(os.environ.get("DEBUG",default=False)):
+    print('debug : worker checks meeting clean start')
+poll.checks.check_meetings_clean_stop()
 
 # if __name__ == '__main__':
 #     import django
