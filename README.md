@@ -7,6 +7,16 @@ I am not a developper, so this code is far from perfect ! Although it runs, plea
 [![GitHub license](https://img.shields.io/github/license/RduMarais/LibreKast)](https://github.com/RduMarais/LibreKast/blob/master/LICENSE)
 
 
+## Summary
+
+ * [Functionnalities](#Functionnalities)
+ * [Roadmap](#project-roadmap)
+ * [Code architecture](#code-architecture)
+ * [Deploy for development](#how-to-deploy-for-development)
+ * [Deploy for production](#how-to-deploy-in-production)
+ * [How to get Twitch and Youtube tokens](#get-stream-tokens)
+ * [State Diagram](#current-state-diagram)
+
 ## Functionnalities
 
 There are 4 types of question you can show in the app : 
@@ -20,11 +30,12 @@ Moreover, there are **flags**, that can be submitted by participants to earn poi
 
 The meeting organizer can access a special dashboard with live scoreboard, live results and buttons to navigate between questions.
 
-There are 3 types of meetings : 
+There are 4 types of meetings : 
 
  * IRL meetings : those are beekast-like meetings. You need to register as explained below to join the meeting.
  * Youtube Live Stream : the chat is automatically fetched by Youtube
  * Twitch live Stream : the chat is fetched with Twitch Helix API (needs API tokens)
+ * Double Stream : the chat is aggregated both from Youtube and Twitch. All interactions are made accross both platforms
 
 To connect to a meeting, participants only need to go to Meetings > choose the meetings. A meeting code is needed to register, by default it is `Pour1nf0`.
 
@@ -52,54 +63,24 @@ You can find screenshots :
 
 ## Project roadmap
 
-v0.4.0 : streaming bots functionnalities
+v0.4.1 : 
 
- * [x] back : setup bots commands models
- * [x] back : setup bots commands for Twitch and Youtube
- * [x] back : generate QR code
- * [x] back : error mode setting (if debug)
- * [x] back : refine complete streams initialization process (now only triggered on first init)
- * [x] back : periodic bots filter with is_active
- * [x] Youtube : Revolution bots support
- * [x] Youtube : Bug : has several subscirber
- * [x] Youtube : handle refresh token renewal
- * [x] front : Revolution bots (with sound)
- * [x] front : Revolution bots (with transparency)
- * [x] front : make responsive home
- * [x] front : make responsive meetings
- * [x] front : make responsive meeting index
- * [x] front : created prompting interface with background and mirror flip
- * [x] BUG : fix bug where admin has no 'attendee_id' in session admin
-
-v0.4.1 : Flag feature
-
- * [x] back : add display flags and prefixes
- * [x] back : add flag model
- * [x] back : add flag GET API
- * [x] back : generate Flag QR
- * [x] back : link flag with participant session
- * [x] back : count flag as vote 
- * [x] back : flag input on meetings
- * [x] back : add bonus points for first blood on flags
- * [x] front : flag page 
- * [x] front : flag input on meeting intf
- * [x] front : flag input on meetings
- * [x] front : latest submissions log
- * [x] front : flag input on meetings display images
- * [x] front : latest submissions notification
- * [x] front : add bonus points for first blood on flags
- * [ ] back : handle prefixes
-
-v0.4.2 : fix various bugs
-
- * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
- * [ ] front : error mode -> show error messages on chat
- * [ ] Youtube : setup alert for Youtube creds
- * [ ] Youtube : automatically generate short answer for poll & quizz
- * [ ] Twitch : setup alert for Twitch connexion error
- * [ ] Twitch : add attendee is subscriber attribute in dashboard
- * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
- * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+ * Flag feature
+	 * [ ] back : handle prefixes
+ * Bots features
+ 	 * [ ] front : modify message bots in dashboard
+ * Documentation : 
+ 	 * [ ] Add documentation on API tokens
+ 	 * [ ] Add documentation on meeting & question status
+ * fix various bugs
+	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
+	 * [ ] front : error mode -> show error messages on chat
+	 * [ ] Youtube : setup alert for Youtube creds
+	 * [ ] Youtube : automatically generate short answer for poll & quizz
+	 * [x] Twitch : setup alert for Twitch connexion error
+	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
+	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
+	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 
 v0.4.2 : stateful meeting
 
@@ -149,7 +130,7 @@ v0.5.0 : installation and Quality of Life
  * [ ] dulicate question and meetings
  * [ ] make twitch and youtube an interface and have bot logic in a separate file
 
-#### code architecture
+## code architecture
 
 The code is a django project named 'pollsite', made with 2 apps : 
 
@@ -161,30 +142,10 @@ The code is a django project named 'pollsite', made with 2 apps :
 In `polls` app, the different URLs are handled in the `views.py` file. All websockets communications are handled (synchronously) in the `consumers.py` file.
 The difference between question types is handled using a `question_type` attribute, which can be `TO`, `QZ`, `QZ` or `WC`.
 
-For the meeting types, I went with optional fields instead of a complex heritage model, in order to get quickly something worrking. Yes it's lame, but hey - it works.
-
-## How to deploy test instance with docker
-
-> Please note that the docker version only uses developpement server and is not ready for production environment !
-
-Copy all the files by cloning the repo with : 
-
-```
-git clone https://github.com/RduMarais/LibreKast.git --depth 1
-```
-
-Simply run : 
-
-```bash
-cd Librekast
-docker-compose up
-```
+For the meeting types, I went with optional fields instead of a complex heritage model, in order to get quickly something working. Yes it's lame, but hey - it works.
 
 
-> Please note that as of today, the server in docker is the development sever. Next push will be gunicorn/uvicorn.
-
-
-## How to deploy for developpment
+## How to deploy for development
 
 __pre-requisites : python(3.8 or above) and pip must be installed__ 
 
@@ -319,7 +280,23 @@ gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker -
 ```
 
 > lmk if you need my redirection setup for nginx or a docker image
- 
+
+## Get Stream Tokens
+
+#### Twitch
+
+ * get an IRC chat token at https://twitchapps.com/tmi (token should have the form oauth:XXXXXX)
+ 	 * OAuth token in django admin dashboard (without the "oauth:" part)
+ 	 * this is responsible for connecting to twitch chat in an app
+ * create an app at https://dev.twitch.tv/console and create a new client secret
+ 	 * App Client ID in django admin dashboard
+ 	 * Client secret in django admin dashboard
+ 	 * these tokens are responsible for allowing LibreKast to interact with your Twitch account as an app
+
+#### Youtube
+
+
+
 ## Current State diagram 
 
 based on current implem (not the final goal)

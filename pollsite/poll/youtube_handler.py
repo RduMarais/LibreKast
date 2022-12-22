@@ -20,6 +20,16 @@ from .models import Choice, Question, Meeting,Attendee,Vote,YoutubeAPI,PeriodicB
 # this uses both pytchat to fetch chat (read-only) and youtube API to post messages
 # all application logic lies in the consumers.py file
 
+class YoutubeChatError(Exception): # not used yet
+	pass
+
+class YoutubeOAuthError(Exception):
+
+	def __init__(self,message,url,flow):
+		self.url = url
+		self.flow = flow
+		super().__init__(message)
+
 PRINT_MESSAGES = True
 
 class YoutubeHandler(threading.Thread):
@@ -37,13 +47,20 @@ class YoutubeHandler(threading.Thread):
 		if(youtube_api):
 			if(settings.OAUTHLIB_INSECURE_TRANSPORT):
 				os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-			self.youtube_api_client = self.get_youtube_api_client(youtube_api)
-		
-			self.liveChatID = self.get_chat_id(yt_id)
-			self.nextPageToken = None
+			# try:
+			(success,creds) = self.get_youtube_api_creds(youtube_api) # this may raise errors
+			# except YoutubeOAuthError as e:
+			if success: # creds contains a creds object and we continue
+				self.youtube_api_client = self.get_youtube_api_client_from_creds(youtube_api,creds)
+				self.liveChatID = self.get_chat_id(yt_id)
+				self.nextPageToken = None
+			else: # creds contains an oauth error object and we wait for fetch_oauth_token
+				self.oauth_error = creds
+
 			print('debug : YT API INIT DONE')
 		else:
 			print('debug : no YT API : only listening')
+
 
 
 	def get_youtube_oauth(self,youtube_api):
@@ -62,17 +79,29 @@ class YoutubeHandler(threading.Thread):
 		authorization_url, state = flow.authorization_url(
 			access_type='offline',
 			include_granted_scopes='true')
-		print('debug : OAUTH Authorization : go to this URL :')
+		return YoutubeOAuthError('debug : OAUTH Authorization : go to this URL :',authorization_url,flow)
 		# self.meetingConsumer.send(text_data=json.dumps({'message':'error test API'}))
-		print(authorization_url)
+		# print(authorization_url)
 		# i kinda need to make the redirection myself for now ?
-		oauth_code = input('INPUT : Press any key when authorized\n') 
+		# oauth_code = input('INPUT : Press any key when authorized\n') 
+		# flow.fetch_token(code=oauth_code)
+		# creds = flow.credentials
+		# return creds
+
+	def fetch_oauth_token(self,youtube_api,yt_id,oauth_code):
+		flow = self.oauth_error.flow
 		flow.fetch_token(code=oauth_code)
 		creds = flow.credentials
-		return creds
+		youtube_api.authorized_credentials=creds.to_json()
+		youtube_api.save()
+		self.youtube_api_client = googleapiclient.discovery.build("youtube", "v3", credentials=creds)
+		self.liveChatID = self.get_chat_id(yt_id)
+		self.nextPageToken = None
+		print('debug : YT API INIT DONE with code fetching')
+
 
 	# Setup OAuth API
-	def get_youtube_api_client(self,youtube_api):
+	def get_youtube_api_creds(self,youtube_api):
 		creds = None
 		# case : the user has already connected once
 		if(youtube_api.authorized_credentials):
@@ -84,17 +113,23 @@ class YoutubeHandler(threading.Thread):
 				try:
 					creds.refresh(Request())
 				except RefreshError:
-					creds = self.get_youtube_oauth(youtube_api)
+					oauth_error = self.get_youtube_oauth(youtube_api) # may raise error
+					return (False,oauth_error)
 			else:
-				creds = self.get_youtube_oauth(youtube_api)
+				oauth_error = self.get_youtube_oauth(youtube_api) # may raise error
+				return (False,oauth_error)
+		return (True,creds)
 
-			# Save the credentials for the next run
-			youtube_api.authorized_credentials=creds.to_json()
-			youtube_api.save()
+
+
+	def get_youtube_api_client_from_creds(self,youtube_api,creds):
+		# Save the credentials for the next run
+		youtube_api.authorized_credentials=creds.to_json()
+		youtube_api.save()
 
 		return googleapiclient.discovery.build("youtube", "v3", credentials=creds)
 
-	# Setup OAuth API
+	# use OAuth API
 	def get_chat_id(self,liveID):
 		print('debug : fetch chat ID')
 		request_chat_id = self.youtube_api_client.liveBroadcasts().list(

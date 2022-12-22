@@ -17,8 +17,8 @@ from google.auth.exceptions import RefreshError
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
-from .youtube_handler import YoutubeHandler
-from .twitch_handler import TwitchHandler
+from .youtube_handler import YoutubeHandler,YoutubeOAuthError,YoutubeChatError
+from .twitch_handler import TwitchHandler, TwitchChatError
 from .utils import validate_flag_attempt
 
 
@@ -126,10 +126,10 @@ class MeetingConsumer(WebsocketConsumer):
 			if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
 				if(settings.DEBUG): print('debug : admin init : check for YT handler')
 				if(not hasattr(self,'ytHandler')):
-					self.init_yt_polling()
-					if(settings.DEBUG): print('debug : admin init : starting YT handler')
 					self.time_iterator = 0
 					self.periodic_bot_iterator = 0
+					self.init_yt_polling()
+					if(settings.DEBUG): print('debug : admin init : starting YT handler')
 				else:
 					if(settings.DEBUG): print('debug : meeting has already a YT handler')
 			if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
@@ -251,6 +251,8 @@ class MeetingConsumer(WebsocketConsumer):
 		elif(message_in == "submit-flag"):
 			if(settings.DEBUG): print('starting flag submission')
 			self.submit_flag(text_data_json,self.attendee)
+		elif(message_in == "new-oauth-token"):
+			self.setup_youtube_oauth_token(text_data_json['token'])
 		else:
 			message_out = {'message':'error','error':_('Something went wrong. Please report this to an admin.')}
 			self.send(text_data=json.dumps(message_out))
@@ -769,6 +771,21 @@ class MeetingConsumer(WebsocketConsumer):
 		except RefreshError:
 			self.send(text_data=json.dumps({'message':'admin-error','text':'You need another YT API credential'}))
 			self.ytHandler = 'RefreshError'
+		if(hasattr(self.ytHandler,'oauth_error')):
+			if(settings.DEBUG):print('debug : '+str(self.ytHandler.oauth_error))
+			self.send(text_data=json.dumps({'message':'oauth-error','text':str(self.ytHandler.oauth_error) + self.ytHandler.oauth_error.url}))
+
+
+	def setup_youtube_oauth_token(self,token):
+		if(settings.DEBUG): print('debug : receive token '+token)
+		if(not self.meeting.stream_id):
+			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
+			raise KeyError('There should be a Youtube live/video ID defined')
+		if(not hasattr(self,'ytHandler')):
+			raise YoutubeChatError('somethiong went wrong')
+		self.ytHandler.fetch_oauth_token(self.meeting.youtube_api,self.meeting.stream_id,token)
+		self.ytHandler.meetingConsumer = self
+
 
 	def start_yt_polling(self,question):
 		if(not hasattr(self,'ytHandler')):
@@ -798,19 +815,23 @@ class MeetingConsumer(WebsocketConsumer):
 		if(not self.meeting.twitch_api):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no Twitch API specified in the Meeting settings'}))
 			raise KeyError('There should be a Twitch API defined')
-		self.twHandler = TwitchHandler(self.meeting.channel_id,self.meeting.twitch_api)
-		self.twHandler.meetingConsumer = self
+		try:
+			self.twHandler = TwitchHandler(self.meeting.channel_id,self.meeting.twitch_api,self)
+		except TwitchChatError as e:
+			self.send(text_data=json.dumps({'message':'admin-error','text':_('Error connecting to Twitch API : ')+e.message}))
 
 	def start_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
-			raise KeyError('There should be a TwitchHandler object')
-		if(settings.DEBUG):print('debug : start polling on twitch')
-		self.twHandler.run()
+			self.send(text_data=json.dumps({'message':'admin-error','text':_('Error connecting to Twitch API : ')+_('Twitch chat is not initiated')}))
+		else:
+			if(settings.DEBUG):print('debug : start polling on twitch')
+			self.twHandler.run()
 
 	def stop_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
-			raise KeyError('There should be a TwitchHandler object')
-		self.twHandler.stop()
+			self.send(text_data=json.dumps({'message':'error','error':_('Error connecting to Twitch API : ')+_('Twitch chat is not initiated')}))
+		else:
+			self.twHandler.stop()
 
 	def terminate_tw_polling(self):
 		if(hasattr(self,'twHandler')):

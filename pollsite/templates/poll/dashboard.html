@@ -589,6 +589,12 @@
 		}else if(data['message']==='notify-flag'){
 			console.log('start flag log');
 			addFlagLog(data['flag-attempt']);
+		}else if(data['message']==='oauth-error'){
+			var token = prompt(data['text']);
+			dashboardSocket.send(JSON.stringify({
+			'message': 'new-oauth-token', 
+			'token': token, 
+			}));
 		}
 	};
 

@@ -1,29 +1,44 @@
 import threading
 import twitch
 import datetime
+import json
+import time
+
 from django.utils import timezone
 from django.conf import settings
 from .models import Choice, Question, Meeting,Attendee,Vote
+from django.utils.translation import gettext as _
 
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
+
+class TwitchChatError(Exception):
+	def __init__(self,message):
+		self.message = message
+		super().__init__(message)
 
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
 	# quick fix for periodic messages
 	# periodic_bot_iterator = 0
 
-	def __init__(self,channel,twitch_api):
-		self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
+	def __init__(self,channel,twitch_api,meetingConsumer):
+		self.meetingConsumer = meetingConsumer
+		try:
+			self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
+		except KeyError as e:
+			raise TwitchChatError(_('Client secret needs to be renewed'))
+
 		self.channel = '#'+channel
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
-		if(settings.DEBUG):
-			print('debug : twitch object initiated')
+		time.sleep(3) # wait to see if the connexion has been made
+		if(self.chat.irc.exception):
+			raise TwitchChatError(_('OAuth token needs to be renewed'))
+		if(settings.DEBUG): print('debug : twitch object initiated')
 		self.chat.subscribe(self.show_message)
 		self.chat.subscribe(self.bot_listen)
-		if(settings.DEBUG):
-			print('debug : twitch chat listening')
+		if(settings.DEBUG): print('debug : twitch chat listening')
 
 
 	def send_message(self,message):
