@@ -74,8 +74,8 @@ v0.4.1 :
  	 * [ ] Add documentation on meeting & question status
  * fix various bugs
 	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
-	 * [ ] front : error mode -> show error messages on chat
-	 * [ ] Youtube : setup alert for Youtube creds
+	 * [x] front : error mode -> show error messages on dashboard
+	 * [x] Youtube : setup alert for Youtube creds
 	 * [ ] Youtube : automatically generate short answer for poll & quizz
 	 * [x] Twitch : setup alert for Twitch connexion error
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
