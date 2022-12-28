@@ -73,30 +73,29 @@ v0.4.1 :
  	 * [x] Add documentation on API tokens
  	 * [x] Add documentation on meeting & question status
  * fix various bugs
-	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
 	 * [x] front : error mode -> show error messages on dashboard
 	 * [x] Youtube : setup alert for Youtube creds
 	 * [x] Twitch : setup alert for Twitch connexion error
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
 	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+ * Prompt feature : 
+     * make another RO consumer & route for prompts and chat log
 
-v0.4.2 : stateful meeting
-
- * [x] back : current question state
-   * i need more work on async states to have the admin changing the state and the users reading it
- * [x] back : joining during a question
- * [x] front : fix error message on connexion
- * [x] back : fix the init phase that is executed only once per meeting
- * [ ] back : go back button in dashboard
- * [ ] front : go back button in dashboard
- * [ ] front : type de question : appréciation /100 (échelle)
-
-v0.4.3 : code quality, error handling and refactor
-
- * [ ] back : bleach word cloud
- * [ ] back : redirection on login
- * [ ] back : refactor QR code creation processes
+ * v0.4.2 : stateful meeting
+     * [x] back : current question state
+       * i need more work on async states to have the admin changing the state and the users reading it
+     * [x] back : joining during a question
+     * [x] front : fix error message on connexion
+     * [x] back : fix the init phase that is executed only once per meeting
+     * [ ] back : go back button in dashboard
+     * [ ] front : go back button in dashboard
+     * [ ] front : type de question : appréciation /100 (échelle)
+ * v0.4.3 : code quality, error handling and refactor
+     * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
+     * [ ] back : bleach word cloud
+     * [ ] back : redirection on login
+     * [ ] back : refactor QR code creation processes
 
 v0.4.4 : QoL
 

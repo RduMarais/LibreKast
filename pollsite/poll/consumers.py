@@ -106,7 +106,9 @@ class MeetingConsumer(WebsocketConsumer):
 				self.scope['session']['attendee_id'] = new_attendee.id
 				self.attendee = new_attendee
 		else:
+			# there is a conflict bc read-only clients such as chat embeddings do not have a session
 			self.send(text_data=json.dumps({'message':'error','error':_('no login (no id in session)')}))
+
 		
 		if(settings.DEBUG):
 			print(f'debug : is user is_authenticated ? {self.is_user_authenticated()}')
