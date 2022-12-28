@@ -70,13 +70,12 @@ v0.4.1 :
  * Bots features
  	 * [ ] front : modify message bots in dashboard
  * Documentation : 
- 	 * [ ] Add documentation on API tokens
- 	 * [ ] Add documentation on meeting & question status
+ 	 * [x] Add documentation on API tokens
+ 	 * [x] Add documentation on meeting & question status
  * fix various bugs
 	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
 	 * [x] front : error mode -> show error messages on dashboard
 	 * [x] Youtube : setup alert for Youtube creds
-	 * [ ] Youtube : automatically generate short answer for poll & quizz
 	 * [x] Twitch : setup alert for Twitch connexion error
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
 	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
@@ -104,7 +103,9 @@ v0.4.4 : QoL
  * [ ] front : create a dedicated meeting admin interface
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular
+ * [ ] back : make docker-compose
  * [ ] back : add env var for redis cache port
+ * [ ] Youtube : automatically generate short answer for poll & quizz
 
 v0.4.5 : feature images slides
 
@@ -295,9 +296,32 @@ gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker -
 
 #### Youtube
 
-
+ * Go to https://console.cloud.google.com/apis/credentials
+     * create an API key
+     * create an App for your instance
+     * create a workstation client ID at https://console.cloud.google.com/apis/credentials/oauthclient/
+     * get these client ID and client secret and paste them in the app
 
 ## Current State diagram 
+
+#### Meeting states
+
+The meeting has an attribute `_is_running` that is set to True when the first admin to connect connects to the dashboard. Then the connexion of the admin has an attribute (`is_Admin`) to follow which one of the staff connected is the one actually managing the meeting. The others are read-only.
+
+ * If the client is disconnected, both of these attribute are reset so you need to refresh the page to get control back.
+ * If the server is disconnected, an init script resets all meeting to not running
+
+During the meeting, there is a state to follow what is happening. This enables users to join during a question : 
+
+ * `WAITING` ='W' : the meeting has started and is waiting for the next question to start
+ * `ONGOING` ='O' : there is a question ongoing
+ * `RESULTS` ='R' : the question is over, the results of this question are displayed
+ * `SCOREBOARD` ='S' : the scoreboard is displayed
+ * `AFTER` ='A' : the meeting is over
+ * `BEFORE` ='B' : the meeting has not started yet
+ * `UNDEFINED` ='U' : something went wrong ?
+
+#### Flow
 
 based on current implem (not the final goal)
 
