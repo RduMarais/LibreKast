@@ -76,11 +76,14 @@ v0.4.1 :
 	 * [x] front : error mode -> show error messages on dashboard
 	 * [x] Youtube : setup alert for Youtube creds
 	 * [x] Twitch : setup alert for Twitch connexion error
+   * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
+   * [x] Twitch : fix bug using wrong oauth token
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
 	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
  * Prompt feature : 
-     * make another RO consumer & route for prompts and chat log
+     * [ ] make another RO consumer & route for prompts and chat log
+     * [ ] make another RO consumer & route for admin
 
  * v0.4.2 : stateful meeting
      * [x] back : current question state

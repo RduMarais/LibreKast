@@ -39,7 +39,7 @@
 	const dashboardSocket = new WebSocket(
 		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
 		+ window.location.host
-		+ '/ws/'
+		+ '/ws/chat/'
 		+ meeting_id
 		+ '/'
 	);

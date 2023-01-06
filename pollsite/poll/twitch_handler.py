@@ -31,7 +31,13 @@ class TwitchHandler(threading.Thread):
 			raise TwitchChatError(_('Client secret needs to be renewed'))
 
 		self.channel = '#'+channel
+		# if(settings.DEBUG): print(f'debug : id : {twitch_api.client_id}')
+		# if(settings.DEBUG): print(f'debug : secret : {twitch_api.client_secret}')
+		# if(settings.DEBUG): print(f'debug : nick : {settings.TWITCH_NICKNAME}')
+		# if(settings.DEBUG): print(f'debug : token : {twitch_api.oauth}')
+		# if(settings.DEBUG): print(f'debug : helix : {self.helix}')
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
+		if(settings.DEBUG): print(f'debug : oauth:{twitch_api.oauth}')
 		time.sleep(3) # wait to see if the connexion has been made
 		if(self.chat.irc.exception):
 			raise TwitchChatError(_('OAuth token needs to be renewed'))

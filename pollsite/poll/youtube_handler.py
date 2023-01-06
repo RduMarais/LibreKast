@@ -79,7 +79,7 @@ class YoutubeHandler(threading.Thread):
 		authorization_url, state = flow.authorization_url(
 			access_type='offline',
 			include_granted_scopes='true')
-		return YoutubeOAuthError('debug : OAUTH Authorization : go to this URL :',authorization_url,flow)
+		return YoutubeOAuthError('OAUTH Authorization Error : go to this URL :  ',authorization_url,flow)
 		# self.meetingConsumer.send(text_data=json.dumps({'message':'error test API'}))
 		# print(authorization_url)
 		# i kinda need to make the redirection myself for now ?

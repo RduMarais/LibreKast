@@ -57,7 +57,7 @@ This template does not inherit from global template te remove the header and fli
 	const dashboardSocket = new WebSocket(
 		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
 		+ window.location.host
-		+ '/ws/'
+		+ '/ws/chat/'
 		+ meeting_id
 		+ '/'
 	);

@@ -33,6 +33,72 @@ class MEETING_STATUS:
 
 
 ##############################################
+#######       CHAT RO CONSUMER       #########
+##############################################
+
+class ChatConsumer(WebsocketConsumer):
+
+	def connect(self):
+		meeting_id = self.scope['url_route']['kwargs']['meeting_id']  
+		self.meeting = Meeting.objects.get(pk=meeting_id)
+		self.meeting_group_name = 'meeting_'+str(self.meeting.id)+'_chat'
+
+		# # Join group
+		# async_to_sync(self.channel_layer.group_add)(
+		# 	self.meeting_group_name,
+		# 	self.channel_name
+		# )
+
+		# join chat group
+		async_to_sync(self.channel_layer.group_add)(
+			self.meeting_group_name,
+			self.channel_name
+		)
+
+		if(settings.DEBUG): print(f'debug : read-only chat instance listening')
+		self.accept()
+		
+	# leave group
+	def disconnect(self, close_code):
+		async_to_sync(self.channel_layer.group_discard)(
+			self.meeting_group_name,
+			self.channel_name
+		)
+		# if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
+			# self.terminate_yt_polling()
+		# if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
+			# self.terminate_tw_polling()
+
+	# handle message received from the client
+	def receive(self, text_data):
+		text_data_json = json.loads(text_data)
+		message_in = text_data_json['message']  # this is the format that should be modified
+		
+		if(settings.DEBUG): print('RECV (RO) : '+message_in)
+
+		if(message_in == "chat-subscribe"):
+			if(settings.DEBUG): print('debug : socket subscribing to live chat')
+			self.subscribe_to_chat()
+		else:
+			message_out = {'message':'error','error':_('Something went wrong. Please report this to an admin.')}
+			self.send(text_data=json.dumps(message_out))
+
+	def subscribe_to_chat(self):
+		if(self.meeting.platform != 'IRL'):
+			if(settings.DEBUG): print('debug : socket subscribing to live chat')
+			async_to_sync(self.channel_layer.group_add)(
+				self.meeting_group_name+'_chat',
+				self.channel_name
+			)
+
+	# Receive message from meeting group
+	def admin_message(self,event):
+		print('debug (RO) : chat message')
+		message = event['message']
+		self.send(text_data=json.dumps(message))
+
+
+##############################################
 ##########       MAIN CLASS       ############
 ##############################################
 
@@ -110,11 +176,11 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps({'message':'error','error':_('no login (no id in session)')}))
 
 		
-		if(settings.DEBUG):
-			print(f'debug : is user is_authenticated ? {self.is_user_authenticated()}')
-			print(f'debug : is meeting running ? {self.meeting._is_running}')
-			print(f'debug : is user the admin ? {self.isAdmin}') ## c'est ça qui plante
-			print(f'debug : what is meeting status ? {self.get_current_meeting_status()}')
+		# if(settings.DEBUG):
+		# 	print(f'debug : is user is_authenticated ? {self.is_user_authenticated()}')
+		# 	print(f'debug : is meeting running ? {self.meeting._is_running}')
+		# 	print(f'debug : is user the admin ? {self.isAdmin}') ## c'est ça qui plante
+		# 	print(f'debug : what is meeting status ? {self.get_current_meeting_status()}')
 
 		# ADMIN settings : this should be executed ONLY ONCE PER MEETING
 		# these status indicates that no one is handling the meeting
