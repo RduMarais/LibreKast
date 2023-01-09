@@ -816,7 +816,9 @@ class MeetingConsumer(WebsocketConsumer):
 			if(settings.DEBUG):print("debug : periodic bot pong")
 			# On Youtube send bot message number *periodic_bot_iterator*
 			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
+			if(settings.DEBUG):print(f"debug : {self.meeting.platform}")
 			if(self.meeting.platform == 'MX' and hasattr(self,'twHandler')):
+				if(settings.DEBUG):print("debug : periodic bot entering twitch")
 				# On Twitch send bot message number *periodic_bot_iterator*
 				self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
 				# no need to print the message in librekast chat as youtube bot already prints it 
