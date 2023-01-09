@@ -812,7 +812,7 @@ class MeetingConsumer(WebsocketConsumer):
 		if(settings.DEBUG):print(f"debug : periodic bot ping {self.time_iterator}")
 		self.time_iterator = (self.time_iterator + 1) % 3600
 		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.filter(is_active=True)):
-			if(settings.DEBUG):print("debug : periodic bot iterator : "+self.periodicbot_iterator)
+			if(settings.DEBUG):print("debug : periodic bot iterator : "+self.periodic_bot_iterator)
 			if(settings.DEBUG):print("debug : periodic bot pong")
 			# On Youtube send bot message number *periodic_bot_iterator*
 			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
