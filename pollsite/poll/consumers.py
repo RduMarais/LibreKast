@@ -809,13 +809,16 @@ class MeetingConsumer(WebsocketConsumer):
 			revolution[0].save()
 
 	def periodic_bot(self):
+		if(settings.DEBUG):print("debug : periodic bot ping")
 		self.time_iterator = (self.time_iterator + 1) % 3600
 		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.filter(is_active=True)):
+			if(settings.DEBUG):print("debug : periodic bot pong")
 			# On Youtube send bot message number *periodic_bot_iterator*
 			self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
 			if(self.meeting.platform == 'MX' and hasattr(self,'twHandler')):
 				# On Twitch send bot message number *periodic_bot_iterator*
 				self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
+				if(settings.DEBUG):print("debug : periodic bot : "+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
 				# no need to print the message in librekast chat as youtube bot already prints it 
 			# iterate over periodic_bot_iterator
 			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.filter(is_active=True))
