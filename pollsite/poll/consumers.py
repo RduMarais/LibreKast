@@ -809,7 +809,7 @@ class MeetingConsumer(WebsocketConsumer):
 			revolution[0].save()
 
 	def periodic_bot(self):
-		if(settings.DEBUG):print("debug : periodic bot ping")
+		if(settings.DEBUG):print(f"debug : periodic bot ping {self.time_iterator}")
 		self.time_iterator = (self.time_iterator + 1) % 3600
 		if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.filter(is_active=True)):
 			if(settings.DEBUG):print("debug : periodic bot pong")
