@@ -13,6 +13,8 @@ from django.utils.translation import gettext as _
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
 
+## Uses : https://github.com/PetterKraabol/Twitch-Python
+
 class TwitchChatError(Exception):
 	def __init__(self,message):
 		self.message = message
@@ -31,11 +33,6 @@ class TwitchHandler(threading.Thread):
 			raise TwitchChatError(_('Client secret needs to be renewed'))
 
 		self.channel = '#'+channel
-		# if(settings.DEBUG): print(f'debug : id : {twitch_api.client_id}')
-		# if(settings.DEBUG): print(f'debug : secret : {twitch_api.client_secret}')
-		# if(settings.DEBUG): print(f'debug : nick : {settings.TWITCH_NICKNAME}')
-		# if(settings.DEBUG): print(f'debug : token : {twitch_api.oauth}')
-		# if(settings.DEBUG): print(f'debug : helix : {self.helix}')
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
 		if(settings.DEBUG): print(f'debug : oauth:{twitch_api.oauth}')
 		time.sleep(3) # wait to see if the connexion has been made
@@ -44,6 +41,8 @@ class TwitchHandler(threading.Thread):
 		if(settings.DEBUG): print('debug : twitch object initiated')
 		self.chat.subscribe(self.show_message)
 		self.chat.subscribe(self.bot_listen)
+		self.time_iterator = 0
+		self.periodic_bot_iterator = 0
 		if(settings.DEBUG): print('debug : twitch chat listening')
 
 
@@ -51,6 +50,7 @@ class TwitchHandler(threading.Thread):
 		self.chat.send(message)
 
 	# relies on YouTube Handler
+	# TODO rethink
 	def send_periodic_bots(self,periodic_bot_iterator):
 		self.send_message(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message)
 		# the message is already printed on youtube, but if needed :
@@ -92,6 +92,17 @@ class TwitchHandler(threading.Thread):
 						print('debug : no poll choice for vote '+message.text[1:]+ ' from user '+message.sender)
 
 
+	# start a thread who regularly sends messages based on self.meetingConsumer.
+	def poll_for_periodic_bots(self):
+		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
+		if(self.time_iterator % self.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
+			self.send_message(self.meetingConsumer.send_periodic_bot(self.periodic_bot_iterator))
+			# iterate over the periodic bots
+			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.filter(is_active=True))
+
+
+
+	# Main function here
 	def bot_listen(self,message: twitch.chat.Message) -> None:
 		if message.text.startswith(settings.BOT_CHAR): # by default this is '!'
 			# is this a command bot
@@ -105,8 +116,6 @@ class TwitchHandler(threading.Thread):
 			# is this a revolution bot
 			self.meetingConsumer.listen_revolution_bot(command,message.sender)
 			
-
-
 
 	def terminate(self):
 		self.chat.irc.active = False

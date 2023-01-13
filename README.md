@@ -66,7 +66,7 @@ You can find screenshots :
 v0.4.1 : 
 
  * Flag feature
-	 * [ ] back : handle prefixes
+	 * [?] back : handle prefixes
  * Bots features
  	 * [ ] front : modify message bots in dashboard
  * Documentation : 
@@ -79,11 +79,12 @@ v0.4.1 :
    * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
    * [x] Twitch : fix bug using wrong oauth token
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
+   * [ ] Twitch : Make bots independant from youtube polling
 	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
  * Prompt feature : 
-     * [ ] make another RO consumer & route for prompts and chat log
-     * [ ] make another RO consumer & route for admin
+   * [x] make another RO consumer & route for prompts and chat log
+   * [ ] make another RO consumer & route for admin
 
  * v0.4.2 : stateful meeting
      * [x] back : current question state

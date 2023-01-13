@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import request
+from django.conf import settings
 import datetime
 import magic
 import json
@@ -94,6 +95,7 @@ class Meeting(models.Model):
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	show_flags = models.BooleanField(_('Display the text inputs for flag bonus points'),default=False)
 	flags_prefix = models.CharField(_('prefix for flags'),default='LibreKast',max_length=20,blank=True)
+	periodic_bot_delay = models.IntegerField(_('Delay between regular bots'),default=settings.PERIODIC_BOT_DELAY)
 
 	class Meta:
 		verbose_name = _('Meeting')
@@ -120,7 +122,7 @@ class Meeting(models.Model):
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
 
-##### BOTS
+##### live stream BOTS
 
 class MessageBot(models.Model):
 	command = models.SlugField(_('command to trigger the message'),max_length=10) 

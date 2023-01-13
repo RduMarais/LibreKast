@@ -47,11 +47,23 @@ class QuestionsOrder(SortableStackedInline):
 class FlagInline(admin.TabularInline):
 	model = Flag
 	extra = 0
-	# readonly_fields = ['finds']
 	fields = (('code','name','points'))
 	classes = ['collapse']
 	show_change_link = True
 
+class PeriodicBotInline(admin.TabularInline):
+	model = PeriodicBot
+	fields = (('name','message','is_active'))
+	extra = 0
+	show_change_link = True
+	classes = ['collapse']
+
+class CommandBotInline(admin.TabularInline):
+	model = MessageBot
+	fields = (('command','message','is_active'))
+	extra = 0
+	show_change_link = True
+	classes = ['collapse']
 
 # Meeting admin panel
 class MeetingAdmin(NonSortableParentAdmin):
@@ -60,13 +72,11 @@ class MeetingAdmin(NonSortableParentAdmin):
 		('Meeting informations', {'fields': ['title','desc','image']}),
 		('Parameters',{'fields':['code','reward_fastest']}),
 		('Flags',{'fields':['show_flags','flags_prefix']}),
-		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','stream_id',
+		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','periodic_bot_delay','stream_id',
 			'channel_id','twitch_api','youtube_api']})
 	]
-	# if(obj.platform == 'YT'):
-	# 	fieldsets[2][1]['fields'].append('stream_url')
 	readonly_fields =['participants','is_ongoing']
-	inlines = [QuestionsOrder,FlagInline]
+	inlines = [QuestionsOrder,FlagInline,PeriodicBotInline,CommandBotInline]
 	list_display = ('title', 'activities','participants','is_ongoing','platform','get_qrcode')
 	search_fields = ['title','description']
 

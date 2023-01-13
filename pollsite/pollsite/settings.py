@@ -206,7 +206,8 @@ INTERACTION_CHAR = "#"
 BOT_CHAR = "!" 
 
 # Define how you want to specify that your message is sent by a bot on Twitch and Youtube
-BOT_MSG_PREFIX = '[BOT] '
+BOT_MSG_PREFIX = '🤖 '
+BOT_MSG_PREFIX_YOUTUBE_ENCODED = ':robot: '
 REVOLUTION_AUTPLAY_HEADER = "Feature-Policy: autoplay 'self'"
 
 # How many seconds between the automated messages 
