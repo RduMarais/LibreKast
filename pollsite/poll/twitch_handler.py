@@ -9,6 +9,7 @@ from django.conf import settings
 from .models import Choice, Question, Meeting,Attendee,Vote
 from django.utils.translation import gettext as _
 
+from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
@@ -22,8 +23,6 @@ class TwitchChatError(Exception):
 
 class TwitchHandler(threading.Thread):
 	meetingConsumer = None
-	# quick fix for periodic messages
-	# periodic_bot_iterator = 0
 
 	def __init__(self,channel,twitch_api,meetingConsumer):
 		self.meetingConsumer = meetingConsumer
@@ -41,24 +40,20 @@ class TwitchHandler(threading.Thread):
 		if(settings.DEBUG): print('debug : twitch object initiated')
 		self.chat.subscribe(self.show_message)
 		self.chat.subscribe(self.bot_listen)
-		self.time_iterator = 0
-		self.periodic_bot_iterator = 0
+
 		if(settings.DEBUG): print('debug : twitch chat listening')
+
+		if(self.meetingConsumer.meeting.platform == 'TW' or self.meetingConsumer.meeting.platform == 'MX'):
+			self.twitchBotPoller = TwitchBotPoller(self,is_daemon=True) # does this work ??
+			print('debug : init done, running')
+			self.twitchBotPoller.start() # using 'run' does not return, it keeps the focus
+			print('debug : is daemon : '+str(self.twitchBotPoller.isDaemon( )))
+		print('debug : webt out of the loop i guess')
 
 
 	def send_message(self,message):
 		self.chat.send(message)
 
-	# relies on YouTube Handler
-	# TODO rethink
-	def send_periodic_bots(self,periodic_bot_iterator):
-		self.send_message(settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message)
-		# the message is already printed on youtube, but if needed :
-		# self.print_message({
-		# 	'author':settings.TWITCH_NICKNAME,
-		# 	'text':settings.BOT_MSG_PREFIX+self.meetingConsumer.meeting.periodicbot_set.all()[periodic_bot_iterator].message,
-		# 	'source':'t'})
-		
 
 	def print_message(self,chatlog):
 		self.meetingConsumer.notify_chat(chatlog)
@@ -92,15 +87,6 @@ class TwitchHandler(threading.Thread):
 						print('debug : no poll choice for vote '+message.text[1:]+ ' from user '+message.sender)
 
 
-	# start a thread who regularly sends messages based on self.meetingConsumer.
-	def poll_for_periodic_bots(self):
-		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
-		if(self.time_iterator % self.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
-			self.send_message(self.meetingConsumer.send_periodic_bot(self.periodic_bot_iterator))
-			# iterate over the periodic bots
-			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.filter(is_active=True))
-
-
 
 	# Main function here
 	def bot_listen(self,message: twitch.chat.Message) -> None:
@@ -118,18 +104,22 @@ class TwitchHandler(threading.Thread):
 			
 
 	def terminate(self):
+		if(settings.DEBUG): print('debug : twitch terminating (i.e thread closing)')
+
+		if(self.meetingConsumer.meeting.platform == 'TW' or self.meetingConsumer.meeting.platform == 'MX'):
+			self.twitchBotPoller.terminate()
+
 		self.chat.irc.active = False
 		self.chat.irc.socket.close()	
 		self.chat.dispose()
 
 	def run(self):
-		if(settings.DEBUG):
-			print('debug : twitch poll start')
-		self.chat.subscribe(self.handle_question)
-		if(settings.DEBUG):
-			print('debug : twitch poll running')
+		if(settings.DEBUG): print('debug : twitch poll start')
+		self.chat.subscribe(self.handle_question) # todo in fact, all the terminate is bc i dont know how to unsubscribe
+		if(settings.DEBUG): print('debug : twitch poll running')
 
 	def stop(self):
+		if(settings.DEBUG): print('debug : twitch stopping (i.e polling the question stops)')
 		self.terminate()
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+self.meetingConsumer.meeting.twitch_api.oauth,helix=self.helix)
 		self.chat.subscribe(self.show_message)

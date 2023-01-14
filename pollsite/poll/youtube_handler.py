@@ -241,7 +241,7 @@ class YoutubeHandler(threading.Thread):
 	def regulary_send_periodic_bot(self):
 		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
 		if(self.time_iterator % self.meetingConsumer.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
-			self.send_message(self.meetingConsumer.send_periodic_bot(self.periodic_bot_iterator))
+			self.send_message(self.meetingConsumer.get_periodic_bot(self.periodic_bot_iterator))
 			# iterate over the periodic bots
 			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True))
 

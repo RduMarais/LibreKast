@@ -64,10 +64,6 @@ class ChatConsumer(WebsocketConsumer):
 			self.meeting_group_name,
 			self.channel_name
 		)
-		# if(self.meeting.platform == 'YT' or self.meeting.platform == 'MX'):
-			# self.terminate_yt_polling()
-		# if(self.meeting.platform == 'TW' or self.meeting.platform == 'MX'):
-			# self.terminate_tw_polling()
 
 	# handle message received from the client
 	def receive(self, text_data):
@@ -806,23 +802,8 @@ class MeetingConsumer(WebsocketConsumer):
 				if(settings.DEBUG): print('debug : added last to buffer')
 			revolution[0].save()
 
-	# def periodic_bot(self):
-	# 	# this is basically a time iterator
-	# 	self.time_iterator = (self.time_iterator + 1) % 3600
-	# 	# every settings.PERIODIC_BOT_DELAY seconds
-	# 	if(self.time_iterator % settings.PERIODIC_BOT_DELAY == 0 and self.meeting.periodicbot_set.filter(is_active=True)):
-	# 		# On Youtube send bot message number *periodic_bot_iterator*
-	# 		self.ytHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
-	# 		if(self.meeting.platform == 'MX' and hasattr(self,'twHandler')):
-	# 			# On Twitch send bot message number *periodic_bot_iterator*
-	# 			self.twHandler.send_message(settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[self.periodic_bot_iterator].message)
-	# 			# no need to print the message in librekast chat as youtube bot already prints it 
-	# 		# iterate over periodic_bot_iterator
-	# 		self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meeting.periodicbot_set.filter(is_active=True))
-	# 		if(settings.DEBUG):print("debug : periodic bot iterator : "+str(self.periodic_bot_iterator))
-
 	# returns the message corresponding to the bot with index periodic_bot_iterator
-	def send_periodic_bot(self,periodic_bot_iterator):
+	def get_periodic_bot(self,periodic_bot_iterator):
 		if(self.meeting.periodicbot_set.filter(is_active=True)):
 			return settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[periodic_bot_iterator].message
 		else:

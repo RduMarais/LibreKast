@@ -50,6 +50,7 @@ This template does not inherit from global template te remove the header and fli
 
 	var meetingPlatform = '{{meeting.platform}}' ; 
 	var botMsgPrefix = '{{ bot_msg_prefix }}' ; 
+	var showBotsMsg = False ;
 
 	{% if meeting.platform != 'IRL' %}
 
@@ -83,6 +84,16 @@ This template does not inherit from global template te remove the header and fli
 			l.appendChild(youtubeIcon);
 			{% endif %}
 		}
+		if(chatMessage['source']=='b'){
+			t.classList.add("librekast-bot-message","italic");
+			let botIcon = document.createElement('img');
+				botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+				botIcon.src = "{% static 'bot-icon.png' %}";
+				l.appendChild(botIcon);
+				l.appendChild(u);
+				l.appendChild(t);
+				chatlog.appendChild(l);
+		}
 		if(chatMessage['source']=='t'){
 			u.classList.add("librekast-twitch-username","text-purple-300");
 			{% if meeting.platform == 'MX' %}
@@ -95,16 +106,21 @@ This template does not inherit from global template te remove the header and fli
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg","break-words","text-white");
 		if(chatMessage['text'].startsWith(botMsgPrefix)){
-			t.classList.add("librekast-bot-message","italic");
-			// l.removeChild(l.getElementsByClassName('librekast-chatlog-platform')[0]);
-			let botIcon = document.createElement('img');
-			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-			botIcon.src = "{% static 'bot-icon.png' %}";
-			l.appendChild(botIcon);
+			if(showBotsMsg){
+				t.classList.add("librekast-bot-message","italic");
+				let botIcon = document.createElement('img');
+				botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+				botIcon.src = "{% static 'bot-icon.png' %}";
+				l.appendChild(botIcon);
+				l.appendChild(u);
+				l.appendChild(t);
+				chatlog.appendChild(l);
+			}
+		}else {
+			l.appendChild(u);
+			l.appendChild(t);
+			chatlog.appendChild(l);
 		}
-		l.appendChild(u);
-		l.appendChild(t);
-		chatlog.appendChild(l);
 	}
 
 
