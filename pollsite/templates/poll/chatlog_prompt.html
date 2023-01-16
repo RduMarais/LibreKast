@@ -65,7 +65,7 @@ This template does not inherit from global template te remove the header and fli
 	);
 
 	function addChatLog(chatMessage){
-		let chatLogSize = {{ meeting.obs_chat_log_size }};
+		let chatLogSize = {{ meeting.prompt_chat_log_size }};
 		let chatlog = document.querySelector('#chatlog-content');
 		if(chatlog.childElementCount>=chatLogSize){
 			chatlog.removeChild(chatlog.firstChild);
