@@ -80,6 +80,7 @@ v0.4.1 :
    * [x] Twitch : fix bug using wrong oauth token
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
    * [x] Twitch : Make bots independant from youtube polling
+   * [ ] front : generate colors in code 300 for usernames in prompt
    * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
    * [x] back : bots ont une limite de chars trop petites
    * [x] back : bots admin intf en forme de texte, pas charset

@@ -65,15 +65,15 @@ This template does not inherit from global template te remove the header and fli
 	);
 
 	function addChatLog(chatMessage){
-		let chatLogSize = {{ meeting.obs_chat_log_size }} +1;
+		let chatLogSize = {{ meeting.obs_chat_log_size }};
 		let chatlog = document.querySelector('#chatlog-content');
 		if(chatlog.childElementCount>=chatLogSize){
 			chatlog.removeChild(chatlog.firstChild);
 		}
-		let l = document.createElement("p");
-		let u = document.createElement("span");
-		let t = document.createElement("span");
-		l.classList.add("librekast-chatlog","mx-2","my-2");
+		let l = document.createElement("p");    //line
+		let u = document.createElement("span"); //username
+		let t = document.createElement("span"); //text
+		l.classList.add("librekast-chatlog","mx-2","my-2","text-xl");
 		u.innerText = chatMessage['author'];
 		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
 		if(chatMessage['source']=='y'){
