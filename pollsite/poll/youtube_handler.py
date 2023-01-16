@@ -235,8 +235,6 @@ class YoutubeHandler(threading.Thread):
 			response = request.execute()
 		except:
 			print("Error posting message on youtube live chat")
-			if(response):
-				print(response)
 
 	def regulary_send_periodic_bot(self):
 		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
