@@ -79,7 +79,11 @@ v0.4.1 :
    * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
    * [x] Twitch : fix bug using wrong oauth token
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
-   * [ ] Twitch : Make bots independant from youtube polling
+   * [x] Twitch : Make bots independant from youtube polling
+   * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
+   * [x] back : bots ont une limite de chars trop petites
+   * [x] back : bots admin intf en forme de texte, pas charset
+   * [ ] back : envoyer les cmd bots à l'affichage
 	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
  * Prompt feature : 
@@ -99,6 +103,7 @@ v0.4.1 :
      * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
      * [ ] back : bleach word cloud
      * [ ] back : redirection on login
+     * [ ] back : add env var pour redis
      * [ ] back : refactor QR code creation processes
 
 v0.4.4 : QoL
