@@ -184,7 +184,7 @@ SITE_URL = "http://localhost"
 if(isDocker):
     channel_host = ('app-redis', 6379)
 else:
-    channel_host = ('127.0.0.1', os.environ.get("REDIS_PORT",default=6379))
+    channel_host = ('127.0.0.1', str(os.environ.get("REDIS_PORT",default=6379)))
 
 CHANNEL_LAYERS = {
     'default': {
