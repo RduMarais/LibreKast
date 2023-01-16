@@ -85,7 +85,7 @@ class Meeting(models.Model):
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
 	image = models.ImageField(_('Image for your meeting'),null = True,blank=True,upload_to=get_meeting_directory)
 	chat_log_size = models.IntegerField(_('Max chat messages to show'),default=8)
-	obs_chat_log_size = models.IntegerField(_('Max chat messages for OBS'),default=12)
+	obs_chat_log_size = models.IntegerField(_('Max chat messages for OBS'),default=8)
 	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)

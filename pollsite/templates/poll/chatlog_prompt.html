@@ -78,7 +78,7 @@ This template does not inherit from global template te remove the header and fli
 		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
 		if(chatMessage['source']=='y'){
 			u.classList.remove('text-blue-700');
-			u.classList.add("librekast-youtube-username","text-red-300");
+			u.classList.add("librekast-youtube-username","text-red-100");
 			{% if meeting.platform == 'MX' %}
 			let youtubeIcon = document.createElement('img');
 			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
@@ -88,7 +88,7 @@ This template does not inherit from global template te remove the header and fli
 		}
 		if(chatMessage['source']=='t'){
 			u.classList.remove('text-blue-700');
-			u.classList.add("librekast-twitch-username","text-purple-300");
+			u.classList.add("librekast-twitch-username","text-purple-100");
 			{% if meeting.platform == 'MX' %}
 			let twitchIcon = document.createElement('img');
 			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
@@ -100,9 +100,9 @@ This template does not inherit from global template te remove the header and fli
 			t.classList.add("librekast-bot-message");
 			// u.classList.remove('text-blue-700');
 			let botIcon = document.createElement('img');
-				botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-				botIcon.src = "{% static 'bot-icon.png' %}";
-				l.appendChild(botIcon);
+			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+			botIcon.src = "{% static 'bot-icon.png' %}";
+			l.appendChild(botIcon);
 		}
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg","break-words","text-white");
