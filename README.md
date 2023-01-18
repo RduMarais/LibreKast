@@ -66,9 +66,7 @@ You can find screenshots :
 v0.4.1 : 
 
  * Flag feature
-	 * [?] back : handle prefixes
- * Bots features
- 	 * [ ] front : modify message bots in dashboard
+	 * [x] back : handle prefixes
  * Documentation : 
  	 * [x] Add documentation on API tokens
  	 * [x] Add documentation on meeting & question status
@@ -79,8 +77,8 @@ v0.4.1 :
    * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
    * [x] Twitch : fix bug using wrong oauth token
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
+ * Bots features
    * [x] Twitch : Make bots independant from youtube polling
-   * [ ] front : generate colors in code 300 for usernames in prompt
    * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
    * [x] back : bots ont une limite de chars trop petites
    * [x] back : bots admin intf en forme de texte, pas charset
@@ -109,6 +107,7 @@ v0.4.1 :
 
 v0.4.4 : QoL
 
+ * [?] front : modify message bots in dashboard
  * [ ] front : create a dedicated meeting admin interface
  * [ ] front : have a nicer dashboard
  * [ ] front : change admin interface to be modular

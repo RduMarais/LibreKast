@@ -60,8 +60,9 @@
 		let t = document.createElement("span");
 		l.classList.add("librekast-chatlog","mx-2","my-2");
 		u.innerText = chatMessage['author'];
-		u.classList.add("librekast-chatlog-username","font-bold","mr-2");
+		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
 		if(chatMessage['source']=='y'){
+			u.classList.remove('text-blue-700');
 			u.classList.add("librekast-youtube-username","text-red-700","dark:text-red-500");
 			{% if meeting.platform == 'MX' %}
 			let youtubeIcon = document.createElement('img');
@@ -71,6 +72,7 @@
 			{% endif %}
 		}
 		if(chatMessage['source']=='t'){
+			u.classList.remove('text-blue-700');
 			u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
 			{% if meeting.platform == 'MX' %}
 			let twitchIcon = document.createElement('img');
@@ -85,20 +87,9 @@
 				botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
 				botIcon.src = "{% static 'bot-icon.png' %}";
 				l.appendChild(botIcon);
-				l.appendChild(u);
-				l.appendChild(t);
-				chatlog.appendChild(l);
 		}
 		t.innerText = chatMessage['text'];
 		t.classList.add("librekast-chatlog-msg","break-words");
-		if(chatMessage['text'].startsWith(botMsgPrefix)){
-			t.classList.add("librekast-bot-message","italic");
-			// l.removeChild(l.getElementsByClassName('librekast-chatlog-platform')[0]);
-			let botIcon = document.createElement('img');
-			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-			botIcon.src = "{% static 'bot-icon.png' %}";
-			l.appendChild(botIcon);
-		}
 		l.appendChild(u);
 		l.appendChild(t);
 		chatlog.appendChild(l);

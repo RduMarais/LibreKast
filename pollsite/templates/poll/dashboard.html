@@ -515,8 +515,8 @@
 		u.innerText = chatMessage['author'];
 		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
 		if(chatMessage['source']=='y'){
-			u.classList.add("librekast-youtube-username","text-red-700","dark:text-red-500");
 			u.classList.remove('text-blue-700');
+			u.classList.add("librekast-youtube-username","text-red-700","dark:text-red-500");
 			{% if meeting.platform == 'MX' %}
 			let youtubeIcon = document.createElement('img');
 			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
@@ -525,8 +525,8 @@
 			{% endif %}
 		}
 		if(chatMessage['source']=='t'){
-			u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
 			u.classList.remove('text-blue-700');
+			u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
 			{% if meeting.platform == 'MX' %}
 			let twitchIcon = document.createElement('img');
 			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
