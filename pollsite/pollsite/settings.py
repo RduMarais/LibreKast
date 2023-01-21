@@ -222,7 +222,7 @@ YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 # YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 YTAPI_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/youtube.force-ssl"]
 
-
+CHATGPT_BOT_COMMAND= "chatgpt"
 
 #### SECURITY SETTINGS
 

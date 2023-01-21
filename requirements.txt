@@ -33,3 +33,7 @@ git+https://github.com/RduMarais/Twitch-Python@main
 # For Youtube API
 google-auth-oauthlib
 google-api-python-client
+
+# for chatGPT and voice to text
+openai
+pyttsx3

@@ -68,6 +68,13 @@ class YoutubeAPI(models.Model):
 	def __str__(self):
 		return self.name
 
+class ChatGPTProfile(models.Model):
+	name = models.CharField(_('Profile name'), max_length=50,default='default')
+	key = models.CharField(_('OpenAI API Key'),max_length=100,default='')
+	initial_prompt = models.TextField(_('OpenAI API Key'),max_length=200,default=_('Hello, I am a live stream bot called LibreKast'))
+	# history = models.TextField(_('This should not be accessed manually'),max_length=1000,blank=True)
+
+
 ##### MAIN APP LOGIC MODEL
 
 # represents an occurence of a presentation. 
@@ -77,9 +84,7 @@ class Meeting(models.Model):
 	desc = MarkdownField(_('Description'), max_length=200,rendered_field='desc_rendered', validator=VALIDATOR_CLASSY,blank=True)
 	desc_rendered = RenderedMarkdownField()
 	code = models.CharField(_('Security Code for joining the Meeting'), default='Pour1nf0', max_length=50)
-	# Is has started used ?
 	has_started = models.BooleanField(_('Meeting has started'),default=False)
-	# TODO : change to integer field 
 	reward_fastest = models.BooleanField(_('Reward for fastest answers'),default=False)
 	date_start = models.DateTimeField(_('Start time of the meeting'),default=timezone.now)
 	date_end = models.DateTimeField(_('End time of the meeting'),default=timezone.now)
@@ -91,6 +96,7 @@ class Meeting(models.Model):
 	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
+	chatgptprofile = models.ForeignKey(ChatGPTProfile,on_delete=models.SET_NULL,null=True,blank=True)
 	_is_running = models.BooleanField('internal state',default=False)
 	_question_status = models.CharField('internal state of the current question',choices=STATUS,default='B',max_length=1)
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
@@ -289,6 +295,3 @@ class Vote(Submission):
 
 	def _text(self):
 		return choice.choice_text
-
-
-

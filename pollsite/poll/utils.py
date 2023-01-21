@@ -1,5 +1,8 @@
 import time
 import threading
+import openai
+import pyttsx3
+
 from django.conf import settings
 from .models import Meeting,Attendee,Flag,FlagAttempt
 
@@ -70,3 +73,62 @@ class TwitchBotPoller(threading.Thread):
 	def terminate(self):
 		if(settings.DEBUG): print('debug : twitch bot polling stopping')
 		self._is_polling_for_bots = False
+
+
+''' Est ce que j'essaie de faire un truc compliant avec l'API des Revolution bots ?
+	* soit je regènère une conversation à chaque fois avec le init et je garde un statut ici
+	* soit je génère une seule fois le bot et il suit les différents messages
+	* soit je crée une classe à part de buffer de bot révolution et je la réutilise ici
+		 * un object buffer = {
+			triggers : []
+			last_revolution : ''
+		 }
+		 et j'aurais un array de revolution_buffers ? 
+'''
+
+class ChatGPTHandler():
+	command = 'chatgpt'
+	MODEL_ENGINE = "text-davinci-003"
+
+	def __init__(self,meeting):
+		openai.api_key = meeting.chatgptprofile.key
+		self.engine = pyttsx3.init()
+		self.buffer = {'triggers':[],'last_revolution':''}
+		self.conversation_history = meeting.chatgptprofile.initial_prompt+'\n'
+		engine.setProperty('voice','com.apple.speech.synthesis.voice.amelie.premium')
+
+	def get_text_to_file(self,text,filename):
+		engine.save_to_file(text , f'{filename}.mp3')
+		engine.runAndWait()
+
+	"""Returns the response for the given prompt using the OpenAI API."""
+	def get_response(prompt):
+		completions = openai.Completion.create(
+				engine = MODEL_ENGINE,
+				prompt = prompt,
+			 max_tokens = 1024,
+			temperature = 0.7,
+		)
+		return completions.choices[0].text
+
+	"""Updates the conversation history and generates a response using GPT-3."""
+	def handle_input(input_str : str, conversation_history : str, USERNAME : str, AI_NAME : str):
+		# Update the conversation history
+		conversation_history += f"{USERNAME}: {input_str}\n"
+	   
+		# Generate a response using GPT-3
+		message = self.get_response(conversation_history)[1:]
+
+		# Update the conversation history
+		conversation_history += f"{AI_NAME}: {message}\n"
+
+		# Print the response
+		print(f'debug : ChatGPT{AI_NAME}: {message}')
+
+		try:
+			self.get_text_to_file(message,'test.mp3')
+		except:
+			print('error')
+
+		return conversation_history
+

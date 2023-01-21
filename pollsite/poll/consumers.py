@@ -763,44 +763,50 @@ class MeetingConsumer(WebsocketConsumer):
 # Threshold/Revolution Bots logic
 	def listen_revolution_bot(self,command, sender):
 		revolution = self.meeting.revolutionbot_set.filter(command=command).filter(is_active=True)
+		revolution_bot = None
 		if(revolution):
-			print('debug : revolution bot +1 '+revolution[0].command)
-			print('debug : buffer :'+str(revolution[0].buffer))
+			revolution_bot = revolution[0]
+		# elif(self.meeting.chatgptprofile and command.startswith(settings.CHATGPT_BOT_COMMAND))
+		# 	revolution_bot = ChatGPTHandler(self.meeting)
+		# else:
+		# 	pass
+			print('debug : revolution bot +1 '+revolution_bot.command)
+			print('debug : buffer :'+str(revolution_bot.buffer))
 			now = timezone.now()
 			spam = False
-			for t in revolution[0].buffer['triggers']:
+			for t in revolution_bot.buffer['triggers']:
 				# remove older messages
-				if((now - datetime.datetime.fromisoformat(t['time'])).seconds >= revolution[0].threshold_delay):
-					revolution[0].buffer['triggers'].remove(t)
+				if((now - datetime.datetime.fromisoformat(t['time'])).seconds >= revolution_bot.threshold_delay):
+					revolution_bot.buffer['triggers'].remove(t)
 					if(settings.DEBUG): print('debug : removed old msg from buffer')
 				elif(t['name']==sender):
 					spam=True 		# the reason this is not a break is bc I want to still browse the array to remove the older triggers
 					if(settings.DEBUG): print('debug : spam identified')
 			if(not spam):
-				revolution[0].buffer['triggers'].append({'name':sender,'time':now.isoformat()})
-				if(len(revolution[0].buffer['triggers']) > revolution[0].threshold_number):
+				revolution_bot.buffer['triggers'].append({'name':sender,'time':now.isoformat()})
+				if(len(revolution_bot.buffer['triggers']) > revolution_bot.threshold_number):
 					if(settings.DEBUG): print('debug : is it a revolution ?')
 					# prevent a revolution to be re-triggered instantly previous revolution
-					if((revolution[0].buffer['last_revolution']=='') or ((now - datetime.datetime.fromisoformat(revolution[0].buffer['last_revolution'])).seconds >= revolution[0].threshold_delay)):
+					if((revolution_bot.buffer['last_revolution']=='') or ((now - datetime.datetime.fromisoformat(revolution_bot.buffer['last_revolution'])).seconds >= revolution_bot.threshold_delay)):
 
 						# ITS HAPPENING HERE
-						if(settings.DEBUG): print('debug : revolution started ! '+revolution[0].message)
+						if(settings.DEBUG): print('debug : revolution started ! '+revolution_bot.message)
 						# send on youtube and twitch and show them in the librekast chat 
 						if(hasattr(self,'ytHandler') and (self.meeting.platform == 'YT' or self.meeting.platform == 'MX')):
-							self.ytHandler.send_message(settings.BOT_MSG_PREFIX+revolution[0].message)
+							self.ytHandler.send_message(settings.BOT_MSG_PREFIX+revolution_bot.message)
 						if(hasattr(self,'twHandler') and (self.meeting.platform == 'TW' or self.meeting.platform == 'MX')):
-							self.twHandler.send_message(settings.BOT_MSG_PREFIX+revolution[0].message)
+							self.twHandler.send_message(settings.BOT_MSG_PREFIX+revolution_bot.message)
 							if(self.meeting.platform == 'TW'):
 								# print the revolution message in librekast chat if youtube handler has not already done it
-								self.twHandler.print_message({'sender':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+revolution[0].message,'source':'t'})
+								self.twHandler.print_message({'sender':settings.TWITCH_NICKNAME,'text':settings.BOT_MSG_PREFIX+revolution_bot.message,'source':'t'})
 						# reset revolution state
-						revolution[0].buffer['last_revolution'] = now.isoformat()
-						revolution[0].buffer['triggers'] = []
+						revolution_bot.buffer['last_revolution'] = now.isoformat()
+						revolution_bot.buffer['triggers'] = []
 						print('debug : reset buffer')
-						if(revolution[0].alert):
-							self.send_bot_alert(revolution[0])
+						if(revolution_bot.alert):
+							self.send_bot_alert(revolution_bot)
 				if(settings.DEBUG): print('debug : added last to buffer')
-			revolution[0].save()
+			revolution_bot.save()
 
 	# returns the message corresponding to the bot with index periodic_bot_iterator
 	def get_periodic_bot(self,periodic_bot_iterator):
