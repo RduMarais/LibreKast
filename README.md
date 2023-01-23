@@ -74,70 +74,77 @@ v0.4.1 :
 	 * [x] front : error mode -> show error messages on dashboard
 	 * [x] Youtube : setup alert for Youtube creds
 	 * [x] Twitch : setup alert for Twitch connexion error
-   * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
-   * [x] Twitch : fix bug using wrong oauth token
-	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
+	 * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
+	 * [x] Twitch : fix bug using wrong oauth token
  * Bots features
-   * [x] Twitch : Make bots independant from youtube polling
-   * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
-   * [x] back : bots ont une limite de chars trop petites
-   * [x] back : bots admin intf en forme de texte, pas charset
-   * [ ] back : envoyer les cmd bots à l'affichage
-	 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
-	 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
- * Prompt feature : 
-   * [x] make another RO consumer & route for prompts and chat log
-   * [ ] make another RO consumer & route for admin
+	 * [x] Twitch : Make bots independant from youtube polling
+	 * [x] back : bots ont une limite de chars trop petites
+	 * [x] back : bots admin intf en forme de texte, pas charset
+	 * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
+	 * [ ] back : envoyer les cmd bots à l'affichage
+	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
 
- * v0.4.2 : stateful meeting
-     * [x] back : current question state
-       * i need more work on async states to have the admin changing the state and the users reading it
-     * [x] back : joining during a question
-     * [x] front : fix error message on connexion
-     * [x] back : fix the init phase that is executed only once per meeting
-     * [ ] back : go back button in dashboard
-     * [ ] front : go back button in dashboard
-     * [ ] front : type de question : appréciation /100 (échelle)
- * v0.4.3 : code quality, error handling and refactor
-     * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
-     * [ ] back : bleach word cloud
-     * [ ] back : redirection on login
-     * [ ] back : add env var pour redis
-     * [ ] back : refactor QR code creation processes
+Next steps : 
 
-v0.4.4 : QoL
-
- * [?] front : modify message bots in dashboard
- * [ ] front : create a dedicated meeting admin interface
- * [ ] front : have a nicer dashboard
- * [ ] front : change admin interface to be modular
- * [ ] back : make docker-compose
- * [ ] back : add env var for redis cache port
- * [ ] Youtube : automatically generate short answer for poll & quizz
-
-v0.4.5 : feature images slides
-
- * [ ] add Image slides
-
-v0.4.6 : feature vote bayésien
-
- * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
-
-v0.5.0 : installation and Quality of Life
-
- * [x] install script
- * [ ] front : dashboard colors 
- * [ ] Youtube : setup oauth redirection for API
- * [ ] refactor : make question object-oriented in consumers
- * [ ] refactor : code wrapping and documentation
- * [ ] back : join during a question
- * [ ] refactor : use proper logging
- * [ ] docker wrapping
- * [ ] readthedocs
- * [ ] documentation on Google & Twitch API
- * [ ] documentation on OBS integration
- * [ ] dulicate question and meetings
- * [ ] make twitch and youtube an interface and have bot logic in a separate file
+ * v0.4.2 : Code Quality & Improvements on existing features
+	 * Stream questions
+		 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
+		 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
+		 * [ ] make special OBS screen for Polls
+	 * Prompt feature : 
+		 * [x] make another RO consumer & route for prompts and chat log
+		 * [ ] make another RO consumer & route for admin
+	 * Code Quality
+		 * [ ] move JS in a specific file
+		 * [ ] Back : Make tests
+ * v0.4.3 : Stateful meeting, ChatGPT & bots
+	 * stateful meeting
+		 * [x] back : current question state
+			 * i need more work on async states to have the admin changing the state and the users reading it
+		 * [x] back : joining during a question
+		 * [x] front : fix error message on connexion
+		 * [x] back : fix the init phase that is executed only once per meeting
+		 * [ ] back : go back button in dashboard
+		 * [ ] front : go back button in dashboard
+	 * ChatGPT : 
+		 * [ ] redo revolution bot buffer interface
+		 * [ ] make a model to store history in a live
+	 * Twitch animations
+		 * [ ] Twitch : add attendee is subscriber attribute in dashboard
+		 * [ ] Twitch get follows 
+			 * is User follower ? (https://discuss.dev.twitch.tv/t/python-twitch-api-follow/24829/3)
+			 * https://discuss.dev.twitch.tv/t/preferred-way-of-detecting-a-new-follower/27792/2
+ * v0.4.4 : code quality, error handling and refactor
+	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
+	 * [ ] back : bleach word cloud
+	 * [ ] back : redirection on login
+	 * [ ] back : add env var pour redis
+	 * [ ] back : refactor QR code creation processes
+ * v0.4.5 : QoL
+	 * [?] front : modify message bots in dashboard
+	 * [ ] front : create a dedicated meeting admin interface
+	 * [ ] front : have a nicer dashboard
+	 * [ ] front : change admin interface to be modular
+	 * [ ] back : make docker-compose
+	 * [ ] back : add env var for redis cache port
+ * v0.4.6 : feature images slides
+	 * [ ] add Image slides
+	 * [ ] front : question type : vote bayésien = plusieurs appréciation sur 5
+	 * [ ] front : type de question : appréciation /100 (échelle)
+ * v0.5.0 : installation and Quality of Life
+	 * [x] install script
+	 * [ ] front : dashboard colors 
+	 * [ ] Youtube : setup oauth redirection for API
+	 * [ ] refactor : make question object-oriented in consumers
+	 * [ ] refactor : code wrapping and documentation
+	 * [ ] back : join during a question
+	 * [ ] refactor : use proper logging
+	 * [ ] docker wrapping
+	 * [ ] readthedocs
+	 * [ ] documentation on Google & Twitch API
+	 * [ ] documentation on OBS integration
+	 * [ ] dulicate question and meetings
+	 * [ ] make twitch and youtube an interface and have bot logic in a separate file
 
 ## code architecture
 
@@ -205,7 +212,7 @@ Then create a secure secret key:
 
 ```bash
 python -c 'from django.core.management.utils import get_random_secret_key; \
-            print(get_random_secret_key())'
+			print(get_random_secret_key())'
 export SECRET_KEY="<your secret key>"
 ```
 
@@ -259,13 +266,13 @@ In order to setup LibreKast in an deployment envionment, one needs to :
 
  1. setup a web server (such as Apache or Nginx), 
  2. setup an ASGI server for delivering a django app 
-   * *please note that you have to redirect not only HTTP, but also websockets !*
+	 * *please note that you have to redirect not only HTTP, but also websockets !*
  3. clone the repository to start the app. 
  4. _By defaults, all environments variables are setup for prod_, but you should setup some more variables :  : 
 	 * `SECRET_KEY` : generate a secure key with the following code : 
 		```bash
 		 python -c 'from django.core.management.utils import get_random_secret_key; \
-            print(get_random_secret_key())'
+			print(get_random_secret_key())'
 		 export SECRET_KEY="<your secret key>"
 		```
 	 * `ALLOWED_HOSTS_LOCAL` : add your server IP/hostname. I recommend setting up a dedicated subdomain (such as _librekast.domainname.com_)
@@ -305,10 +312,10 @@ gunicorn pollsite.asgi -b 127.0.0.1:8010 -w 2 -k uvicorn.workers.UvicornWorker -
 #### Youtube
 
  * Go to https://console.cloud.google.com/apis/credentials
-     * create an API key
-     * create an App for your instance
-     * create a workstation client ID at https://console.cloud.google.com/apis/credentials/oauthclient/
-     * get these client ID and client secret and paste them in the app
+	 * create an API key
+	 * create an App for your instance
+	 * create a workstation client ID at https://console.cloud.google.com/apis/credentials/oauthclient/
+	 * get these client ID and client secret and paste them in the app
 
 ## Current State diagram 
 
@@ -334,49 +341,49 @@ During the meeting, there is a state to follow what is happening. This enables u
 based on current implem (not the final goal)
 
 ```
-CLIENT                                      SERVER                          GROUP
-  |                                           |                               |
-  |          --> question-start -->           |                               |
-  |                                    get current question                   |
-  |                                           |                               |
-  |          <-- question-ready <--           |                               |
-showWait                                      |                               |
-  |                                           or                              |
-  |             <-- question-go <--           |                               |
- if Poll/Quizz :                              |                               |
- showQuestion                                 |                               |
-  |                                           |                               |
-  |          --> vote -->                     |                               |
-  |                <-- voted <--              |                               |
-  |                                         if Poll :                         |
-  |                <-- results <--            |   --> notify-update-poll -->  |
-showResultsPoll                               |                           updatePoll
-  |                                           |                               |
-  |                                        end : results                      |   
-  |                <-- results <--            |    --> results -->            |
-  |                                           |                               |
-  |                                     end : close                           | 
-  |                                           |    --> question-close -->     | 
-  |                                           |                               |
- if Word Cloud :                              |                               |
- showWordCloud                                |                               |
-  |          --> word-cloud-add -->           |                               |
-  |                                        add vote                           |
-  |                                           |   --> notify-update-cloud-->  |
-  |                                           |                          updateWordCloud
-  |                                           |                               |
-  |                                        end : close                        |   
-  |                                           |    --> question-close -->     | 
-  |                                           |                             showWait
-  |                                           |                               |
-  |                                           if                              |
-  |                                           |    --> next-question -->      | 
-  |                                           |                             showWait
-  |                                           |                               |
-  |                                           |                               |
- wait for score                               |                               |
-  |            --> get-score  -->             |                               |
-  |           <-- update-score <--            |                               |
-updateScore                                   |                               |
-  |                                           |                               |
+CLIENT					SERVER			  GROUP
+  |			 |		  |
+  |	--> question-start -->	 |		  |
+  |		 get current question	   |
+  |			 |		  |
+  |	<-- question-ready <--	 |		  |
+showWait									  |		  |
+  |			 or							  |
+  |	<-- question-go <--	 |		  |
+ if Poll/Quizz :							  |		  |
+ showQuestion						 |		  |
+  |			 |		  |
+  |	--> vote -->				|		  |
+  |	<-- voted <--			  |		  |
+  |		   if Poll :				   |
+  |	<-- results <--	  |   --> notify-update-poll -->  |
+showResultsPoll		  |		 updatePoll
+  |			 |		  |
+  |		  end : results					  |   
+  |	<-- results <--	  | --> results -->	  |
+  |			 |		  |
+  |		  end : close		 | 
+  |			 | --> question-close -->	| 
+  |			 |		  |
+ if Word Cloud :							  |		  |
+ showWordCloud				|		  |
+  |	--> word-cloud-add -->	 |		  |
+  |		  add vote		 |
+  |			 |   --> notify-update-cloud-->  |
+  |			 |		updateWordCloud
+  |			 |		  |
+  |		  end : close			|   
+  |			 | --> question-close -->	| 
+  |			 |		showWait
+  |			 |		  |
+  |			 if							  |
+  |			 | --> next-question -->	  | 
+  |			 |		showWait
+  |			 |		  |
+  |			 |		  |
+ wait for score		  |		  |
+  |   --> get-score  -->		  |		  |
+  |	 <-- update-score <--	  |		  |
+updateScore		   |		  |
+  |			 |		  |
 ```
