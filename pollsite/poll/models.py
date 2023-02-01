@@ -17,6 +17,9 @@ from adminsortable.fields import SortableForeignKey
 from markdownfield.models import MarkdownField, RenderedMarkdownField
 from markdownfield.validators import VALIDATOR_CLASSY
 
+
+
+
 QUESTION_TYPES = (
 		('PL', _('Poll')),           # For questions to get the attendees' POV
 		('TX', _('Text Only')),      # For text display before and after a question 
@@ -43,7 +46,15 @@ def get_meeting_directory(instance, filename):
 	return 'meetings/meeting_{0}/{1}'.format(instance.id, filename)
 
 def get_bot_directory(instance, filename):
+	# TODO add check sur l'instance pour mettre dans un dossier à part les event twitch
 	return 'bots/bot_revolution_{0}/{1}'.format(instance.command, filename)
+
+def get_default_buffer():
+	return {'triggers':[],'last_revolution':''}
+
+
+
+
 
 #### APIs
 
@@ -73,6 +84,7 @@ class ChatGPTProfile(models.Model):
 	key = models.CharField(_('OpenAI API Key'),max_length=100,default='')
 	initial_prompt = models.TextField(_('OpenAI API Key'),max_length=200,default=_('Hello, I am a live stream bot called LibreKast'))
 	# history = models.TextField(_('This should not be accessed manually'),max_length=1000,blank=True)
+
 
 
 ##### MAIN APP LOGIC MODEL
@@ -129,6 +141,8 @@ class Meeting(models.Model):
 				question_type='TX',is_done=False,meeting=self)
 			return MeetingEnd
 
+
+
 ##### live stream BOTS
 
 class MessageBot(models.Model):
@@ -150,9 +164,10 @@ class RevolutionBot(models.Model):
 	threshold_number = models.IntegerField(_('Number of commands to be sent'),default=5)
 	is_active = models.BooleanField(_('is this command activated'),default=False)
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-	buffer = models.JSONField(_('internal state of the bot'),default=dict({'triggers':[],'last_revolution':''}),encoder=DjangoJSONEncoder)
+	buffer = models.JSONField(_('internal state of the bot'),default=get_default_buffer,encoder=DjangoJSONEncoder)
 	# i'd like to add a FileField but I need to validate it
 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_bot_directory)
+
 
 	def clean(self):
 		if(self.alert):
@@ -160,6 +175,15 @@ class RevolutionBot(models.Model):
 			authorized_formats = ['video/mp4','video/quicktime','video/webm']
 			if(file_type not in authorized_formats):
 				raise ValidationError({'alert': "This file format is not allowed"})
+
+
+class TwitchWebhook(models.Model):
+	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
+	event_type = models.CharField(_('Type of event'),choices=(('F','Follow'),('S','Sub')),max_length=50,default='Follow')
+	secret = models.CharField(_('Secret to sign hooks'), max_length=50,default='Pour1nf0_bJc`CP2oRSNfV;7?-^OT!J@X')
+	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
+	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_bot_directory)
 
 
 

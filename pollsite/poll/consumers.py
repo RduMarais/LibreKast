@@ -172,12 +172,6 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps({'message':'error','error':_('no login (no id in session)')}))
 
 		
-		# if(settings.DEBUG):
-		# 	print(f'debug : is user is_authenticated ? {self.is_user_authenticated()}')
-		# 	print(f'debug : is meeting running ? {self.meeting._is_running}')
-		# 	print(f'debug : is user the admin ? {self.isAdmin}') ## c'est ça qui plante
-		# 	print(f'debug : what is meeting status ? {self.get_current_meeting_status()}')
-
 		# ADMIN settings : this should be executed ONLY ONCE PER MEETING
 		# these status indicates that no one is handling the meeting
 		if(self.is_user_authenticated() and not self.meeting._is_running): 
@@ -691,9 +685,7 @@ class MeetingConsumer(WebsocketConsumer):
 		print('debug : sent bot alert')
 		if(self.meeting.platform != 'IRL'):
 			if(settings.DEBUG): print('debug : sending revolution alert')
-			# message_out = {
-			# }
-			# notify the group admin so the alerts in OBS can have it
+
 			async_to_sync(self.channel_layer.group_send)(
 				self.meeting_group_name+'_chat',
 				{

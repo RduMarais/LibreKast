@@ -8,20 +8,51 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.core.files import File
+from django.views.decorators.csrf import csrf_exempt
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 import datetime
 import qrcode
+import json
 from io import BytesIO
 
-from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt
+from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook
 from .forms import WordForm,LoginForm
 from .utils import validate_flag_attempt
+ 
+
+
+####### UTILS ########
 
 def get_previous_user_answers(attendee,question):
 	query = Q(user=attendee)
 	query.add(Q(choice__question__title__contains=question.title),Q.AND)
 	return Vote.objects.filter(query)
 
+def verify_twitch_webhook(request):
+	pass
+
+# send notification via websocket using django channels, as in consumer class
+def send_channel_notification(follow_name,tw_webhook):
+	channel_layer = get_channel_layer()
+	async_to_sync(channel_layer.group_send)(
+		'meeting_'+str(tw_webhook.meeting.id)+'_chat',
+		{
+			'type': 'admin_message',
+			'message': {
+				'message':'revolution-alert',
+				'alert':{
+					'url':tw_webhook.alert.url,
+					'text':tw_webhook.message,
+					'follow_name':follow_name
+				},
+			}
+		}
+	)
+
+
+####### VIEWS ########
 
 # Index view with all current meetings
 def index(request):
@@ -30,6 +61,7 @@ def index(request):
 	context = {'meetings':meetings_list }
 	return render(request, 'poll/index.html', context)
 
+
 # custom view to manage current meetings
 @staff_member_required
 def dashboard(request,meeting_id):
@@ -37,14 +69,15 @@ def dashboard(request,meeting_id):
 	attendees = meeting.attendee_set.all().order_by('-score')
 	return render(request,'poll/dashboard.html',{'meeting':meeting,'attendees':attendees})
 
+
 # Standalone view with chat log for streaming software such as OBS
 # this page is not protected, for simplicity (the data shown here are actually public on YT and Twitch)
 def chat(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/chatlog.html',{'meeting':meeting})
 
+
 # Standalone view for QRcode flag
-# TODO : make this add points to the participant
 def flag(request,meeting_id,flag_code):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	if(not 'attendee_id' in request.session):
@@ -62,15 +95,18 @@ def flag(request,meeting_id,flag_code):
 		(flag_attempt,error) = validate_flag_attempt(meeting,attendee,flag_code)
 	return render(request,'poll/flag.html',{'meeting':meeting,'flagAttempt':flag_attempt,'error':error})
 
+
 # Standalone view with chat alerts for streaming software such as OBS
 def alerts(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/alerts.html',{'meeting':meeting})
 
+
 # Standalone view with chat alerts for teleprompt tablets (with text inverted)
 def prompt(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	return render(request,'poll/chatlog_prompt.html',{'meeting':meeting})
+
 
 # Create a QR code picture for a specific meeting
 def qr_meeting(request,meeting_id):
@@ -134,6 +170,7 @@ def meeting(request, meeting_id):
 		}
 		return render(request, 'poll/meeting.html', context)
 
+
 def login(request,meeting_id):
 	meeting = get_object_or_404(Meeting, pk=meeting_id)
 	if(not 'attendee_id' in request.session): # if attendee is not logged in yet
@@ -168,4 +205,18 @@ def results(request, question_id):
 		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 		return render(request, 'poll/results.html', {'question': question})
 
-
+@csrf_exempt
+def twitch_webhook(request,webhook_id):
+	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
+	if(request.method=='POST'):
+		data = json.loads(request.body)
+		if(data["subscription"]["type"] == "channel.follow"):
+			follow_name = data["event"]["user_name"]
+			if(tw_webhook.meeting._is_running):
+				send_channel_notification(tw_webhook,follow_name)
+				return HttpResponse(f'ok webhook {webhook_id}',status=202)
+			else:
+				return HttpResponse(f'Meeting not running for webhook {webhook_id}',status=201)
+		return HttpResponse(f'Bad webhook data {webhook_id}',status=405)
+	else:
+		return HttpResponse(f'NOPE webhook GET {webhook_id}',status=400)

@@ -45,7 +45,7 @@ There are several ways you can add bots in your meetings :
 
  * **Periodic bots** : these will regularly send a message in the one you define in the administration interface. The duration between 2 messages is defined in the instance settings.
  * **Message bots** : they will answer a message starting with "!" (or the character you define in the instance settings).
- * **Revolution bots** : They will keep track of the messages calling them (with the default character "!") and once the number of commands sent is more than a threshold, it sends a message, and starts an animation in the dashboard (the animation can be shown over OBS). The animation is a webm video (you may have to setup your proxy to allow certain file sizes). 
+ * **Revolution bots** : They will keep track of the messages calling them (with the default character "!") and once the number of commands sent is more than a threshold, it sends a message, and starts an animation in the dashboard (the animation can be shown over OBS). The animation is a webm video (you may have to setup your proxy to allow certain file sizes).
 
 #### demo
 
@@ -83,6 +83,14 @@ v0.4.1 :
 	 * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
 	 * [ ] back : envoyer les cmd bots à l'affichage
 	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
+ * Twitch animations
+	 * [ ] Twitch get follows with callback https://github.com/Teekeks/pyTwitchAPI ??
+	 	 * [x] créer une API (url + une vue)
+	 	 * [x] créer un modèle webhook lié aux meeting
+	 	 * [ ] vérifie le HMAC à la réception du webhook
+	 	 * [ ] subscribe le webhook au lancement du bot twitch
+	 	 * [ ] unsubscribe le webhook à la terminaison du bot twitch
+	 	 * [x] déclencher une animation quand il y a un follow
 
 Next steps : 
 
@@ -94,9 +102,10 @@ Next steps :
 	 * Prompt feature : 
 		 * [x] make another RO consumer & route for prompts and chat log
 		 * [ ] make another RO consumer & route for admin
-	 * Code Quality
+	 * Code Quality and tests
 		 * [ ] move JS in a specific file
-		 * [ ] Back : Make tests
+		 * [ ] Back : run tests with meetingConsumer
+		 * [ ] Back : test periodic bots
  * v0.4.3 : Stateful meeting, ChatGPT & bots
 	 * stateful meeting
 		 * [x] back : current question state
@@ -109,11 +118,7 @@ Next steps :
 	 * ChatGPT : 
 		 * [ ] redo revolution bot buffer interface
 		 * [ ] make a model to store history in a live
-	 * Twitch animations
-		 * [ ] Twitch : add attendee is subscriber attribute in dashboard
-		 * [ ] Twitch get follows 
-			 * is User follower ? (https://discuss.dev.twitch.tv/t/python-twitch-api-follow/24829/3)
-			 * https://discuss.dev.twitch.tv/t/preferred-way-of-detecting-a-new-follower/27792/2
+	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * v0.4.4 : code quality, error handling and refactor
 	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
 	 * [ ] back : bleach word cloud

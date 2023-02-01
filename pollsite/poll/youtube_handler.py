@@ -263,4 +263,6 @@ class YoutubeHandler(threading.Thread):
 			# regularly sends a message in a set of predefined messages (requires OAuth)
 			if(self.youtube_api_client):
 				self.regulary_send_periodic_bot()
+			print('+',end='')
+
 
