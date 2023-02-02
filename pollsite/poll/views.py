@@ -226,6 +226,7 @@ def twitch_webhook(request,webhook_id):
 		data = json.loads(request.body)
 		if(verify_twitch_webhook(tw_webhook,request)):
 			if(data["subscription"]["type"] == "channel.follow"):
+				if(settings.DEBUG): print(data)
 				follow_name = data["event"]["user_name"]
 				if(tw_webhook.meeting._is_running):
 					send_channel_notification(tw_webhook,follow_name)
