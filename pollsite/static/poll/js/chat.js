@@ -3,7 +3,7 @@ function playAlert(alert){
 		videoPlayer = '<video id="librekast-alert" controls><source src="'+alert['url']+'" type="video/webm;video/mp4" />'
 		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
 		document.querySelector('#librekast-alertbox video').autoplay=true;
-		myVideo.addEventListener("ended", function() {
+		document.querySelector('#librekast-alertbox video').addEventListener("ended", function() {
 		    console.log("The video has just ended!");
 		    document.querySelector('#librekast-alertbox').innerHTML = ""
 		}, true);
