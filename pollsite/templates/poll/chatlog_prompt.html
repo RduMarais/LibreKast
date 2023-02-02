@@ -57,6 +57,7 @@ This template does not inherit from global template te remove the header and fli
 	{% if meeting.platform != 'IRL' %}
 
 	const meeting_id = {{ meeting.id }};
+	const chatLogSize = {{ meeting.chat_log_size }} -1;
 	const dashboardSocket = new WebSocket(
 		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
 		+ window.location.host
@@ -139,7 +140,7 @@ This template does not inherit from global template te remove the header and fli
 	};
 
 	// start chat
-	document.querySelector('header').classList.add('hidden');
+	// document.querySelector('header').classList.add('hidden');
 	document.querySelector('footer').classList.add('hidden');
 
 	
