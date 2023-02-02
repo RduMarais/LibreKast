@@ -269,7 +269,9 @@
 		}else if(data['message']==='error'){
 			alert(data['error']);
 		}else if(data['message']==='revolution-alert'){
-			playRevolutionAlert(data['alert']);
+			playAlert(data['alert']);
+		}else if(data['message']==='twitch-alert'){
+			playAlert(data['alert']);
 		}else if(data['message']==='notify-flag'){
 			console.log('start flag log');
 			addFlagLog(data['flag-attempt']);

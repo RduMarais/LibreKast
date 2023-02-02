@@ -204,7 +204,7 @@ class YoutubeHandler(threading.Thread):
 			self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'ys'})
 		elif(chat_msg.message.startswith(settings.BOT_MSG_PREFIX) or chat_msg.message.startswith(settings.BOT_MSG_PREFIX_YOUTUBE_ENCODED)):
 			print('debug : message sent by a bot, so not re-showing it in the librekast chat')
-			print(str(chat_msg.message) +' : '+ str(chat_msg.author))
+			print(str(chat_msg.message) +' : '+ str(chat_msg.author.name))
 			# self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'y'})
 		else:
 			self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'y'})

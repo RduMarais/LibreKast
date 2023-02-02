@@ -16,6 +16,7 @@
 
 	</div>
 
+<script src="{% static 'poll/js/chat.js' %}"></script>
 <script>
 	var meetingPlatform = '{{meeting.platform}}' ; 
 
@@ -30,20 +31,6 @@
 		+ '/'
 	);
 
-	function showWait(){
-		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
-		questionDesc.innerHTML = "";
-		resetQuestionContent();
-	}
-
-
-	function playRevolutionAlert(alert){
-		videoPlayer = '<video id="librekast-alert" autoplay style="width:100vw;"><source src="'+alert['url']+'" type="video/mp4;video/quicktime" />'
-		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
-		document.querySelector('#librekast-alertbox video').autoplay=true;
-	}
-
-
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
 		const data = JSON.parse(e.data);
@@ -53,7 +40,9 @@
 			console.log('go');
 			// updateMeetingPlan(data['question'].id)
 		} else if(data['message']==='revolution-alert'){
-			playRevolutionAlert(data['alert']);
+			playAlert(data['alert']);
+		}else if(data['message']==='twitch-alert'){
+			playAlert(data['alert']);
 		} else if(data['message']==='error no login'){
 			dashboardSocket.send(JSON.stringify({
 				'message': "chat-subscribe", 

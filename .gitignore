@@ -18,4 +18,5 @@ pollsite/home/migrations/*
 !pollsite/static/favicon.ico
 !pollsite/static/license.html
 !pollsite/static/style.css
+!pollsite/static/poll/
 pollsite/db.sqlite3

@@ -15,6 +15,8 @@ from channels.layers import get_channel_layer
 import datetime
 import qrcode
 import json
+import hashlib
+import hmac
 from io import BytesIO
 
 from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook
@@ -30,8 +32,19 @@ def get_previous_user_answers(attendee,question):
 	query.add(Q(choice__question__title__contains=question.title),Q.AND)
 	return Vote.objects.filter(query)
 
-def verify_twitch_webhook(request):
-	pass
+def verify_twitch_webhook(tw_webhook, request):
+	message_id = request.headers['Twitch-Eventsub-Message-Id']
+	message_signature = request.headers['Twitch-Eventsub-Message-Signature']
+	message_timestamp = request.headers['Twitch-Eventsub-Message-Timestamp']
+
+	body = request.body.decode('utf-8')
+	hmac_message = message_id + message_timestamp + body
+	secret = tw_webhook.secret
+	key = bytes(secret, 'utf-8')
+	data = bytes(hmac_message, 'utf-8')
+	signature = hmac.new(key, data, hashlib.sha256)
+	expected_signature_header = 'sha256=' + signature.hexdigest()
+	return (message_signature == expected_signature_header)
 
 # send notification via websocket using django channels, as in consumer class
 def send_channel_notification(tw_webhook,follow_name):
@@ -211,13 +224,16 @@ def twitch_webhook(request,webhook_id):
 	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
 	if(request.method=='POST'):
 		data = json.loads(request.body)
-		if(data["subscription"]["type"] == "channel.follow"):
-			follow_name = data["event"]["user_name"]
-			if(tw_webhook.meeting._is_running):
-				send_channel_notification(tw_webhook,follow_name)
-				return HttpResponse(f'ok webhook {webhook_id}',status=202)
-			else:
-				return HttpResponse(f'Meeting not running for webhook {webhook_id}',status=201)
-		return HttpResponse(f'Bad webhook data {webhook_id}',status=405)
+		if(verify_twitch_webhook(tw_webhook,request)):
+			if(data["subscription"]["type"] == "channel.follow"):
+				follow_name = data["event"]["user_name"]
+				if(tw_webhook.meeting._is_running):
+					send_channel_notification(tw_webhook,follow_name)
+					return HttpResponse(f'ok webhook {webhook_id}',status=202)
+				else:
+					return HttpResponse(f'Meeting not running for webhook {webhook_id}',status=201)
+			return HttpResponse(f'Bad webhook data {webhook_id}',status=405)
+		else:
+			return HttpResponse(f'Bad signature {webhook_id}',status=403)
 	else:
 		return HttpResponse(f'NOPE webhook GET {webhook_id}',status=400)

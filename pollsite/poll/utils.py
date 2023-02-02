@@ -43,13 +43,18 @@ class TwitchBotPoller(threading.Thread):
 		self.twitchHandler = twitchHandler
 		self.time_iterator = 0
 		self.periodic_bot_iterator = 0
-		self._is_polling_for_bots = True
+		if(self.twitchHandler.meetingConsumer.meeting.periodicbot_set.filter(is_active=True)):
+			self._is_polling_for_bots = True
+			print('debug : polling')
+		else:
+			self._is_polling_for_bots = False
 		if(settings.DEBUG): print('debug : twitch bot polling set up')
 
 
 	# start a thread who regularly sends messages based on self.meetingConsumer.
 	def poll_for_periodic_bots(self):
 		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
+
 		if(self.time_iterator % self.twitchHandler.meetingConsumer.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
 			bot_message = self.twitchHandler.meetingConsumer.get_periodic_bot(self.periodic_bot_iterator)
 			if(settings.DEBUG): print(f'debug : twitch sending message {bot_message}')

@@ -45,9 +45,11 @@ STATUS = (
 def get_meeting_directory(instance, filename):
 	return 'meetings/meeting_{0}/{1}'.format(instance.id, filename)
 
-def get_bot_directory(instance, filename):
-	# TODO add check sur l'instance pour mettre dans un dossier à part les event twitch
+def get_revbot_directory(instance, filename):
 	return 'bots/bot_revolution_{0}/{1}'.format(instance.command, filename)
+
+def get_alert_directory(instance, filename):
+	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
 
 def get_default_buffer():
 	return {'triggers':[],'last_revolution':''}
@@ -166,7 +168,7 @@ class RevolutionBot(models.Model):
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 	buffer = models.JSONField(_('internal state of the bot'),default=get_default_buffer,encoder=DjangoJSONEncoder)
 	# i'd like to add a FileField but I need to validate it
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_bot_directory)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_revbot_directory)
 
 
 	def clean(self):
@@ -183,7 +185,7 @@ class TwitchWebhook(models.Model):
 	secret = models.CharField(_('Secret to sign hooks'), max_length=50,default='Pour1nf0_bJc`CP2oRSNfV;7?-^OT!J@X')
 	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_bot_directory)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
 
 
 

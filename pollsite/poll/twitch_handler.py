@@ -105,7 +105,7 @@ class TwitchHandler(threading.Thread):
 	def terminate(self):
 		if(settings.DEBUG): print('debug : twitch terminating (i.e thread closing)')
 
-		if(self.meetingConsumer.meeting.platform == 'TW' or self.meetingConsumer.meeting.platform == 'MX'):
+		if(self.meetingConsumer.meeting.platform == 'TW' or self.meetingConsumer.meeting.platform == 'MX' and self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True)):
 			self.twitchBotPoller.terminate()
 
 		self.chat.irc.active = False
