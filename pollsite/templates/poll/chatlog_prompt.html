@@ -66,6 +66,12 @@ This template does not inherit from global template te remove the header and fli
 		+ '/'
 	);
 
+	const meeting_qr_url = "{% url 'poll:qr_meeting' meeting.id %}";
+	const twitch_icon_url = "{% static 'twitch-icon.png' %}";
+	const sub_icon_url = "{% static 'sub-icon.png' %}";
+	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
+	const bot_icon_url = "{% static 'bot-icon.png' %}";
+
 	// function addChatLog(chatMessage){
 	// 	let chatLogSize = {{ meeting.prompt_chat_log_size }};
 	// 	let chatlog = document.querySelector('#chatlog-content');
@@ -141,7 +147,7 @@ This template does not inherit from global template te remove the header and fli
 
 	// start chat
 	// document.querySelector('header').classList.add('hidden');
-	document.querySelector('footer').classList.add('hidden');
+	// document.querySelector('footer').classList.add('hidden');
 
 	
 	{% endif %}
