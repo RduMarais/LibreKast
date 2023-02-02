@@ -46,8 +46,8 @@ def verify_twitch_webhook(tw_webhook, request):
 	expected_signature_header = 'sha256=' + signature.hexdigest()
 	return (message_signature == expected_signature_header)
 
-def verify_webhook_callback(tw_webhook, request):
-	data = json.loads(request.body)
+def verify_webhook_callback(tw_webhook, data):
+	# data = json.loads(request.body)
 	return HttpResponse(data["challenge"],status=200)
 
 # send notification via websocket using django channels, as in consumer class
@@ -227,12 +227,12 @@ def results(request, question_id):
 def twitch_webhook(request,webhook_id):
 	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
 	if(request.method=='POST'):
-		if(request.headers['Twitch-Eventsub-Message-Type']==webhook_callback_verification):
-			verify_webhook_callback(tw_webhook,request)
 		data = json.loads(request.body)
+		if(settings.DEBUG): print(data)
+		if(request.headers['Twitch-Eventsub-Message-Type']==webhook_callback_verification):
+			verify_webhook_callback(tw_webhook,data)
 		if(verify_twitch_webhook(tw_webhook,request)):
 			if(data["subscription"]["type"] == "channel.follow"):
-				if(settings.DEBUG): print(data)
 				follow_name = data["event"]["user_name"]
 				if(tw_webhook.meeting._is_running):
 					send_channel_notification(tw_webhook,follow_name)
