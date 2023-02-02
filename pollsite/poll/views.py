@@ -231,7 +231,7 @@ def twitch_webhook(request,webhook_id):
 		if(settings.DEBUG): print(data)
 		if(settings.DEBUG): print(request.headers)
 		if(request.headers['Twitch-Eventsub-Message-Type']=='webhook_callback_verification'):
-			verify_webhook_callback(tw_webhook,data)
+			return HttpResponse(data['challenge'],status=200)
 		if(verify_twitch_webhook(tw_webhook,request)):
 			if(data["subscription"]["type"] == "channel.follow"):
 				follow_name = data["event"]["user_name"]
