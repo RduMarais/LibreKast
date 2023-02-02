@@ -229,7 +229,7 @@ def twitch_webhook(request,webhook_id):
 	if(request.method=='POST'):
 		data = json.loads(request.body)
 		if(settings.DEBUG): print(data)
-		if(request.headers['Twitch-Eventsub-Message-Type']==webhook_callback_verification):
+		if(request.headers['Twitch-Eventsub-Message-Type']=='webhook_callback_verification'):
 			verify_webhook_callback(tw_webhook,data)
 		if(verify_twitch_webhook(tw_webhook,request)):
 			if(data["subscription"]["type"] == "channel.follow"):
