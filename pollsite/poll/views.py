@@ -46,6 +46,10 @@ def verify_twitch_webhook(tw_webhook, request):
 	expected_signature_header = 'sha256=' + signature.hexdigest()
 	return (message_signature == expected_signature_header)
 
+def verify_webhook_callback(tw_webhook, request):
+	data = json.loads(request.body)
+	return HttpResponse(data["challenge"],status=200)
+
 # send notification via websocket using django channels, as in consumer class
 def send_channel_notification(tw_webhook,follow_name):
 	channel_layer = get_channel_layer()
@@ -223,6 +227,8 @@ def results(request, question_id):
 def twitch_webhook(request,webhook_id):
 	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
 	if(request.method=='POST'):
+		if(request.headers['Twitch-Eventsub-Message-Type']==webhook_callback_verification):
+			verify_webhook_callback(tw_webhook,request)
 		data = json.loads(request.body)
 		if(verify_twitch_webhook(tw_webhook,request)):
 			if(data["subscription"]["type"] == "channel.follow"):
