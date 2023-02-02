@@ -44,6 +44,7 @@ This template does not inherit from global template te remove the header and fli
 </section>
 </div>
 
+<script src="{% static 'poll/js/chat.js' %}"></script>
 <script>
 	var body = document.querySelector('body');
 	body.style = "background-color: black;";
@@ -123,7 +124,7 @@ This template does not inherit from global template te remove the header and fli
 				'message': "chat-subscribe", 
 			}));
 		}else if(data['message']==='notify-chat'){
-			addChatLog(data['chat']); 
+			addChatLogDark(data['chat']); 
 		}else if(data['message']==='revolution-alert'){
 			playAlert(data['alert']);
 		}else if(data['message']==='twitch-alert'){

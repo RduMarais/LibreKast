@@ -90,6 +90,7 @@ v0.4.1 :
 	 	 * [x] créer un modèle webhook lié aux meeting
 	 	 * [x] vérifie le HMAC à la réception du webhook
 	 	 * [ ] subscribe le webhook au lancement du bot twitch
+	 	 * [x] vérifier le webhook au lancement du bot twitch
 	 	 * [ ] unsubscribe le webhook à la terminaison du bot twitch
 	 	 * [x] déclencher une animation quand il y a un follow
 
