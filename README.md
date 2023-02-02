@@ -82,6 +82,7 @@ v0.4.1 :
 	 * [x] back : bots admin intf en forme de texte, pas charset
 	 * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
 	 * [ ] back : envoyer les cmd bots à l'affichage
+	 * [ ] BUG : reg bots youtube never stop
 	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
  * Twitch animations
 	 * [ ] Twitch get follows with callback https://github.com/Teekeks/pyTwitchAPI ??

@@ -850,11 +850,13 @@ class MeetingConsumer(WebsocketConsumer):
 		if(not hasattr(self,'ytHandler')):
 			raise KeyError('There should be a YoutubeHandler object')
 		self.ytHandler._polling = False
+		if(settings.DEBUG): print('debug : YT polling stopped')
 
 	def terminate_yt_polling(self):
 		if(hasattr(self,'ytHandler')):
 			self.ytHandler.terminate()
 			self.ytHandler = None
+		if(settings.DEBUG): print('debug : YT polling terminated')
 
 
 

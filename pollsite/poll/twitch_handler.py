@@ -33,7 +33,6 @@ class TwitchHandler(threading.Thread):
 
 		self.channel = '#'+channel
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
-		if(settings.DEBUG): print(f'debug : oauth:{twitch_api.oauth}')
 		time.sleep(3) # wait to see if the connexion has been made
 		if(self.chat.irc.exception):
 			raise TwitchChatError(_('OAuth token needs to be renewed'))
@@ -48,7 +47,7 @@ class TwitchHandler(threading.Thread):
 			print('debug : init done, running')
 			self.twitchBotPoller.start() # using 'run' does not return, it keeps the focus
 			print('debug : is daemon : '+str(self.twitchBotPoller.isDaemon( )))
-		print('debug : webt out of the loop i guess')
+		print('debug : successfully initiated Twitch handler')
 
 
 	def send_message(self,message):

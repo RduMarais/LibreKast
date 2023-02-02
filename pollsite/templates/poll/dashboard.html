@@ -172,7 +172,10 @@
 {% endblock  %}
 
 {% block javascript %}
-
+{% if meeting.platform != 'IRL' %}
+<script src="{% static 'poll/js/chat.js' %}"></script>
+{% endif %}
+<script src="{% static 'poll/js/dashboard.js' %}"></script>
 <script>
 	const meeting_id = {{ meeting.id }};
 	var botMsgPrefix = '{{ bot_msg_prefix }}';
@@ -188,7 +191,16 @@
 	var questionDesc = document.querySelector('#question-description');
 	var wordCloudData = [];
 	var questionStatus ;
-	var meetingPlatform = '{{meeting.platform}}' ; 
+	var meetingPlatform = '{{meeting.platform}}' ;
+	const chatLogSize = {{ meeting.chat_log_size }} -1;
+	
+	const meeting_qr_url = "{% url 'poll:qr_meeting' meeting.id %}";
+	const twitch_icon_url = "{% static 'twitch-icon.png' %}";
+	const sub_icon_url = "{% static 'sub-icon.png' %}";
+	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
+	const bot_icon_url = "{% static 'bot-icon.png' %}";
+
+	const trans_copied_clipboard = '{% trans " copied in the clipboard" %}';
 
 	function resetQuestionContent(){
 		if(document.querySelector('#question-content') != null){
@@ -196,18 +208,6 @@
 		}
 	}
 
-	function getQRCode(){
-		// send request to prepare the QR code
-		const createRequest = new XMLHttpRequest()
-		createRequest.open("GET", "{% url 'poll:qr_meeting' meeting.id %}")
-		createRequest.send()
-		createRequest.onload = function() {
-			if (createRequest.status === 200) {
-			    console.log(createRequest.responseText)
-			    window.open(createRequest.responseText);
-			  }
-		}
-	}
 		
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";
@@ -215,341 +215,25 @@
 		// global vars reset ?
 	}
 
-	function quickNdirtyExpandGraphHeight(height){
-		document.querySelector('.anychart-ui-support').height.baseVal.valueAsString = height;
-	}
+	// function quickNdirtyExpandGraphHeight(height) -> dashboard.js
+	// function copyToClipboard(targetUrl,targetName) -> dashboard.js
+	// function updateScoreboard(scoresArray) -> dashboard.js
+	// function startQuestion(item) -> dashboard.js
+	// function stopQuestion(item_stop) -> dashboard.js
+	// function nextQuestion(item_next) -> dashboard.js
+	// function sendScores(item) -> dashboard.js
+	// function updateMeetingPlan(questionId) -> dashboard.js
+	// function showQuestionText(questionObj) -> dashboard.js
+	// function showResultsPoll(resultsArray) -> dashboard.js
+	// function showResultsQuizz(resultsArray) -> dashboard.js
+	// function updateWordCloud(word) -> dashboard.js
+	// function showWordCloud(questionObj) -> dashboard.js
+	// function showChoices(choicesArray) -> dashboard.js
 
-	function copyToClipboard(targetUrl,targetName){
-		navigator.clipboard.writeText('{{ request.scheme }}://{{ request.META.HTTP_HOST }}'+targetUrl);
-		let copyNotif = document.createElement('small');
-		copyNotif.innerText = targetName + '{% trans " copied in the clipboard" %}'
-		copyNotif.id = 'copy-notification-box'
-		document.querySelector('#chatlog-title').appendChild(document.createElement('br'));
-		document.querySelector('#chatlog-title').appendChild(copyNotif);
-		setTimeout(function(){document.querySelector('#copy-notification-box').remove();}, 2000);
-	}
+	// function addFlagLog(flagAttempt) -> dashboard.js
 
-	function updateScoreboard(scoresArray){
-		tableBody = document.querySelector('#scoreboard-tbody');
-		tableBody.textContent =''; //clear previous rows
-		for(i in scoresArray){
-			let row = document.createElement('tr');
-			let username = document.createElement('td');
-			let userscore = document.createElement('td');
-			username.innerText = scoresArray[i].name;
-			username.classList.add("break-words");
-			userscore.innerText = scoresArray[i].score;
-			userscore.id = 'librekast-userscore-'+scoresArray[i].id;
-			row.appendChild(username);
-			row.appendChild(userscore);
-			if(meetingPlatform != 'IRL'){
-				let userBadges = document.createElement('td');
-				if(scoresArray[i].is_sub){
-					userBadges.innerHTML += '<img class="w-4" src="{% static 'sub-icon.png' %}">';
-				}
-				if(scoresArray[i].yt){
-					username.classList.add("text-red-700","dark:text-red-500");
-					userBadges.innerHTML += '<img class="w-4" src="{% static 'youtube-icon.png' %}">';
-				}
-				if(scoresArray[i].tw){
-					username.classList.add("text-purple-700","dark:text-pour1nf0-purple-100");
-					userBadges.innerHTML = '<img class="w-4" src="{% static 'twitch-icon.png' %}">';
-				}
-				row.appendChild(userBadges);
-			}
-			tableBody.appendChild(row);
-		}
-
-	}
-
-	function startQuestion(item){
-		// console.log(item.innerHTML);
-		id = item.id.split('-')[3];
-		// change button for stop button
-		item.onclick = null;
-		questionResults = document.querySelector('#librekast-question-results-'+id);
-		questionResults.innerHTML = "&#128202;" //rsults icon
-		questionResults.onclick = function(item_stop){stopQuestion(questionResults);};
-		item.innerHTML = "&#9723;"; // blanck icon
-
-		// change button 
-		document.querySelector("#meeting-question-go").classList.add('hidden');
-		buttonResults = document.querySelector('#meeting-question-results');
-		buttonResults.classList.remove('hidden');
-		buttonResults.onclick = function(item){stopQuestion(questionResults);};
-
-		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-start",
-			'question_id':id,
-		}))
-	}
-
-	function stopQuestion(item_stop){
-		// console.log(item_stop.innerHTML);
-		id = item_stop.id.split('-')[3];
-		// change button for Next button
-		item_stop.onclick = null;
-		questionNext = document.querySelector('#librekast-question-next-'+id);
-		questionNext.innerHTML = "&#9193;"
-		questionNext.onclick = function(item){nextQuestion(questionNext);}
-		item_stop.innerHTML = "&#9723;"; //blank icon
-
-		// change button 
-		document.querySelector("#meeting-question-results").classList.add('hidden');
-		buttonNext = document.querySelector('#meeting-question-next');
-		buttonNext.classList.remove('hidden');
-		buttonNext.onclick = function(item){nextQuestion(questionNext);};
-
-		buttonScores = document.querySelector('#meeting-question-scores');
-		buttonScores.classList.remove('hidden');
-		buttonScores.onclick = function(item){sendScores(item);}; //TODO
-
-
-		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-results",
-			'question_id':id,
-		}))
-	}
-
-	function nextQuestion(item_next){
-		id = item_next.id.split('-')[3];
-		item_next.onclick = null;
-		item_next.innerHTML = "&#9723;"; //blank icon
-
-		document.querySelector('#librekast-question-'+id).classList.remove('bg-red-200','dark:bg-pour1nf0-pink-400');
-		document.querySelector('#librekast-question-status-'+id).innerHTML = '&#9745;';
-
-		// change button 
-		document.querySelector("#meeting-question-next").classList.add('hidden');
-		document.querySelector("#meeting-question-scores").classList.add('hidden');
-
-		dashboardSocket.send(JSON.stringify({
-			'message': "admin-question-next", 
-			'question_id':id,
-		}))
-		showWait();
-	}
-
-	function sendScores(item) {
-		dashboardSocket.send(JSON.stringify({
-			'message': "admin-send-scoreboard",
-		}))
-	}
-
-	function updateMeetingPlan(questionId){
-		questionStatus = document.querySelector('#librekast-question-status-'+questionId);
-		questionStatus.innerHTML = '&#9989;';
-		document.querySelector('#librekast-question-'+questionId).classList.add('bg-red-200','dark:bg-pour1nf0-pink-400');
-		questionGo = document.querySelector('#librekast-question-go-'+questionId);
-		// questionGo.classList.remove('hidden');
-		questionGo.innerHTML = "&#9199;";
-		questionGo.onclick = function(item){startQuestion(questionGo);}
-		buttonGo = document.querySelector("#meeting-question-go");
-		buttonGo.classList.remove('hidden');
-		buttonGo.onclick = function(item){startQuestion(questionGo);}
-	}
-
-	function showQuestionText(questionObj){
-		questionTitle.textContent = questionObj['title'];
-		questionTitle.value = questionObj['id'];
-		questionTitle.classList.add('librekast-'+questionObj['type']);
-		questionDesc.innerHTML = questionObj['desc'];
-		if(questionObj['type'] === 'WC'){showWordCloud(questionObj);}
-		else if(questionObj['type'] !== 'TX'){showChoices(questionObj['choices'])}
-	}
-
-
-	function showResultsPoll(resultsArray){
-		document.querySelector("#question-content").innerText = '';
-
-		var chart = anychart.column();
-		let chartData = [];
-		for(i in resultsArray){
-			a = [resultsArray[i].text,resultsArray[i].votes];
-			chartData.push(a);
-		}
-		if(document.querySelector('#darkmode-button').value == 'night'){
-			anychart.theme(anychart.themes.darkBlue);
-			// anychart.theme(anychart.themes.darkGlamour);
-		}
-		chart.data(chartData);
-		chart.container("question-content");
-
-		chart.draw();
-		quickNdirtyExpandGraphHeight(300);
-	}
-
-	function showResultsQuizz(resultsArray){
-		for(i in resultsArray){
-			if(resultsArray[i].isTrue){
-				let s = document.createElement("span");
-				s.innerHTML = "The answer was <b>"+resultsArray[i].text+"</b><br/>";
-				questionDesc.appendChild(s);
-			}
-		}
-		showResultsPoll(resultsArray);
-	}
-
-	function updateWordCloud(word){
-		//updte value array
-		let b = false;
-		//if word exists
-		let obj = wordCloudData.find((o, i) => {
-    		if (o.x === word) {
-        		o.value++;
-        		b = true;
-        		return true;
-    		}
-		});
-		//add word to data if non existent
-		if(!b){
-			let n = {'x':word,'value':1};
-			wordCloudData.push(n);
-		}
-
-		//remove old graph
-		ocontent = document.querySelector('#question-content');
-		ocontent.remove();
-		//show ne graph
-		ncontent = document.createElement("div");
-		ncontent.id = "question-content";
-		document.querySelector('#question-div').appendChild(ncontent);
-
-		var chart = anychart.tagCloud(wordCloudData);
-		if(document.querySelector('#darkmode-button').value == 'night'){
-			// anychart.theme(anychart.themes.darkBlue);
-			anychart.theme(anychart.themes.darkGlamour);
-		}
-		chart.angles([0]);
-		chart.container("question-content");
-		chart.draw();
-		quickNdirtyExpandGraphHeight(250);
-	}
-
-	function showWordCloud(questionObj){
-		console.log('start WC');
-		wordCloudData = questionObj['choices'];
-
-		// show results
-		content = document.createElement("div");
-		content.id = "question-content";
-		document.querySelector('#question-div').appendChild(content);
-		// console.log('created content');
-
-		var chart = anychart.tagCloud(wordCloudData);
-		if(document.querySelector('#darkmode-button').value == 'night'){
-			anychart.theme(anychart.themes.darkGlamour);
-			// anychart.theme(anychart.themes.darkBlue);
-		}
-		chart.angles([0]);
-		chart.container("question-content");
-		chart.draw();
-		// console.log('WC drawn');
-		quickNdirtyExpandGraphHeight(250);
-	}
-
-	function showChoices(choicesArray){
-		console.log("choices array : "+choicesArray);
-		content = document.createElement("div");
-		content.id = "question-content";
-		content.classList.add("py-8"); 
-		content.classList.add("px-2"); 
-		content.style="";
-		document.querySelector('#question-div').appendChild(content);
-
-		let l = document.createElement("ul");
-		l.id="choice-table";
-		content.appendChild(l);
-		for(i in choicesArray){
-			let c = document.createElement("li");
-			c.innerText = choicesArray[i].text;
-			c.id = 'choice-'+choicesArray[i].id;
-			c.value = choicesArray[i].id;
-			c.classList.add("bg-blue-200","hover:bg-blue-700","hover:text-white","dark:bg-pour1nf0-blue-400","dark:hover:bg-pour1nf0-blue-200");
-			c.classList.add("text-blue-600","dark:text-gray-200","text-center","py-2","px-4","my-2","rounded");
-			c.classList.add("librekast-choice");
-			content.children[0].appendChild(c);
-		}
-
-		// chart.draw();
-	}
-
-	function addFlagLog(flagAttempt){
-		console.log('addFlagLog');
-		flagLogSize = 6;
-		let flaglog = document.querySelector('#latest-submissions-content');
-		if(flaglog.childElementCount>=flagLogSize){
-			flaglog.removeChild(flaglog.firstChild);
-		}
-		let l = document.createElement("p");
-		let u = document.createElement("span");
-		let t = document.createElement("span");
-		l.classList.add("librekast-flaglog","mx-2","my-2");
-		u.innerText = flagAttempt['user'];
-		u.classList.add("text-pour1nf0-purple-800","librekast-flaglog-username","font-bold","mr-2");
-		t.innerText = flagAttempt['code']+' ('+flagAttempt['correct']+')';
-		t.classList.add("librekast-flaglog-code");
-		l.appendChild(u);
-		l.appendChild(t);
-		flaglog.appendChild(l);
-	}
-
-	{% if meeting.platform != 'IRL' %}
-
-	function playRevolutionAlert(alert){
-		videoPlayer = '<video id="librekast-alert" controls><source src="'+alert['url']+'" type="video/webm;video/mp4" />'
-		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
-		document.querySelector('#librekast-alertbox video').autoplay=true;
-	}
-
-	function addChatLog(chatMessage){
-		let chatLogSize = {{ meeting.chat_log_size }} -1;
-		let chatlog = document.querySelector('#chatlog-content');
-		if(chatlog.childElementCount>=chatLogSize){
-			chatlog.removeChild(chatlog.firstChild);
-		}
-		let l = document.createElement("p");
-		let u = document.createElement("span");
-		let t = document.createElement("span");
-		l.classList.add("librekast-chatlog","mx-2","my-2");
-		u.innerText = chatMessage['author'];
-		u.classList.add("text-blue-700","librekast-chatlog-username","font-bold","mr-2");
-		if(chatMessage['source']=='y'){
-			u.classList.remove('text-blue-700');
-			u.classList.add("librekast-youtube-username","text-red-700","dark:text-red-500");
-			{% if meeting.platform == 'MX' %}
-			let youtubeIcon = document.createElement('img');
-			youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-			youtubeIcon.src = "{% static 'youtube-icon.png' %}";
-			l.appendChild(youtubeIcon);
-			{% endif %}
-		}
-		if(chatMessage['source']=='t'){
-			u.classList.remove('text-blue-700');
-			u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
-			{% if meeting.platform == 'MX' %}
-			let twitchIcon = document.createElement('img');
-			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-			twitchIcon.src = "{% static 'twitch-icon.png' %}";
-			l.appendChild(twitchIcon);
-			{% endif %}
-		}
-		if(chatMessage['source']=='b'){
-			t.classList.add("librekast-bot-message","italic");
-			let botIcon = document.createElement('img');
-				botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-				botIcon.src = "{% static 'bot-icon.png' %}";
-				l.appendChild(botIcon);
-		}
-		t.innerText = chatMessage['text'];
-		t.classList.add("librekast-chatlog-msg","break-words");
-		l.appendChild(u);
-		l.appendChild(t);
-		chatlog.appendChild(l);
-	}
-
-	{% endif %}
-
+	// function playRevolutionAlert(alert) -> chat.js
+	// function addChatLog(chatMessage) -> chat.js
 
 	// main fuction : receive messages
 	dashboardSocket.onmessage = function(e) {
@@ -598,8 +282,7 @@
 		}
 	};
 
-	dashboardSocket.onclose = function(e) {
-	};
+	dashboardSocket.onclose = function(e) {};
 
 	function startMeeting(){
 		dashboardSocket.send(JSON.stringify({

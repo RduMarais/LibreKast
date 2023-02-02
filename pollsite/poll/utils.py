@@ -71,8 +71,8 @@ class TwitchBotPoller(threading.Thread):
 
 
 	def terminate(self):
-		if(settings.DEBUG): print('debug : twitch bot polling stopping')
 		self._is_polling_for_bots = False
+		if(settings.DEBUG): print('debug : twitch bot polling stopping')
 
 
 ''' Est ce que j'essaie de faire un truc compliant avec l'API des Revolution bots ?

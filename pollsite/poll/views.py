@@ -34,18 +34,19 @@ def verify_twitch_webhook(request):
 	pass
 
 # send notification via websocket using django channels, as in consumer class
-def send_channel_notification(follow_name,tw_webhook):
+def send_channel_notification(tw_webhook,follow_name):
 	channel_layer = get_channel_layer()
 	async_to_sync(channel_layer.group_send)(
 		'meeting_'+str(tw_webhook.meeting.id)+'_chat',
 		{
 			'type': 'admin_message',
 			'message': {
-				'message':'revolution-alert',
+				'message':'twitch-alert',
 				'alert':{
-					'url':tw_webhook.alert.url,
-					'text':tw_webhook.message,
-					'follow_name':follow_name
+					'url':tw_webhook.alert.url if tw_webhook.alert else "",
+					'text':tw_webhook.message, 
+					'follow_name':follow_name,
+					'type':tw_webhook.event_type
 				},
 			}
 		}
