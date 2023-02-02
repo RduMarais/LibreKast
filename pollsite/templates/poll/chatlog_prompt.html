@@ -22,9 +22,10 @@ This template does not inherit from global template te remove the header and fli
 
 <!-- this is what flips the screen -->
 <div style="-moz-transform: scale(-1, 1); -webkit-transform: scale(-1, 1); -o-transform: scale(-1, 1); -ms-transform: scale(-1, 1); transform: scale(-1, 1);" id="retourne">
-<section class="w-full body-font md:border md:border-red-200" name="meeting-plan-section">
+<section class="w-full body-font md:border md:border-red-200" name="meeting-plan-section" style="position:absolute;">
+	<div id="librekast-alertbox" style="position: relative; display: inline-block;"></div>
 	{% if meeting.platform != 'IRL' %}
-	<div class = "w-full items-center m-2 p-1">
+	<div class = "w-full items-center m-2 p-1" style="position: relative;">
 		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
 		</div>
 		<div id="#chat-offset">
@@ -35,13 +36,12 @@ This template does not inherit from global template te remove the header and fli
 		</div>
 	</div>
 	{% else %}
-	<div class = "w-full items-center m-2 p-1">
+	<div class = "w-full items-center m-2 p-1" style="position: relative;">
 		<div class="text-2xl text-center mt-2 mx-2 mb-2" id="chatlog-title">
 			{% trans "No live chat for this meeting" %}
 		</div>
 	</div>
 	{% endif %}
-	<div id="librekast-alertbox" style="position: relative; display: inline-block;"></div>
 </section>
 </div>
 

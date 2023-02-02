@@ -3,6 +3,7 @@ function playAlert(alert){
 		videoPlayer = '<video id="librekast-alert" controls><source src="'+alert['url']+'" type="video/webm;video/mp4" />'
 		document.querySelector('#librekast-alertbox').innerHTML = videoPlayer;
 		document.querySelector('#librekast-alertbox video').autoplay=true;
+		await delay(20000);
 	}
 }
 
