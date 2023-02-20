@@ -90,7 +90,7 @@ class TwitchHandler(threading.Thread):
 						print('debug : no poll choice for vote '+message.text[1:]+ ' from user '+message.sender)
 
 	def subscribe_webhooks(self):
-		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F'):
+		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F').filter(helix_id__exact=''):
 			print(f'setup : webhook name : {tw_webhook.name}')
 			webhook_url = 'https://api.twitch.tv/helix/eventsub/subscriptions'
 			data_json = {
@@ -118,22 +118,22 @@ class TwitchHandler(threading.Thread):
 				tw_webhook.helix_id = response.json()['data'][0]['id']
 				tw_webhook.save()
 
+	def unsubscribe_webhook(self,tw_webhook):
+		print(f'unsub : webhook name : {tw_webhook.name}')
+		webhook_url = f"https://api.twitch.tv/helix/eventsub/subscriptions?id={tw_webhook.helix_id}"
+		headers = {
+			"Authorization" : self.helix.api.bearer_token,
+			"Client-Id" :self.helix.api.client_id,
+			"Content-Type" :"application/json",
+		}
+		response = requests.request(method='DELETE', url=webhook_url,headers=headers) 
+		if(response.status_code >=200 and response.status_code <300):
+			tw_webhook.helix_id = ""
+			tw_webhook.save()
+
 	def unsubscribe_webhooks(self):
 		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F'):
-			print(f'unsub : webhook name : {tw_webhook.name}')
-			webhook_url = f"https://api.twitch.tv/helix/eventsub/subscriptions?id={tw_webhook.helix_id}"
-			headers = {
-				"Authorization" : self.helix.api.bearer_token,
-				"Client-Id" :self.helix.api.client_id,
-				"Content-Type" :"application/json",
-			}
-			print(f'unsub : headers : {headers}')
-			response = requests.request(method='DELETE', url=webhook_url,headers=headers) 
-			print(f'unsub : response : {response.status_code}')
-			print(f'unsub : response : {response.text}')
-			if(response.status_code >=200 and response.status_code <300):
-				tw_webhook.helix_id = ""
-				tw_webhook.save()
+			self.unsubscribe_webhook(tw_webhook)
 
 
 	# Main function here

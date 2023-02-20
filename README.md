@@ -89,10 +89,12 @@ v0.4.1 :
 	 	 * [x] créer une API (url + une vue)
 	 	 * [x] créer un modèle webhook lié aux meeting
 	 	 * [x] vérifie le HMAC à la réception du webhook
-	 	 * [ ] subscribe le webhook au lancement du bot twitch
+	 	 * [x] subscribe le webhook au lancement du bot twitch
 	 	 * [x] vérifier le webhook au lancement du bot twitch
-	 	 * [ ] unsubscribe le webhook à la terminaison du bot twitch
+	 	 * [x] unsubscribe le webhook à la terminaison du bot twitch
 	 	 * [x] déclencher une animation quand il y a un follow
+	 	 * [x] fetch l'imge de profil du follower
+	 	 * [ ] clean les subscriptions au lancement de la plateforme
 
 Next steps : 
 
