@@ -113,9 +113,10 @@ class TwitchHandler(threading.Thread):
 			response = requests.post(webhook_url, json=data_json,headers=headers) 
 			print(f'setup : response : {response.text}')
 			print(f'setup : response : {response.status_code}')
-			print(response.json()['data'][0]['id'])
-			tw_webhook.helix_id = response.json()['data'][0]['id']
-			tw_webhook.save()
+			if('data' in response.json()):
+				print(response.json()['data'][0]['id'])
+				tw_webhook.helix_id = response.json()['data'][0]['id']
+				tw_webhook.save()
 
 	def unsubscribe_webhooks(self):
 		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F'):
@@ -130,6 +131,9 @@ class TwitchHandler(threading.Thread):
 			response = requests.request(method='DELETE', url=webhook_url,headers=headers) 
 			print(f'unsub : response : {response.status_code}')
 			print(f'unsub : response : {response.text}')
+			if(response.status_code >=200 and response.status_code <300):
+				tw_webhook.helix_id = ""
+				tw_webhook.save()
 
 
 	# Main function here
