@@ -8,6 +8,19 @@ function playAlert(alert){
 		    document.querySelector('#librekast-alertbox').innerHTML = ""
 		}, true);
 	}
+	// if(alert['text'] && alert['user_name']){
+	// 	console.log('alert username..');
+	// 	decoded_text = alert['user_name']+' '+alert['text'];
+	// 	let l = document.createElement("div");
+	// 	l.id='librekast-alertbox-text'
+	// 	for(var i in decoded_text){
+	// 		let t = document.createElement("div");
+	// 		t.innerText = decoded_text[i];
+	// 		t.classList.add('text-animation');
+	// 		l.appendChild(t);
+	// 	}
+	// 	document.querySelector('#librekast-alertbox').appendChild(l);
+	// }
 }
 
 function addChatLog(chatMessage){

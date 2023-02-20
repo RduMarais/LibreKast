@@ -3,6 +3,7 @@ import twitch
 import datetime
 import json
 import time
+import requests
 
 from django.utils import timezone
 from django.conf import settings
@@ -47,7 +48,10 @@ class TwitchHandler(threading.Thread):
 			print('debug : init done, running')
 			self.twitchBotPoller.start() # using 'run' does not return, it keeps the focus
 			print('debug : is daemon : '+str(self.twitchBotPoller.isDaemon( )))
+			self.subscribe_webhooks()
 		print('debug : successfully initiated Twitch handler')
+
+		# INIT Webhook
 
 
 	def send_message(self,message):
@@ -85,6 +89,47 @@ class TwitchHandler(threading.Thread):
 					if(settings.DEBUG):
 						print('debug : no poll choice for vote '+message.text[1:]+ ' from user '+message.sender)
 
+	def subscribe_webhooks(self):
+		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F'):
+			print(f'setup : webhook name : {tw_webhook.name}')
+			webhook_url = 'https://api.twitch.tv/helix/eventsub/subscriptions'
+			data_json = {
+				"type":"channel.follow", # changer pour mettre le type d'event
+				"version":"1",
+				"condition":{"broadcaster_user_id":"764974570"},# TODO choper l'user id
+				"transport":{
+					"method":"webhook",
+					"callback":"https://"+settings.ALLOWED_HOSTS[-1]+"/poll/webhook/"+str(tw_webhook.id)+"/",
+					"secret":tw_webhook.secret
+					}
+				}
+			headers = {
+				"Authorization" : self.helix.api.bearer_token,
+				"Client-Id" :self.helix.api.client_id,
+				"Content-Type" :"application/json",
+			}
+			print(f'setup : headers : {headers}')
+			print(f'setup : data : {data_json}')
+			response = requests.post(webhook_url, json=data_json,headers=headers) 
+			print(f'setup : response : {response.text}')
+			print(f'setup : response : {response.status_code}')
+			print(response.json()['data'][0]['id'])
+			tw_webhook.helix_id = response.json()['data'][0]['id']
+			tw_webhook.save()
+
+	def unsubscribe_webhooks(self):
+		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F'):
+			print(f'unsub : webhook name : {tw_webhook.name}')
+			webhook_url = f"https://api.twitch.tv/helix/eventsub/subscriptions?id={tw_webhook.helix_id}"
+			headers = {
+				"Authorization" : self.helix.api.bearer_token,
+				"Client-Id" :self.helix.api.client_id,
+				"Content-Type" :"application/json",
+			}
+			print(f'unsub : headers : {headers}')
+			response = requests.request(method='DELETE', url=webhook_url,headers=headers) 
+			print(f'unsub : response : {response.status_code}')
+			print(f'unsub : response : {response.text}')
 
 
 	# Main function here
@@ -107,6 +152,7 @@ class TwitchHandler(threading.Thread):
 
 		if(self.meetingConsumer.meeting.platform == 'TW' or self.meetingConsumer.meeting.platform == 'MX' and self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True)):
 			self.twitchBotPoller.terminate()
+			self.unsubscribe_webhooks()
 
 		self.chat.irc.active = False
 		self.chat.irc.socket.close()	

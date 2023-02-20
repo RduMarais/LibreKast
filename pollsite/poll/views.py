@@ -51,7 +51,7 @@ def verify_webhook_callback(tw_webhook, data):
 	return HttpResponse(data["challenge"],status=200)
 
 # send notification via websocket using django channels, as in consumer class
-def send_channel_notification(tw_webhook,follow_name):
+def send_channel_notification(tw_webhook,user_name):
 	channel_layer = get_channel_layer()
 	async_to_sync(channel_layer.group_send)(
 		'meeting_'+str(tw_webhook.meeting.id)+'_chat',
@@ -62,7 +62,7 @@ def send_channel_notification(tw_webhook,follow_name):
 				'alert':{
 					'url':tw_webhook.alert.url if tw_webhook.alert else "",
 					'text':tw_webhook.message, 
-					'follow_name':follow_name,
+					'user_name':user_name,
 					'type':tw_webhook.event_type
 				},
 			}

@@ -186,6 +186,7 @@ class TwitchWebhook(models.Model):
 	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
+	helix_id = models.CharField(_('ID received from Helix API'), max_length=100,default='',blank=True)
 
 
 
