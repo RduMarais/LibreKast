@@ -92,13 +92,13 @@ class TwitchHandler(threading.Thread):
 
 	def get_twitch_user(self,username):
 		if(settings.DEBUG): print(f'debug : get info on user : {username}')
-		url = f"https://api.twitch.tv/helix/users?id={username}"
+		endpoint_url = f"https://api.twitch.tv/helix/users?id={username}"
 		headers = {
 			"Authorization" : self.helix.api.bearer_token,
 			"Client-Id" :self.helix.api.client_id,
 			"Content-Type" :"application/json",
 			}
-		response = requests.get(webhook_url,headers=headers)
+		response = requests.get(endpoint_url,headers=headers)
 		if(settings.DEBUG): print(f'debug : return response code {response.status_code}')
 		resp_json = response.json()
 		if(settings.DEBUG): print(f'debug : return response body : {resp_json}')
