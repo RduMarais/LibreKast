@@ -30,7 +30,8 @@ class TwitchHandler(threading.Thread):
 	def __init__(self,channel,twitch_api,meetingConsumer):
 		self.meetingConsumer = meetingConsumer
 		try:
-			self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret,scopes=['channel:read:subscriptions','chat:read','chat:edit'])
+			self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
+			# ,scopes=['channel:read:subscriptions','chat:read','chat:edit']
 		except KeyError as e:
 			raise TwitchChatError(_('Client secret needs to be renewed'))
 		self.channel = '#'+channel
