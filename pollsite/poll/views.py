@@ -22,7 +22,7 @@ from io import BytesIO
 from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook
 from .forms import WordForm,LoginForm
 from .utils import validate_flag_attempt
- 
+
 
 
 ####### UTILS ########

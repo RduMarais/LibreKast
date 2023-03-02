@@ -99,6 +99,7 @@ class TwitchHandler(threading.Thread):
 			"Client-Id" :self.helix.api.client_id,
 			"Content-Type" :"application/json",
 			}
+		if(settings.DEBUG): print(f'debug : request headers {headers}')
 		response = requests.get(endpoint_url,headers=headers)
 		if(settings.DEBUG): print(f'debug : return response code {response.status_code}')
 		resp_json = response.json()
