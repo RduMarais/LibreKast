@@ -73,7 +73,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 		('Parameters',{'fields':['code','reward_fastest']}),
 		('Flags',{'fields':['show_flags','flags_prefix']}),
 		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','periodic_bot_delay','stream_id',
-			'channel_id','twitch_api','youtube_api']})
+			'channel_id','broadcaster_user_id','twitch_api','youtube_api']})
 	]
 	readonly_fields =['participants','is_ongoing']
 	inlines = [QuestionsOrder,FlagInline,PeriodicBotInline,CommandBotInline]

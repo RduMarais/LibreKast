@@ -236,6 +236,7 @@ def twitch_webhook(request,webhook_id):
 			if(data["subscription"]["type"] == "channel.follow"):
 				follow_name = data["event"]["user_name"]
 				if(tw_webhook.meeting._is_running):
+					image_url = tw_webhook.meeting
 					send_channel_notification(tw_webhook,follow_name)
 					return HttpResponse(f'ok webhook {webhook_id}',status=202)
 				else:
