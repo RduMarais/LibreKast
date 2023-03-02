@@ -64,7 +64,6 @@ def get_default_buffer():
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
-	oauth = models.CharField(_('OAuth Token'),max_length=30)
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 
@@ -87,7 +86,14 @@ class ChatGPTProfile(models.Model):
 	initial_prompt = models.TextField(_('OpenAI API Key'),max_length=200,default=_('Hello, I am a live stream bot called LibreKast'))
 	# history = models.TextField(_('This should not be accessed manually'),max_length=1000,blank=True)
 
+class TwitchChannel(models.Model):
+	name = models.CharField(_('Name of the Twitch channel'),max_length=20)
+	oauth = models.CharField(_('OAuth Token'),max_length=30)
+	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
 
+class YoutubeDirect(models.Model):
+	name = models.CharField(_('Name of the direct video'),max_length=20)
+	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
 
 ##### MAIN APP LOGIC MODEL
 
@@ -106,8 +112,9 @@ class Meeting(models.Model):
 	chat_log_size = models.IntegerField(_('Max chat messages to show'),default=8)
 	obs_chat_log_size = models.IntegerField(_('Max chat messages for OBS'),default=12)
 	prompt_chat_log_size = models.IntegerField(_('Max chat messages for prompting devices'),default=6)
-	stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
-	channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
+	# stream_id = models.CharField(_('video stream ID for Youtube'),max_length=15,blank=True,null=True)
+	# channel_id = models.CharField(_('channel ID for Twitch'),max_length=15,blank=True,null=True)
+
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	youtube_api = models.ForeignKey(YoutubeAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	chatgptprofile = models.ForeignKey(ChatGPTProfile,on_delete=models.SET_NULL,null=True,blank=True)
