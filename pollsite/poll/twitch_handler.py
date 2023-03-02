@@ -32,7 +32,6 @@ class TwitchHandler(threading.Thread):
 			self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
 		except KeyError as e:
 			raise TwitchChatError(_('Client secret needs to be renewed'))
-		self.user_id = twitch_api.user_id
 		self.channel = '#'+channel
 		self.chat = twitch.Chat(channel=self.channel,nickname=settings.TWITCH_NICKNAME,oauth='oauth:'+twitch_api.oauth,helix=self.helix)
 		time.sleep(3) # wait to see if the connexion has been made
@@ -107,47 +106,50 @@ class TwitchHandler(threading.Thread):
 			return resp_json['data']
 
 	def subscribe_webhooks(self):
-		broadcaster_user = self.get_twitch_user(self.meetingConsumer.meeting.channel_id)
-		broadcaster_user_id = broadcaster_user[0]['id']
-		for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F').filter(helix_id__exact=''):
-			print(f'setup : webhook name : {tw_webhook.name}')
-			webhook_url = 'https://api.twitch.tv/helix/eventsub/subscriptions'
-			data_json = {
-				"type":"channel.follow", # changer pour mettre le type d'event
-				"version":"1",
-				"condition":{"broadcaster_user_id":broadcaster_user_id},# TODO choper l'user id : https://discuss.dev.twitch.tv/t/get-the-broadcaster-id-and-the-user-id-of-any-channel-with-the-name/32416
-				"transport":{
-					"method":"webhook",
-					"callback":"https://"+settings.ALLOWED_HOSTS[-1]+"/poll/webhook/"+str(tw_webhook.id)+"/",
-					"secret":tw_webhook.secret
-					}
-				}
-			headers = {
-				"Authorization" : self.helix.api.bearer_token,
-				"Client-Id" :self.helix.api.client_id,
-				"Content-Type" :"application/json",
-			}
-			print(f'setup : headers : {headers}')
-			print(f'setup : data : {data_json}')
-			response = requests.post(webhook_url, json=data_json,headers=headers) 
-			print(f'setup : response : {response.text}')
-			print(f'setup : response : {response.status_code}')
-			if('data' in response.json()):
-				print(response.json()['data'][0]['id'])
-				tw_webhook.helix_id = response.json()['data'][0]['id']
-				tw_webhook.save()
-			if('error' in response.json()):
-				channel_layer = get_channel_layer()
-				async_to_sync(channel_layer.group_send)(
-					self.meetingConsumer.meeting_group_name+'_admin',
-					{
-						'type': 'admin_message',
-						'message': {
-							'message':'admin-error',
-							'text':response.json()['message'] + ' (-> Your API key probably doesnt have permissions to read events on the broadcaster channel)'
+		webhooks_set = self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F').filter(helix_id__exact='')
+		if(webhooks_set):
+			broadcaster_user = self.get_twitch_user(self.meetingConsumer.meeting.channel_id)
+			broadcaster_user_id = broadcaster_user[0]['id']
+			for tw_webhook in self.meetingConsumer.meeting.twitchwebhook_set.filter(event_type='F').filter(helix_id__exact=''):
+				print(f'setup : webhook name : {tw_webhook.name}')
+				webhook_url = 'https://api.twitch.tv/helix/eventsub/subscriptions'
+				data_json = {
+					"type":"channel.follow", 
+					"version":"1",
+					"condition":{"broadcaster_user_id":broadcaster_user_id},
+					"transport":{
+						"method":"webhook",
+						"callback":"https://"+settings.ALLOWED_HOSTS[-1]+"/poll/webhook/"+str(tw_webhook.id)+"/",
+						"secret":tw_webhook.secret
 						}
 					}
-				)
+				headers = {
+					"Authorization" : self.helix.api.bearer_token,
+					"Client-Id" :self.helix.api.client_id,
+					"Content-Type" :"application/json",
+				}
+				print(f'setup : headers : {headers}')
+				print(f'setup : data : {data_json}')
+				response = requests.post(webhook_url, json=data_json,headers=headers) 
+				print(f'setup : response : {response.text}')
+				print(f'setup : response : {response.status_code}')
+				if('data' in response.json()):
+					print(response.json()['data'][0]['id'])
+					tw_webhook.helix_id = response.json()['data'][0]['id']
+					tw_webhook.save()
+				# TODO : i should put this in an error
+				if('error' in response.json()):
+					channel_layer = get_channel_layer()
+					async_to_sync(channel_layer.group_send)(
+						self.meetingConsumer.meeting_group_name+'_admin',
+						{
+							'type': 'admin_message',
+							'message': {
+								'message':'admin-error',
+								'text':response.json()['message'] + ' (-> Your API key probably doesnt have permissions to read events on the broadcaster channel)'
+							}
+						}
+					)
 
 	def unsubscribe_webhook(self,tw_webhook):
 		print(f'unsub : webhook name : {tw_webhook.name}')
