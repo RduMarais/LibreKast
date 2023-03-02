@@ -92,7 +92,7 @@ class TwitchHandler(threading.Thread):
 
 	def get_twitch_user(self,username):
 		if(settings.DEBUG): print(f'debug : get info on user : {username}')
-		endpoint_url = f"https://api.twitch.tv/helix/users?id={username}"
+		endpoint_url = f"https://api.twitch.tv/helix/users?login={username}"
 		headers = {
 			"Authorization" : self.helix.api.bearer_token,
 			"Client-Id" :self.helix.api.client_id,
