@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext as _
 from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .utils import TwitchBotPoller
