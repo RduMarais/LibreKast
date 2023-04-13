@@ -37,3 +37,7 @@ google-api-python-client
 # for chatGPT and voice to text
 openai
 pyttsx3
+
+# for matinale module
+markdown-it-py
+mdformat-gfm
