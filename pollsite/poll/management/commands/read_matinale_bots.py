@@ -1,9 +1,12 @@
 #!/bin/python
 
-from django.core.management.base import BaseCommand, CommandError
 import sqlite3
 import datetime
 import os
+
+from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
+
 from poll.management.commands._md_parsing import Actu, Heading, MarkdownParsing
 from poll.models import Meeting, MessageBot, PeriodicBot
 
@@ -106,9 +109,15 @@ class Command(BaseCommand):
 				print(f'### {h.title} (NOT found)')
 
 	def define_dates(self,meeting):
-		pass
+		if(self.verbosity>1): print('- time reset')
+		today_iso_str = timezone.now().strftime("%Y-%m-%d")
+		time_start_iso_str = ' 07:00:00+02:00'
+		time_end_iso_str = ' 12:00:00+02:00'
+		meeting.date_start = timezone.datetime.fromisoformat(today_iso_str + time_start_iso_str)
+		meeting.date_end = timezone.datetime.fromisoformat(today_iso_str + time_end_iso_str)
 
 	def reset_bots(self):
+		if(self.verbosity>1): print('- reset')
 		for bot in [MessageBot.objects.get(pk=4),MessageBot.objects.get(pk=5),PeriodicBot.objects.get(pk=4)]:
 			bot.message = 'BLABLBALBALBALA'
 			bot.save()
