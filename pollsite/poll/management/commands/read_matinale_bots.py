@@ -92,7 +92,7 @@ class Command(BaseCommand):
 			is_categorie = any(c['nom'] == h.title for c in CATEGORIES)
 			if(is_categorie):
 				categorie = next(c for c in CATEGORIES if c['nom'] == h.title)
-				print(f'### {h.title} (found !)')
+				print(f'### {h.title} (categ found !)')
 				# find bot
 				bots_candidates = list(meeting.messagebot_set.filter(command=categorie['cmd']))
 				bots_candidates += list(meeting.periodicbot_set.filter(name=categorie['cmd']))
@@ -115,6 +115,9 @@ class Command(BaseCommand):
 		time_end_iso_str = ' 12:00:00+02:00'
 		meeting.date_start = timezone.datetime.fromisoformat(today_iso_str + time_start_iso_str)
 		meeting.date_end = timezone.datetime.fromisoformat(today_iso_str + time_end_iso_str)
+		meeting.save()
+		if(self.verbosity>2): print(f'  -> start time {meeting.date_start}')
+		if(self.verbosity>2): print(f'  -> end time {meeting.date_end}')
 
 	def reset_bots(self):
 		if(self.verbosity>1): print('- reset')
