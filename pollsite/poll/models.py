@@ -156,13 +156,13 @@ class Meeting(models.Model):
 
 class MessageBot(models.Model):
 	command = models.SlugField(_('command to trigger the message'),max_length=10) 
-	message = models.TextField(_('Message to send when the command is sent'),max_length=400)
+	message = models.TextField(_('Message to send when the command is sent'),max_length=800)
 	is_active = models.BooleanField(_('is this command activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 
 class PeriodicBot(models.Model):
 	name = models.CharField(_('short name for the message'),max_length=15) 
-	message = models.TextField(_('Message to send regularly'),max_length=400)
+	message = models.TextField(_('Message to send regularly'),max_length=800)
 	is_active = models.BooleanField(_('is this message activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 
