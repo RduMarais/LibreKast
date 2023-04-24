@@ -85,7 +85,15 @@ class Command(BaseCommand):
 		if(self.verbosity>1): print('- connected')
 		cursor = connection.cursor()
 		rows = cursor.execute(f"SELECT content,slug,lead FROM zinnia_entry WHERE creation_date LIKE '{date_str}%'")
-		return rows.fetchone()
+		# if(self.verbosity>2):
+		# 	for row in rows:
+		# 		print(f'row : {row}')
+		a = rows.fetchone()
+		if(self.verbosity > 2):
+			print(type(a))
+			print(type(a[0]))
+			print(type(rows))
+		return a
 
 	def define_bots(self,meeting,actus):
 		for h in actus.headings:
@@ -143,7 +151,8 @@ class Command(BaseCommand):
 			else:
 				return
 		if(self.verbosity>1): print('- source markdown fetched')
-		# print(source_markdown[0])
+		# print(source_markdown)
+		if(self.verbosity >2): print(type(source_markdown[0]))
 		debug = self.verbosity>2
 		actus = MarkdownParsing(debug=debug)
 		actus.read_text(source_markdown[0]) # pass the content key

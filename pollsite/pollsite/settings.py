@@ -161,7 +161,7 @@ STATICFILES_DIRS = [
 
 # for testing only, can be omitted for deployment
 if(DEBUG):
-    STATIC_ROOT = '/Users/romain/Stratus/info/server/tests_beekast/LibreKast/pollsite/static/'
+    STATIC_ROOT = '/Users/romain/Nuage/Info/tests_beekast_nosync/LibreKast/pollsite/static/'
 else:
     STATIC_ROOT = BASE_DIR + "/static"
 

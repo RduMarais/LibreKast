@@ -80,6 +80,8 @@ class MarkdownParsing:
 	def get_list_item_content(self, index):
 		news_text = ''
 		news_links = []
+		if(not self.tokens[index].children):
+			break
 		for child in self.tokens[index].children: #body # self.index+2 is inline
 			if(child.type == 'text'):
 				news_text += child.content
