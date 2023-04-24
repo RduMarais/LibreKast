@@ -81,7 +81,7 @@ class MarkdownParsing:
 		news_text = ''
 		news_links = []
 		if(not self.tokens[index].children):
-			break
+			return 
 		for child in self.tokens[index].children: #body # self.index+2 is inline
 			if(child.type == 'text'):
 				news_text += child.content
@@ -130,7 +130,10 @@ class MarkdownParsing:
 					print('[!] Error in index browsing : no list_item_open > paragraph_open > inline')
 				
 
-				news_text,news_links = self.get_list_item_content(self.index+2)
+				if(self.get_list_item_content(self.index+2)):
+					news_text,news_links = self.get_list_item_content(self.index+2)
+				else:
+					break
 				self.actu_count += 1
 				actu = Actu(actu_id = self.actu_count,text=news_text,links=news_links,category=self.heading_text)
 
