@@ -72,7 +72,7 @@ class MeetingAdmin(NonSortableParentAdmin):
 		('Meeting informations', {'fields': ['title','desc','image']}),
 		('Parameters',{'fields':['code','reward_fastest']}),
 		('Flags',{'fields':['show_flags','flags_prefix']}),
-		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','periodic_bot_delay','stream_id',
+		('Live Stream only',{'fields':['chat_log_size','obs_chat_log_size','prompt_chat_log_size','periodic_bot_delay','stream_id',
 			'channel_id','twitch_api','youtube_api']})
 	]
 	readonly_fields =['participants','is_ongoing']
@@ -147,6 +147,9 @@ class FlagAdmin(admin.ModelAdmin):
 			link=reverse("poll:qr_flag", args=[obj.meeting.id,obj.code])
 			return format_html('<button type="submit" formaction="%s">create QR</button>' % link)
 
+class FlagAttemptAdmin(admin.ModelAdmin):
+	list_display = ('code', 'correct_flag','user') 
+	search_fields = ('code', 'correct_flag','user') 
 
 
 class TwitchAPIAdmin(admin.ModelAdmin):
@@ -180,6 +183,6 @@ admin.site.register(MessageBot,MsgBotAdmin)
 admin.site.register(PeriodicBot,PeriodBotAdmin)
 admin.site.register(RevolutionBot,RevolutionBotAdmin)
 admin.site.register(Flag,FlagAdmin)
-admin.site.register(FlagAttempt)
+admin.site.register(FlagAttempt,FlagAttemptAdmin)
 admin.site.register(TwitchWebhook)
 

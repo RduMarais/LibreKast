@@ -67,11 +67,14 @@ v0.4.1 :
 
  * Flag feature
 	 * [x] back : handle prefixes
+	 * [ ] back : Attendee name is string
+	 * [ ] back : Flag name is string
  * Documentation : 
  	 * [x] Add documentation on API tokens
  	 * [x] Add documentation on meeting & question status
  * fix various bugs
 	 * [x] front : error mode -> show error messages on dashboard
+	 * [x] front : show enter flag button on mobile
 	 * [x] Youtube : setup alert for Youtube creds
 	 * [x] Twitch : setup alert for Twitch connexion error
 	 * [x] Twitch : put TWITCH_NICKNAME in twitch api settings
@@ -103,6 +106,7 @@ Next steps :
 		 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 		 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 		 * [ ] make special OBS screen for Polls
+		 * [ ] make OBS overlay
 	 * Prompt feature : 
 		 * [x] make another RO consumer & route for prompts and chat log
 		 * [ ] make another RO consumer & route for admin
@@ -115,15 +119,15 @@ Next steps :
 		 * [x] back : current question state
 			 * i need more work on async states to have the admin changing the state and the users reading it
 		 * [x] back : joining during a question
-		 * [x] front : fix error message on connexion
 		 * [x] back : fix the init phase that is executed only once per meeting
+		 * [x] front : fix error message on connexion
+		 * [x] front : fix display items number in prompt
+		 * [x] front : go back button in dashboard
 		 * [ ] back : go back button in dashboard
-		 * [ ] front : go back button in dashboard
-	 * ChatGPT : 
-		 * [ ] redo revolution bot buffer interface
-		 * [ ] make a model to store history in a live
+	 * [ ] move Twitch code from [PetterKraabol/Twitch-Python](https://github.com/PetterKraabol/Twitch-Python) to [Teekeks/pyTwitchAPI](https://github.com/Teekeks/pyTwitchAPI)
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * v0.4.4 : code quality, error handling and refactor
+	 * [ ] back : admin interface : Flags and votes show meetings
 	 * [ ] back : init periodic bots for both youtube and twitch (process depends on youtube as of now)
 	 * [ ] back : bleach word cloud
 	 * [ ] back : redirection on login

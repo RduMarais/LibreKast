@@ -148,6 +148,12 @@ function updateMeetingPlan(questionId){
 	buttonGo = document.querySelector("#meeting-question-go");
 	buttonGo.classList.remove('hidden');
 	buttonGo.onclick = function(item){startQuestion(questionGo);}
+	buttonPrevious = document.querySelector("#meeting-question-previous");
+	if(buttonPrevious.classList.contains('hidden')){
+		buttonPrevious.classList.remove('hidden');
+		buttonPrevious.onclick = function(item){previousQuestion();}
+	} 
+
 }
 
 function showQuestionText(questionObj){
@@ -292,6 +298,9 @@ function addFlagLog(flagAttempt){
 	flaglog.appendChild(l);
 }
 
-
+function previousQuestion(){
+	alert('not implemented yet');
+	//TODO
+}
 
 

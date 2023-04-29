@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from poll.management.commands._md_parsing import Actu, Heading, MarkdownParsing
 from poll.models import Meeting, MessageBot, PeriodicBot
+from pprint import pprint
 
 # ARCHI de la DB
 # "id" integer
@@ -76,7 +77,7 @@ class Command(BaseCommand):
 			default_meeting = 'Matinale cyber'
 		parser.add_argument("--db-path", type=str,default=default_db_path)
 		parser.add_argument("--meeting", type=str,default=default_meeting)
-		parser.add_argument("--date", type=str,default=date_article)
+		parser.add_argument("--date", type=str,default=date_article,help="date in format YYYY-MM-DD")
 		parser.add_argument("--reset", action='store_true')
 		# parser.add_argument("--verbose", type=bool,default=False)
 
@@ -156,7 +157,13 @@ class Command(BaseCommand):
 		debug = self.verbosity>2
 		actus = MarkdownParsing(debug=debug)
 		actus.read_text(source_markdown[0]) # pass the content key
+		# # test
+		# pprint(actus.tokens[:15])
 		actus.parse_bullet_points()
+		if(self.verbosity > 0):
+			print("Properties : ")
+			for prop in actus.headings[0].properties:
+				print(" - "+prop['type']+' : '+prop['value'])
 		# this should be the summary already
 		meetings = Meeting.objects.filter(title=options['meeting'])
 		if(not meetings): 

@@ -9,6 +9,7 @@ class Heading:
 		self.title = title
 		self.news_list = news_list
 		self.size = 0
+		self.properties = []
 
 	def __str__(self):
 		return self.title+' ('+str(self.size)+')'
@@ -22,6 +23,11 @@ class Heading:
 	def append_actu(self,actu):
 		self.news_list.append(actu)
 		self.size +=1
+
+	def set_property(self,key,value):
+		prop = {'type':key,'value':value}
+		self.properties.append(prop)
+
 
 class Actu:
 	# actu = {'id':self.actu_count,'text':news_text,'links':news_links,'category':self.heading_text}
@@ -122,7 +128,7 @@ class MarkdownParsing:
 					# on trouve la categorie et on la sélectionne
 					self.ongoing_category = next(h for h in self.headings if h.title == self.heading_text)
 
-			
+			# handle items
 			if(token.type == 'list_item_open'):
 				if(self.tokens[self.index+1].type != 'paragraph_open'):
 					print('[!] Error in index browsing : no list_item_open > paragraph_open')
@@ -154,6 +160,15 @@ class MarkdownParsing:
 					if(self.debug) : print(news_text[0:20]+' -> news done')
 
 				self.ongoing_category.append_actu(actu)
+
+			# handle options in html comms
+			if(token.type == 'html_block'):
+				if(token.content.startswith('<!--') and token.content.endswith('-->\n')):
+					prop_type = token.content[4:-4].split(': ')[0]
+					prop_value = token.content[4:-4].split(': ')[1]
+					# a = {'type':a_type,'value':a_value}
+					self.ongoing_category.set_property(prop_type,prop_value)
+					if(self.debug): print(f' --- property : {prop_type} set to {prop_value}')
 
 			self.index = self.index+1 # main iterator
 

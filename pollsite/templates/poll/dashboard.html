@@ -44,10 +44,11 @@
 	<div class = "w-full items-center m-2 p-1">
 		<div id="meeting-controls" class="items-center text-center mb-2">
 			<button id="meeting-start" value="meeting-start" class="bg-red-600 hover:bg-red-800 text-white text-center font-bold py-2 px-4 rounded">{% trans "start meeting" %}</button>
-			<button id="meeting-question-go" value="meeting-question-go" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9199; {% trans "start activity" %}</button>
-			<button id="meeting-question-results" value="meeting-question-results" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#128202; {% trans "show results" %}</button>
-			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 px-4 rounded">&#127942; {% trans "show scoreboard" %}</button>
-			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 px-4 rounded">&#9193; {% trans "next activity" %}</button>
+			<button id="meeting-question-previous" value="meeting-question-previous" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 my-2 px-4 rounded">&#9198; {% trans "go back" %}</button>
+			<button id="meeting-question-go" value="meeting-question-go" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 my-2 px-4 rounded">&#9199; {% trans "start activity" %}</button>
+			<button id="meeting-question-results" value="meeting-question-results" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 my-2 px-4 rounded">&#128202; {% trans "show results" %}</button>
+			<button id="meeting-question-scores" value="meeting-question-scores" class="hidden bg-blue-600 hover:bg-blue-800 text-white text-center py-2 my-2 px-4 rounded">&#127942; {% trans "show scoreboard" %}</button>
+			<button id="meeting-question-next" value="meeting-question-next" class="hidden bg-green-600 hover:bg-green-800 text-white text-center py-2 my-2 px-4 rounded">&#9193; {% trans "next activity" %}</button>
 		</div>
 		<table class="table-fixed border-separate border border-solid border-red-900 divide-solid divide-y-2 divide-x-2 divide-red-800 mx-auto text-center dark:bg-pour1nf0-pink-900">
 			<thead>
@@ -298,7 +299,7 @@
 		startMeetingNode.remove();
 		showWait();
 		{% if meeting.platform != 'IRL' %}
-		alert('if you are using Revolution Bots, be sure to allow this website to play videos in the browser');
+		// alert('if you are using Revolution Bots, be sure to allow this website to play videos in the browser');
 		{% endif %}
 	}
 

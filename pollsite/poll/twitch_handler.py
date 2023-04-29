@@ -5,6 +5,8 @@ import json
 import time
 import requests
 
+from twitchAPI.twitch import Twitch
+
 from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext as _
@@ -31,6 +33,7 @@ class TwitchHandler(threading.Thread):
 		self.meetingConsumer = meetingConsumer
 		try:
 			self.helix = twitch.Helix(twitch_api.client_id, twitch_api.client_secret)
+			# self.new_twitch = await Twitch(twitch_api.client_id, twitch_api.client_secret)
 			# ,scopes=['channel:read:subscriptions','chat:read','chat:edit']
 		except KeyError as e:
 			raise TwitchChatError(_('Client secret needs to be renewed'))
