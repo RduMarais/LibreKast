@@ -64,12 +64,22 @@ def get_default_buffer():
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
+	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
 	oauth = models.CharField(_('OAuth Token'),max_length=30)
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 
 	def __str__(self):
 		return self.name
+
+	def save(self, *args, **kwargs):
+		# TODO : setup from request
+		host = settings.ALLOWED_HOSTS[-1]
+		encrypted = '' if settings.DEBUG else 's' 
+		port = ':8000' if host == 'localhost' else '' 
+		super().save(*args, **kwargs)
+		self.api_callback_url = f'http{encrypted}://{host}{port}/poll/twitch_auth/{self.pk}/'
+		super().save(*args, **kwargs)
 
 class YoutubeAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)

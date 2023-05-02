@@ -154,6 +154,7 @@ class FlagAttemptAdmin(admin.ModelAdmin):
 
 class TwitchAPIAdmin(admin.ModelAdmin):
 	list_display = ('name','description')
+	readonly_fields =['api_callback_url']
 
 class YTAPIAdmin(admin.ModelAdmin):
 	# readonly_fields =['authorized_credentials']

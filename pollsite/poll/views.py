@@ -19,7 +19,7 @@ import hashlib
 import hmac
 from io import BytesIO
 
-from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook
+from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook,TwitchAPI
 from .forms import WordForm,LoginForm
 from .utils import validate_flag_attempt
 
@@ -68,7 +68,21 @@ def send_channel_notification(tw_webhook,user_name):
 			}
 		}
 	)
-
+# send notification via websocket to verify the callback
+def send_callback_notification(tw_api_id,code,state,scope):
+	channel_layer = get_channel_layer()
+	async_to_sync(channel_layer.group_send)(
+		'callback_'+str(tw_api_id),
+		{
+			'type': 'callback_message',
+			'callback': {
+				'callback_id':tw_api_id,
+				'code':code,
+				'state':state,
+				'scope':scope,
+			}
+		}
+		)
 
 ####### VIEWS ########
 
@@ -222,6 +236,22 @@ def results(request, question_id):
 		question = get_object_or_404(Question, pk=question_id)
 		attendee = Attendee.objects.get(pk=request.session['attendee_id'])
 		return render(request, 'poll/results.html', {'question': question})
+
+@csrf_exempt
+def twitch_auth(request,twitch_api_id):
+	code = request.GET.get('code','')
+	state = request.GET.get('state','')
+	scope = request.GET.get('scope','')
+	error = request.GET.get('error','')
+	error_description = request.GET.get('error_description','')
+	if(settings.DEBUG) : print(f'- code : {code}\n- state : {state}\n- scope : {scope}\n- error : {error}\n')
+	if(error):
+		return HttpResponse(f'<b>Error : {error}</b><p>{error_description}</p>',status=403)
+	else:
+		# get meeting and twitch handler associated
+		# Problem : this is not secure, someone could use another user's twitch api (model : an attacker using the same instance)
+		send_callback_notification(twitch_api_id,code,state,scope)
+		return HttpResponse(f'ok',status=200)
 
 @csrf_exempt
 def twitch_webhook(request,webhook_id):

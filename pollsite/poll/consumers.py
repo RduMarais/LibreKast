@@ -3,7 +3,7 @@ import json
 import threading
 import datetime
 import atexit
-
+import asyncio
 
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -18,7 +18,7 @@ from google.auth.exceptions import RefreshError
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler,YoutubeOAuthError,YoutubeChatError
-from .twitch_handler import TwitchHandler, TwitchChatError
+from .twitch_handler import TwitchHandler, TwitchChatError, NewTwitchHandler
 from .utils import validate_flag_attempt
 
 
@@ -217,16 +217,20 @@ class MeetingConsumer(WebsocketConsumer):
 	# Receive message from meeting group
 	def meeting_message(self, event):
 		message = event['message']
-		print('debug : meeting message')
+		if(settings.DEBUG) : print('debug : meeting message')
 		# Send message to WebSocket
 		self.send(text_data=json.dumps(message))
 
 	def admin_message(self,event):
-		print('debug : admin message')
+		if(settings.DEBUG) : print('debug : admin message')
 		message = event['message']
 		self.send(text_data=json.dumps(message))
 
-
+	def callback_message(self,event):
+		if(settings.DEBUG) : print('debug new : callback message !! ')
+		if(settings.DEBUG) : print('debug new : '+json.dumps(event))
+		if(self.twHandler):
+			asyncio.run(self.twHandler.authenticate_callback(event['callback']))
 
 
 ##############################################
@@ -813,6 +817,7 @@ class MeetingConsumer(WebsocketConsumer):
 #########       Youtube Streams      #########
 ##############################################
 
+	# executed only once, configures the listener
 	def init_yt_polling(self):
 		if(not self.meeting.stream_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no video ID specified in the Meeting settings'}))
@@ -841,17 +846,20 @@ class MeetingConsumer(WebsocketConsumer):
 		self.ytHandler.meetingConsumer = self
 
 
+	# executed at the beginning of each question : begins to record the votes
 	def start_yt_polling(self,question):
 		if(not hasattr(self,'ytHandler')):
 			raise KeyError('There should be a YoutubeHandler object')
 		self.ytHandler._polling = True
 
+	# halts the recording of votes for a question
 	def stop_yt_polling(self,question):
 		if(not hasattr(self,'ytHandler')):
 			raise KeyError('There should be a YoutubeHandler object')
 		self.ytHandler._polling = False
 		if(settings.DEBUG): print('debug : YT polling stopped')
 
+	# On disconnection
 	def terminate_yt_polling(self):
 		if(hasattr(self,'ytHandler')):
 			self.ytHandler.terminate()
@@ -864,6 +872,7 @@ class MeetingConsumer(WebsocketConsumer):
 #########       Twitch Streams       #########
 ##############################################
 
+	# executed only once, configures the listener
 	def init_tw_polling(self):
 		if(not self.meeting.channel_id):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no channel ID specified in the Meeting settings'}))
@@ -872,10 +881,16 @@ class MeetingConsumer(WebsocketConsumer):
 			self.send(text_data=json.dumps({'message':'admin-error','text' : 'there is no Twitch API specified in the Meeting settings'}))
 			raise KeyError('There should be a Twitch API defined')
 		try:
-			self.twHandler = TwitchHandler(self.meeting.channel_id,self.meeting.twitch_api,self)
+			# self.twHandler = TwitchHandler(self.meeting.channel_id,self.meeting.twitch_api,self)
+			self.twHandler = NewTwitchHandler(self.meeting.channel_id,self.meeting.twitch_api,self)
+			# 
+			# TODO : sub to group : 'meeting_'+str(tw_webhook.meeting.id)+'_chat'
+			# 
+			# self.twHandler.configure_ntwhandler(self.meeting.channel_id)
 		except TwitchChatError as e:
 			self.send(text_data=json.dumps({'message':'admin-error','text':_('Error connecting to Twitch API : ')+e.message}))
 
+	# executed at the beginning of each question : begins to record the votes
 	def start_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
 			self.send(text_data=json.dumps({'message':'admin-error','text':_('Error connecting to Twitch API : ')+_('Twitch chat is not initiated')}))
@@ -883,12 +898,14 @@ class MeetingConsumer(WebsocketConsumer):
 			if(settings.DEBUG):print('debug : start polling on twitch')
 			self.twHandler.run()
 
+	# halts the recording of votes for a question
 	def stop_tw_polling(self,question):
 		if(not hasattr(self,'twHandler')):
 			self.send(text_data=json.dumps({'message':'error','error':_('Error connecting to Twitch API : ')+_('Twitch chat is not initiated')}))
 		else:
 			self.twHandler.stop()
 
+	# On disconnection
 	def terminate_tw_polling(self):
 		if(hasattr(self,'twHandler')):
 			self.twHandler.terminate()
