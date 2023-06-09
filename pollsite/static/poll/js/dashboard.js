@@ -17,20 +17,21 @@ function showAlert(alertObj){
 	let alertNotif = document.createElement('div');
 	let alertTextBox = document.createElement('p');
 	let alertTitleBox = document.createElement('p');
-	alertTitleBox.classList.add("font-bold","m-1","text-center")
-	alertTextBox.classList.add("font-italic","text-center")
-	alertNotif.classList.add("text-center","m-2")
+	alertTitleBox.classList.add("font-bold","m-1","text-center");
+	alertTextBox.classList.add("text-center");
+	alertNotif.classList.add("text-center","m-2");
 	alertTitleBox.innerText = alertObj['message'];
 	if(alertObj['message'] === "twitch-oauth-error") {
-		alertNotif.classList.style = "background-color: lightblue;"
+		alertNotif.classList.style = "background-color: lightblue;";
 		alertTextBox.innerText = alertObj['text'];
 		alertLink = document.createElement('a');
 		alertLink.innerText = alertObj['url'];
 		alertLink.href = alertObj['url'];
 		alertTextBox.appendChild(alertLink);
 	} else if(alertObj['message'] === "warning") {
-		alertNotif.classList.style = "background-color: lightyellow;"
+		alertNotif.style = "background-color: lightyellow;"
 		alertTextBox.innerText = alertObj['text'];
+		alertTextBox.classList.add('italic');
 	} else {
 		alertNotif.classList.style = "background-color: lightpink;"
 		alertTextBox.innerText = alertObj;
