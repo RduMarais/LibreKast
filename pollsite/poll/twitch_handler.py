@@ -14,6 +14,7 @@ from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.types import AuthScope, ChatEvent, TwitchAPIException
 from twitchAPI.helper import first
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand
+from twitchAPI.eventsub import EventSub
 
 from django.utils import timezone
 from django.conf import settings
@@ -38,6 +39,8 @@ class NewTwitchHandler(threading.Thread):
 	TARGET_SCOPES = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS]
 
 
+#### GENERAL METHODS #####
+
 	async def authenticate_client(self,code):
 		token, refresh_token = await self.auth.authenticate(user_token=code)
 		if(settings.DEBUG) : print(f'[3] authenticate : {token} and refresh : {refresh_token}')
@@ -60,8 +63,7 @@ class NewTwitchHandler(threading.Thread):
 			)
 			if(settings.DEBUG): print('[2] Channel discarded and user authenticated')
 
-			await self.start_chat()
-			if(settings.DEBUG) : print('[2] : twitch chat started')
+			await self.start_chat() # -> calls method down there that starts everything
 		else:
 			if(settings.DEBUG) : print('error : bad state (oauth request replay)')
 
@@ -81,6 +83,53 @@ class NewTwitchHandler(threading.Thread):
 				}
 			}
 		)
+
+
+#### BOTS, ANIMATION AND METHODS #####
+
+	# this will be called when the event READY is triggered, which will be on bot start
+	async def on_ready(self,ready_event: EventData):
+		if(settings.DEBUG) : print('debug new : Bot is ready for work, joining channels')
+		# join our target channel, if you want to join multiple, either call join for each individually
+		# or even better pass a list of channels as the argument
+		await ready_event.chat.join_room(self.channel)
+		# you can do other bot initialization things in here
+
+	# this will be called whenever a message in a channel was send by either the bot OR another user
+	async def on_message(self, msg: ChatMessage):
+		print(f'debug new : {msg.user.name} dit "{msg.text}" ({msg.room.name})')
+		# user is ChatUser -> msg.user.vip, msg.user.subscriber, msg.user.mod, msg.user.badge_info aussi msg.bits
+		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
+
+	# this will be called whenever someone subscribes to a channel
+	async def on_sub(self, sub: ChatSub):
+		print(f'New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
+		await self.print_message({'author':settings.TWITCH_NICKNAME,'text':sub.sub_message,'source':'t','sub':True})
+		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
+		# TODO Alert
+
+	async def on_follow(self, data: dict):
+		print('DEBUG new : FOLLOW data = '+str(data))
+		# TODO Alert
+
+
+	# this will be called whenever the !reply command is issued
+	async def msg_command(self, cmd: ChatCommand):
+		print(f'[4] REPLY {cmd.user.name}')
+		msgBot = next(mb for mb in self.bots if mb.command == cmd.name)
+		if(msgBot):
+			print(f'[4] command {msgBot.command}')
+			await cmd.reply(f'{settings.BOT_MSG_PREFIX}{msgBot.message}')
+			await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'{settings.BOT_MSG_PREFIX} {msgBot.message}','source':'b'})
+			# TODO : cmd with params 
+			# TODO : check bot type and act depending on type
+			# if len(cmd.parameter) == 0:
+			# else:
+			# 	await cmd.reply(f'debug new : {cmd.user.name}: {cmd.parameter}')
+
+
+
+#### INIT AND AUTHENT ####
 
 	# is not async
 	def __init__(self,channel,twitch_api,meetingConsumer):
@@ -138,62 +187,26 @@ class NewTwitchHandler(threading.Thread):
 
 
 	# Thread 3
-	async def wait_for_connection(self):
-		# wait for callback to authenticate
-		while(not self.twitch_new.get_user_auth_scope()):
-			if(settings.DEBUG): print(f'[3] waiting for auth callback with scope : {self.twitch_new.get_user_auth_scope()}')
-			await asyncio.sleep(10)
+	#  is this in use ?
+	# async def wait_for_connection(self):
+	# 	# wait for callback to authenticate
+	# 	while(not self.twitch_new.get_user_auth_scope()):
+	# 		if(settings.DEBUG): print(f'[3] waiting for auth callback with scope : {self.twitch_new.get_user_auth_scope()}')
+	# 		await asyncio.sleep(10)
 
-		print('[3] : USER AUTHENTICATED FROM OTHER THREAD')
-		await self.start_chat()
-		if(settings.DEBUG) : print('[3] : twitch chat started')
-		
-
-
-	# this will be called when the event READY is triggered, which will be on bot start
-	async def on_ready(self,ready_event: EventData):
-		print('debug new : Bot is ready for work, joining channels')
-		# join our target channel, if you want to join multiple, either call join for each individually
-		# or even better pass a list of channels as the argument
-		await ready_event.chat.join_room(self.channel)
-		# you can do other bot initialization things in here
-
-	# this will be called whenever a message in a channel was send by either the bot OR another user
-	async def on_message(self, msg: ChatMessage):
-		print(f'debug new : {msg.user.name} dit "{msg.text}" ({msg.room.name})')
-		# user is ChatUser -> msg.user.vip, msg.user.subscriber, msg.user.mod, msg.user.badge_info aussi msg.bits
-		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
-
-	# this will be called whenever someone subscribes to a channel
-	async def on_sub(self, sub: ChatSub):
-		print(f'New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
-		await self.print_message({'author':settings.TWITCH_NICKNAME,'text':sub.sub_message,'source':'t','sub':True})
-		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
-		# TODO Alert
+	# 	if(settings.DEBUG) : print('[3] : USER AUTHENTICATED FROM OTHER THREAD')
+	# 	await self.start_chat()
+	# 	if(settings.DEBUG) : print('[3] : twitch chat started')
 
 
-	# this will be called whenever the !reply command is issued
-	async def msg_command(self, cmd: ChatCommand):
-		print(f'[4] REPLY {cmd.user.name}')
-		msgBot = next(mb for mb in self.bots if mb.command == cmd.name)
-		if(msgBot):
-			print(f'[4] command {msgBot.command}')
-			await cmd.reply(f'{settings.BOT_MSG_PREFIX}{msgBot.message}')
-			await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'{settings.BOT_MSG_PREFIX} {msgBot.message}','source':'b'})
-			# TODO : cmd with params 
-			# TODO : check bot type and act depending on type
-			# if len(cmd.parameter) == 0:
-			# else:
-			# 	await cmd.reply(f'debug new : {cmd.user.name}: {cmd.parameter}')
-
-
+	# MAIN START AND METHOD REGISTRATIONS
 	async def start_chat(self):
 		self.chat = await Chat(self.twitch_new) # miss user auth
 		
 		# register a bunch of stuff
 
 		self.chat.start()
-		print('NTW : started')
+		print('INFO : new twitch chat started')
 
 		self.chat.register_event(ChatEvent.READY, self.on_ready)
 		# https://github.com/Teekeks/pyTwitchAPI
@@ -211,15 +224,31 @@ class NewTwitchHandler(threading.Thread):
 		self.chat.register_event(ChatEvent.MESSAGE, self.on_message)
 		await self.meetingConsumer.channel_layer.group_send(
 			self.meetingConsumer.meeting_group_name+'_admin',
-			{
-				'type':"meeting_message",
-				'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'},
-			},
+			{'type':"meeting_message",'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'}},
 			)
+		### Event Sub (à init dans une aute méthode)
+		# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
+		print('DEBUG NEW : startinng creation of event sub')
+		self.event_sub = EventSub("https://webhook.site/#!/af10f774-2b5d-490e-9715-d5de01630ec1", self.twitch_api.client_id, 443, self.twitch_new) 
+		print('DEBUG NEW : created event sub')
+		await self.event_sub.unsubscribe_all()
+		print('DEBUG NEW : unsub')
+		self.event_sub.start()
+		print('DEBUG NEW : started event sub')
+		# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
+		#  has to be user id -> use dedicated class
+		me_user = await first(self.twitch_new.get_users(logins='rom___101'))
+		await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
+		print('DEBUG NEW : subbed for follows')
+
+
+#### FINISH ####
 
 	def terminate(self):
 		if(hasattr(self,'chat')):
 			self.chat.stop()
+		if(hasattr(self,'event_sub')):
+			self.event_sub.stop()
 		print('NTW : stopped')
 
 

@@ -22,7 +22,7 @@ function showAlert(alertObj){
 	alertNotif.classList.add("text-center","m-2");
 	alertTitleBox.innerText = alertObj['message'];
 	if(alertObj['message'] === "twitch-oauth-error") {
-		alertNotif.classList.style = "background-color: lightblue;";
+		alertNotif.style = "background-color: lightblue;";
 		alertTextBox.innerText = alertObj['text'];
 		alertLink = document.createElement('a');
 		alertLink.innerText = alertObj['url'];
