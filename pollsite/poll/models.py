@@ -9,6 +9,7 @@ from django.conf import settings
 import datetime
 import magic
 import json
+import os
 import qrcode
 
 from adminsortable.models import SortableMixin
