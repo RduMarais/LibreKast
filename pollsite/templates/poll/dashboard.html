@@ -267,9 +267,11 @@
 		}else if(data['message']==='notify-chat'){
 			addChatLog(data['chat']); 		
 		}else if(data['message']==='admin-error'){
-			alert(data['text']);
-		}else if(data['message']==='error'){
-			alert(data['error']);
+			showAlert(data);
+		}else if(data['message']==='twitch-oauth-ok'){
+			cleanAlert("alert-notification-box-twitch-oauth-error");
+		}else if(data['message']==='error' || data['message']==='warning' || data['message']==='twitch-oauth-error'){
+			showAlert(data);
 		}else if(data['message']==='revolution-alert'){
 			playAlert(data['alert']);
 		}else if(data['message']==='twitch-alert'){
@@ -283,6 +285,8 @@
 			'message': 'new-oauth-token', 
 			'token': token, 
 			}));
+		} else {
+			showAlert(data);
 		}
 	};
 

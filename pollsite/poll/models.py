@@ -65,9 +65,10 @@ class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
 	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
-	oauth = models.CharField(_('OAuth Token'),max_length=30)
+	oauth = models.CharField(_('OAuth Token'),max_length=30) # will not be needed anymore
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
+	auth_code = models.CharField(_('Secret Auth code to get access and refresh tokens'),max_length=100,default='')
 
 	def __str__(self):
 		return self.name

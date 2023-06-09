@@ -67,8 +67,8 @@ v0.4.1 :
 
  * Flag feature
 	 * [x] back : handle prefixes
-	 * [ ] back : Attendee name is string
-	 * [ ] back : Flag name is string
+	 * [x] back : Attendee name is string
+	 * [x] back : Flag name is string
  * Documentation : 
  	 * [x] Add documentation on API tokens
  	 * [x] Add documentation on meeting & question status
@@ -88,7 +88,7 @@ v0.4.1 :
 	 * [x] BUG : reg bots youtube never stop
 	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
  * Twitch animations
-	 * [ ] Twitch get follows with callback https://github.com/Teekeks/pyTwitchAPI ??
+	 * [-] Twitch get follows with callback
 	 	 * **ERROR**
 	 	 * [x] créer une API (url + une vue)
 	 	 * [x] créer un modèle webhook lié aux meeting
@@ -99,6 +99,16 @@ v0.4.1 :
 	 	 * [x] déclencher une animation quand il y a un follow
 	 	 * [x] fetch l'imge de profil du follower
 	 	 * [x] clean les subscriptions au lancement de la plateforme
+	 * Migrate https://github.com/Teekeks/pyTwitchAPI ??
+	 	 * [ ] periodic bots
+	 	 * [x] message bots
+	 	 * [ ] revolution bots
+	 	 	 * create buffers in self.XX on registering commands
+	 	 * [ ] follows
+	 	 * [ ] subs
+	 	 * [ ] other events
+	 	 * [ ] send message to admin/chat
+
 
 Next steps : 
 
@@ -128,8 +138,16 @@ Next steps :
 	 * [ ] move Twitch code from [PetterKraabol/Twitch-Python](https://github.com/PetterKraabol/Twitch-Python) to [Teekeks/pyTwitchAPI](https://github.com/Teekeks/pyTwitchAPI)
 	 	 * [x] setup oauth
 	 	 * [x] setup oauth : callback group remove
-	 	 * [ ] setup code remembering
-	 	 * [ ] setup chat bots
+	 	 * [x] setup twitch stopping
+	 	 * [ ] setup token remembering -> ERROR
+	 	 * [x] setup basic chat bots
+	 	 * [x] link with existing chat bots
+	 	 * [ ] show chat log
+	 	 * [ ] get chat log subs attributes
+	 	 * [ ] setup chat bots with params
+	 	 * [ ] setup basic periodic bots
+	 	 * [ ] link with existing existning bots
+	 	 * [ ] setup event subscription
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * v0.4.4 : code quality, error handling and refactor
 	 * [ ] back : admin interface : Flags and votes show meetings
