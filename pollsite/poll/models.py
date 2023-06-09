@@ -64,11 +64,22 @@ def get_default_buffer():
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
+	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
+	oauth = models.CharField(_('OAuth Token'),max_length=30)
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 
 	def __str__(self):
 		return self.name
+
+	def save(self, *args, **kwargs):
+		# TODO : setup from request
+		host = settings.ALLOWED_HOSTS[-1]
+		encrypted = '' if settings.DEBUG else 's' 
+		port = ':8000' if host == 'localhost' else '' 
+		super().save(*args, **kwargs)
+		self.api_callback_url = f'http{encrypted}://{host}{port}/poll/twitch_auth/{self.pk}/'
+		super().save(*args, **kwargs)
 
 class YoutubeAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
@@ -160,11 +171,17 @@ class MessageBot(models.Model):
 	is_active = models.BooleanField(_('is this command activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
 
+	def __str__(self):
+		return f'{self.meeting.title}:msg:{self.command}'
+
 class PeriodicBot(models.Model):
 	name = models.CharField(_('short name for the message'),max_length=15) 
 	message = models.TextField(_('Message to send regularly'),max_length=800)
 	is_active = models.BooleanField(_('is this message activated'))
 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+
+	def __str__(self):
+		return f'{self.meeting.title}:auto:{self.name}'
 
 class RevolutionBot(models.Model):
 	command = models.SlugField(_('command to trigger the message'),max_length=15) 
@@ -185,6 +202,8 @@ class RevolutionBot(models.Model):
 			if(file_type not in authorized_formats):
 				raise ValidationError({'alert': "This file format is not allowed"})
 
+	def __str__(self):
+		return f'{self.meeting.title}:rev:{self.command}'
 
 class TwitchWebhook(models.Model):
 	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
@@ -195,6 +214,8 @@ class TwitchWebhook(models.Model):
 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
 	helix_id = models.CharField(_('ID received from Helix API'), max_length=100,default='',blank=True)
 
+	def __str__(self):
+		return self.name
 
 
 ##### IRL Meetings models
@@ -209,6 +230,9 @@ class Attendee(models.Model):
 	is_subscriber = models.BooleanField(_('Subscriber/sponsor'),default=False)
 	is_twitch = models.BooleanField(_('is Twitch user'),default=False)
 	is_youtube = models.BooleanField(_('is Youtube user'),default=False)
+
+	def __str__(self):
+		return self.name
 
 	class Meta:
 		verbose_name = _('Participant')
@@ -275,6 +299,9 @@ class Flag(models.Model):
 	desc_img = models.ImageField(_('Image to show on flag completion'),null=True,blank=True,upload_to=get_meeting_directory)
 	meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
 
+	def __str__(self):
+		return self.name
+
 	# def finds(self):
 	# 	return len(self.vote_set.all())
 
@@ -329,3 +356,6 @@ class Vote(Submission):
 
 	def _text(self):
 		return choice.choice_text
+
+	def __str__(self):
+		return f'{self.user}::{self.choice}'

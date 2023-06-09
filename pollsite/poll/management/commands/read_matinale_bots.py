@@ -1,11 +1,15 @@
 #!/bin/python
 
-from django.core.management.base import BaseCommand, CommandError
 import sqlite3
 import datetime
 import os
+
+from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
+
 from poll.management.commands._md_parsing import Actu, Heading, MarkdownParsing
 from poll.models import Meeting, MessageBot, PeriodicBot
+from pprint import pprint
 
 # ARCHI de la DB
 # "id" integer
@@ -73,7 +77,7 @@ class Command(BaseCommand):
 			default_meeting = 'Matinale cyber'
 		parser.add_argument("--db-path", type=str,default=default_db_path)
 		parser.add_argument("--meeting", type=str,default=default_meeting)
-		parser.add_argument("--date", type=str,default=date_article)
+		parser.add_argument("--date", type=str,default=date_article,help="date in format YYYY-MM-DD")
 		parser.add_argument("--reset", action='store_true')
 		# parser.add_argument("--verbose", type=bool,default=False)
 
@@ -82,14 +86,22 @@ class Command(BaseCommand):
 		if(self.verbosity>1): print('- connected')
 		cursor = connection.cursor()
 		rows = cursor.execute(f"SELECT content,slug,lead FROM zinnia_entry WHERE creation_date LIKE '{date_str}%'")
-		return rows.fetchone()
+		# if(self.verbosity>2):
+		# 	for row in rows:
+		# 		print(f'row : {row}')
+		a = rows.fetchone()
+		if(self.verbosity > 2):
+			print(type(a))
+			print(type(a[0]))
+			print(type(rows))
+		return a
 
 	def define_bots(self,meeting,actus):
 		for h in actus.headings:
 			is_categorie = any(c['nom'] == h.title for c in CATEGORIES)
 			if(is_categorie):
 				categorie = next(c for c in CATEGORIES if c['nom'] == h.title)
-				print(f'### {h.title} (found !)')
+				print(f'### {h.title} (categ found !)')
 				# find bot
 				bots_candidates = list(meeting.messagebot_set.filter(command=categorie['cmd']))
 				bots_candidates += list(meeting.periodicbot_set.filter(name=categorie['cmd']))
@@ -106,9 +118,18 @@ class Command(BaseCommand):
 				print(f'### {h.title} (NOT found)')
 
 	def define_dates(self,meeting):
-		pass
+		if(self.verbosity>1): print('- time reset')
+		today_iso_str = timezone.now().strftime("%Y-%m-%d")
+		time_start_iso_str = ' 07:00:00+02:00'
+		time_end_iso_str = ' 12:00:00+02:00'
+		meeting.date_start = timezone.datetime.fromisoformat(today_iso_str + time_start_iso_str)
+		meeting.date_end = timezone.datetime.fromisoformat(today_iso_str + time_end_iso_str)
+		meeting.save()
+		if(self.verbosity>2): print(f'  -> start time {meeting.date_start}')
+		if(self.verbosity>2): print(f'  -> end time {meeting.date_end}')
 
 	def reset_bots(self):
+		if(self.verbosity>1): print('- reset')
 		for bot in [MessageBot.objects.get(pk=4),MessageBot.objects.get(pk=5),PeriodicBot.objects.get(pk=4)]:
 			bot.message = 'BLABLBALBALBALA'
 			bot.save()
@@ -131,11 +152,18 @@ class Command(BaseCommand):
 			else:
 				return
 		if(self.verbosity>1): print('- source markdown fetched')
-		# print(source_markdown[0])
+		# print(source_markdown)
+		if(self.verbosity >2): print(type(source_markdown[0]))
 		debug = self.verbosity>2
 		actus = MarkdownParsing(debug=debug)
 		actus.read_text(source_markdown[0]) # pass the content key
+		# # test
+		# pprint(actus.tokens[:15])
 		actus.parse_bullet_points()
+		if(self.verbosity > 0):
+			print("Properties : ")
+			for prop in actus.headings[0].properties:
+				print(" - "+prop['type']+' : '+prop['value'])
 		# this should be the summary already
 		meetings = Meeting.objects.filter(title=options['meeting'])
 		if(not meetings): 

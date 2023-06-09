@@ -59,7 +59,7 @@ This template does not inherit from global template te remove the header and fli
 	{% if meeting.platform != 'IRL' %}
 
 	const meeting_id = {{ meeting.id }};
-	const chatLogSize = {{ meeting.chat_log_size }} -1;
+	const chatLogSize = {{ meeting.prompt_chat_log_size }} -1;
 	const dashboardSocket = new WebSocket(
 		{% if wss %}'wss://'{% else %}'ws://'{% endif %}
 		+ window.location.host
@@ -73,51 +73,6 @@ This template does not inherit from global template te remove the header and fli
 	const sub_icon_url = "{% static 'sub-icon.png' %}";
 	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
 	const bot_icon_url = "{% static 'bot-icon.png' %}";
-
-	// function addChatLog(chatMessage){
-	// 	let chatLogSize = {{ meeting.prompt_chat_log_size }};
-	// 	let chatlog = document.querySelector('#chatlog-content');
-	// 	if(chatlog.childElementCount>=chatLogSize){
-	// 		chatlog.removeChild(chatlog.firstChild);
-	// 	}
-	// 	let l = document.createElement("p");    //line
-	// 	let u = document.createElement("span"); //username
-	// 	let t = document.createElement("span"); //text
-	// 	l.classList.add("librekast-chatlog","mx-2","my-2","text-2xl");
-	// 	u.innerText = chatMessage['author'];
-	// 	u.classList.add("librekast-chatlog-username","font-bold","mr-2");
-	// 	if(chatMessage['source']=='y'){
-	// 		u.classList.add("librekast-youtube-username","text-red-100");
-	// 		{% if meeting.platform == 'MX' %}
-	// 		let youtubeIcon = document.createElement('img');
-	// 		youtubeIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-	// 		youtubeIcon.src = "{% static 'youtube-icon.png' %}";
-	// 		l.appendChild(youtubeIcon);
-	// 		{% endif %}
-	// 	}
-	// 	if(chatMessage['source']=='t'){
-	// 		u.classList.add("librekast-twitch-username","text-purple-100");
-	// 		{% if meeting.platform == 'MX' %}
-	// 		let twitchIcon = document.createElement('img');
-	// 		twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-	// 		twitchIcon.src = "{% static 'twitch-icon.png' %}";
-	// 		l.appendChild(twitchIcon);
-	// 		{% endif %}
-	// 	}
-	// 	if(chatMessage['source']=='b'){
-	// 		t.classList.add("librekast-bot-message");
-	// 		let botIcon = document.createElement('img');
-	// 		botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-	// 		botIcon.src = "{% static 'bot-icon.png' %}";
-	// 		l.appendChild(botIcon);
-	// 	}
-	// 	t.innerText = chatMessage['text'];
-	// 	t.classList.add("librekast-chatlog-msg","break-words","text-white");
-	// 	l.appendChild(u);
-	// 	l.appendChild(t);
-	// 	chatlog.appendChild(l);
-	// }
-
 
 
 	// main fuction : receive messages
