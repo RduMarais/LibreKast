@@ -145,7 +145,7 @@ class NewTwitchHandler(threading.Thread):
 		# asyncio. wait for authentication
 		# asyncio.run(self.wait_for_connection()) # ASYNC STARTS HERE for testing
 
-	# @async_worker
+	
 	async def configure_ntwhandler(self,channel):
 		self.twitch_new = await Twitch(self.twitch_api.client_id, self.twitch_api.client_secret)
 		self.twitch_new.app_auth_refresh_callback = self.app_refresh # not sure why this is needed but i guess its part of the app registration

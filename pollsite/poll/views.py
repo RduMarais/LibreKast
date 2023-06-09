@@ -245,6 +245,8 @@ def twitch_auth(request,twitch_api_id):
 	error = request.GET.get('error','')
 	error_description = request.GET.get('error_description','')
 	if(settings.DEBUG) : print(f'RECEIVED CALLBACK REQ\n  - code : {code}\n  - state : {state}\n  - scope : {scope}\n  - error : {error}')
+	if(settings.DEBUG) : print(request.body)
+	if(settings.DEBUG) : print(request.headers)
 	if(error):
 		return HttpResponse(f'<b>Error : {error}</b><p>{error_description}</p>',status=403)
 	else:
