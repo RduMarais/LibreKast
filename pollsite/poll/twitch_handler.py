@@ -229,7 +229,7 @@ class NewTwitchHandler(threading.Thread):
 		### Event Sub (à init dans une aute méthode)
 		# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
 		print('DEBUG NEW : startinng creation of event sub')
-		self.event_sub = EventSub("https://live.pour-info.tech/poll/twitch_auth/2/", self.twitch_api.client_id, 443, self.twitch_new) 
+		# self.event_sub = EventSub("https://live.pour-info.tech/poll/twitch_auth/2/", self.twitch_api.client_id, 443, self.twitch_new) # test webhook
 		print('DEBUG NEW : created event sub')
 		await self.event_sub.unsubscribe_all()
 		print('DEBUG NEW : unsub')
