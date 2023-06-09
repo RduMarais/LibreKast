@@ -75,7 +75,11 @@ class TwitchAPI(models.Model):
 
 	def save(self, *args, **kwargs):
 		host = settings.ALLOWED_HOSTS[-1]
-		encrypted = 's' if settings.OAUTHLIB_INSECURE_TRANSPORT else '' 
+		encrypted = 's' 
+		if(os.environ.get("DISABLE_ENCRYPTION",default=False)):
+			encrypted = ''
+		else:
+			encrypted = 's'
 		port = ':8000' if host == 'localhost' else '' 
 		super().save(*args, **kwargs)
 		self.api_callback_url = f'http{encrypted}://{host}{port}/poll/twitch_auth/{self.pk}/'
