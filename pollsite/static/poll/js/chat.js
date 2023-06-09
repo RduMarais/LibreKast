@@ -58,11 +58,15 @@ function addChatLog(chatMessage){
 	if(chatMessage['source']=='b'){
 		t.classList.add("librekast-bot-message","italic");
 		let botIcon = document.createElement('img');
-			botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
-			botIcon.src = bot_icon_url;
-			l.appendChild(botIcon);
+		botIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-bot");
+		botIcon.src = bot_icon_url;
+		l.appendChild(botIcon);
 	}
-	t.innerText = chatMessage['text'];
+	if(chatMessage['source']=='b' && chatMessage['text'].startsWith(botMsgPrefix)){
+		t.innerText = chatMessage['text'].substring(botMsgPrefix.length);
+	} else {
+		t.innerText = chatMessage['text'];
+	}
 	t.classList.add("librekast-chatlog-msg","break-words");
 	l.appendChild(u);
 	l.appendChild(t);

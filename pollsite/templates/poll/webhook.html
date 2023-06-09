@@ -1,0 +1,13 @@
+{% extends "base_layout.html" %}
+{% load i18n %}
+
+{% block title  %}Redirection{% endblock  %}
+
+{% block content  %}
+<div style="margin:1em;">
+	<h3 class="text-center">OK</h3> <br>
+	<p class="text-center">
+	{% trans 'You can close this page now.' %}
+	</p>
+</div>
+{% endblock  %}

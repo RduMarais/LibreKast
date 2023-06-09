@@ -11,7 +11,7 @@ import asyncio
 
 from twitchAPI import Twitch
 from twitchAPI.oauth import UserAuthenticator
-from twitchAPI.types import AuthScope, ChatEvent
+from twitchAPI.types import AuthScope, ChatEvent, TwitchAPIException
 from twitchAPI.helper import first
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand
 
@@ -19,7 +19,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext as _
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .utils import TwitchBotPoller
@@ -37,73 +37,203 @@ class NewTwitchHandler(threading.Thread):
 	meetingConsumer = None
 	TARGET_SCOPES = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS]
 
-	async def authenticate_callback(self,callback: dict):
-		# TODO  check 
-		if(callback['state'] == self.auth.state):
-			# TODO save code -> for new meetings
-			token, refresh_token = await self.auth.authenticate(user_token=callback['code'])
-			if(settings.DEBUG) : print(f'authenticate : {token} and refresh : {refresh_token}')
-			await self.twitch_new.set_user_authentication(token,self.TARGET_SCOPES,refresh_token)
-			if(settings.DEBUG) : print('debug new : starting twitch chat')
-			await self.start_chat()
-			if(settings.DEBUG) : print('debug new : twitch chat started')
 
+	async def authenticate_client(self,code):
+		token, refresh_token = await self.auth.authenticate(user_token=code)
+		if(settings.DEBUG) : print(f'[3] authenticate : {token} and refresh : {refresh_token}')
+		await self.twitch_new.set_user_authentication(token,self.TARGET_SCOPES,refresh_token)
+		if(settings.DEBUG) : print(f'[3] scopes {self.twitch_new.get_user_auth_scope()}')
+
+
+	# get called by a request and updates user codes
+	async def authenticate_callback(self,callback: dict):
+		if(callback['state'] == self.auth.state):
+			if(settings.DEBUG): print(f'[2] : CALLBACKED')
+
+			# get access tokens
+			await self.authenticate_client(callback['code'])
+			
+			# Discard django channel used to callback
 			await self.meetingConsumer.channel_layer.group_discard(
 				f'callback_{self.twitch_api.id}',
 				self.meetingConsumer.channel_name
 			)
+			if(settings.DEBUG): print('[2] Channel discarded and user authenticated')
+
+			await self.start_chat()
+			if(settings.DEBUG) : print('[2] : twitch chat started')
 		else:
 			if(settings.DEBUG) : print('error : bad state (oauth request replay)')
 
-
+	# not sure why this is needed
 	def app_refresh(self,token: str):
 		print(f'my new app token is: {token}')
 
-	def user_refresh(self,token: str):
-		print(f'my new app token is: {token}')
+	# print in dashboard and all chat subscriber sessions
+	async def print_message(self,message):
+		await self.meetingConsumer.channel_layer.group_send(
+			self.meetingConsumer.meeting_group_name+'_chat',
+			{
+				'type': 'admin_message', # is it though ?
+				'message': {
+					'message':'notify-chat',
+					'chat':message,
+				}
+			}
+		)
 
-	# should be async
+	# is not async
 	def __init__(self,channel,twitch_api,meetingConsumer):
 		self.meetingConsumer = meetingConsumer
 		self.twitch_api = twitch_api
+		self.channel = channel
+		# TODO : problème : je peux pas update le bot ?
+		self.bots = [] 
+		for bot in self.meetingConsumer.meeting.messagebot_set.filter(is_active=True): # because this is sync
+			self.bots.append(bot)
+		if(settings.DEBUG) : print('debug : message bots list = '+str(self.bots))
 		asyncio.run(self.configure_ntwhandler(channel)) # ASYNC STARTS HERE for testing
 		# asyncio. wait for authentication
+		# asyncio.run(self.wait_for_connection()) # ASYNC STARTS HERE for testing
 
 	# @async_worker
 	async def configure_ntwhandler(self,channel):
 		self.twitch_new = await Twitch(self.twitch_api.client_id, self.twitch_api.client_secret)
 		self.twitch_new.app_auth_refresh_callback = self.app_refresh # not sure why this is needed but i guess its part of the app registration
 
+		# for testing --> TDO remove
 		self.user = await first(self.twitch_new.get_users(logins=channel)) 
-		if(settings.DEBUG) : print(f"user : {self.user.display_name} ({self.user.description})")
+		if(settings.DEBUG) : print(f"[1] user : {self.user.display_name} ({self.user.description})")
 		
-		# register a bunch of stuff
-
+		# setup userauth
 		self.auth = UserAuthenticator(self.twitch_new, self.TARGET_SCOPES, force_verify=False, url=self.twitch_api.api_callback_url) # with callback
-		auth_url = self.auth.return_auth_url()
-		if(settings.DEBUG) : print('url to connect to : '+self.auth.return_auth_url())
-		await self.meetingConsumer.channel_layer.group_send(
-			self.meetingConsumer.meeting_group_name+'_admin',
-			{'type':"meeting_message",
-			'message': {'message':'admin-error','text':f'You need another Twitch API credential : {auth_url}'}},
+		try: # TODO : for some reason this never executes without error
+			# try to connect using known value of code
+			if(settings.DEBUG): print(f'[1] secret code : {self.twitch_api.auth_code}')
+			res = await self.authenticate_client(self.twitch_api.auth_code)
+			if(settings.DEBUG) : print(f'[1] connection : {res}')
+		except TwitchAPIException :
+			# if the code is not valid anymore, request a new one
+			# authenticate with following
+			auth_url = self.auth.return_auth_url()
+			if(settings.DEBUG) : print('[1] url to connect to : '+self.auth.return_auth_url())
+
+			# Send URL for oAuth
+			await self.meetingConsumer.channel_layer.group_send(
+				self.meetingConsumer.meeting_group_name+'_admin',
+				{'type':"meeting_message",
+				'message': {'message':'twitch-oauth-error','text':f'You need another Twitch API credential :','url':auth_url },
+				},
+				)
+			if(settings.DEBUG) : print('[1] debug new : before channel name listening')
+			# await self.meetingConsumer.channel_layer.group_discard(
+			await self.meetingConsumer.channel_layer.group_add(
+				f'callback_{self.twitch_api.id}',
+				self.meetingConsumer.channel_name
 			)
-		if(settings.DEBUG) : print('debug new : before channel name listening')
-		await self.meetingConsumer.channel_layer.group_add(
-			f'callback_{self.twitch_api.id}',
-			self.meetingConsumer.channel_name
-		)
-		if(settings.DEBUG) : print('debug new : added channel name listening')
+		else:
+			# if the code is valid, start chat
+			await self.start_chat()
+			if(settings.DEBUG) : print('[1]debug new : twitch chat started')
+
+
+	# Thread 3
+	async def wait_for_connection(self):
+		# wait for callback to authenticate
+		while(not self.twitch_new.get_user_auth_scope()):
+			if(settings.DEBUG): print(f'[3] waiting for auth callback with scope : {self.twitch_new.get_user_auth_scope()}')
+			await asyncio.sleep(10)
+
+		print('[3] : USER AUTHENTICATED FROM OTHER THREAD')
+		await self.start_chat()
+		if(settings.DEBUG) : print('[3] : twitch chat started')
+		
+
+
+	# this will be called when the event READY is triggered, which will be on bot start
+	async def on_ready(self,ready_event: EventData):
+		print('debug new : Bot is ready for work, joining channels')
+		# join our target channel, if you want to join multiple, either call join for each individually
+		# or even better pass a list of channels as the argument
+		await ready_event.chat.join_room(self.channel)
+		# you can do other bot initialization things in here
+
+	# this will be called whenever a message in a channel was send by either the bot OR another user
+	async def on_message(self, msg: ChatMessage):
+		print(f'debug new : {msg.user.name} dit "{msg.text}" ({msg.room.name})')
+		# user is ChatUser -> msg.user.vip, msg.user.subscriber, msg.user.mod, msg.user.badge_info aussi msg.bits
+		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
+
+	# this will be called whenever someone subscribes to a channel
+	async def on_sub(self, sub: ChatSub):
+		print(f'New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
+		await self.print_message({'author':settings.TWITCH_NICKNAME,'text':sub.sub_message,'source':'t','sub':True})
+		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
+		# TODO Alert
+
+
+	# this will be called whenever the !reply command is issued
+	async def msg_command(self, cmd: ChatCommand):
+		print(f'[4] REPLY {cmd.user.name}')
+		msgBot = next(mb for mb in self.bots if mb.command == cmd.name)
+		if(msgBot):
+			print(f'[4] command {msgBot.command}')
+			await cmd.reply(f'{settings.BOT_MSG_PREFIX}{msgBot.message}')
+			await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'{settings.BOT_MSG_PREFIX} {msgBot.message}','source':'b'})
+			# TODO : cmd with params 
+			# TODO : check bot type and act depending on type
+			# if len(cmd.parameter) == 0:
+			# else:
+			# 	await cmd.reply(f'debug new : {cmd.user.name}: {cmd.parameter}')
+
 
 	async def start_chat(self):
 		self.chat = await Chat(self.twitch_new) # miss user auth
+		
+		# register a bunch of stuff
+
 		self.chat.start()
 		print('NTW : started')
 
+		self.chat.register_event(ChatEvent.READY, self.on_ready)
+		# https://github.com/Teekeks/pyTwitchAPI
+
+		# listen to channel subscriptions
+		self.chat.register_event(ChatEvent.SUB, self.on_sub)
+		# there are more events, you can view them all in this documentation
+		# await event_sub.listen_channel_follow_v2(user.id, user.id, on_follow)
+
+		# you can directly register commands and their handlers, this will register the !reply command
+		for msg_bot in self.bots:
+			self.chat.register_command(msg_bot.command, self.msg_command)
+
+		# listen to chat messages
+		self.chat.register_event(ChatEvent.MESSAGE, self.on_message)
+		await self.meetingConsumer.channel_layer.group_send(
+			self.meetingConsumer.meeting_group_name+'_admin',
+			{
+				'type':"meeting_message",
+				'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'},
+			},
+			)
 
 	def terminate(self):
-		if(self.chat):
+		if(hasattr(self,'chat')):
 			self.chat.stop()
 		print('NTW : stopped')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class TwitchChatError(Exception):

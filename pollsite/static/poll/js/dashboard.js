@@ -10,6 +10,40 @@ function copyToClipboard(targetUrl,targetName){
 	setTimeout(function(){document.querySelector('#copy-notification-box').remove();}, 2000);
 }
 
+function cleanAlert(alertName){
+	document.querySelector('#'+alertName).remove();
+}
+function showAlert(alertObj){
+	let alertNotif = document.createElement('div');
+	let alertTextBox = document.createElement('p');
+	let alertTitleBox = document.createElement('p');
+	alertTitleBox.classList.add("font-bold","m-1","text-center")
+	alertTextBox.classList.add("font-italic","text-center")
+	alertNotif.classList.add("text-center","m-2")
+	alertTitleBox.innerText = alertObj['message'];
+	if(alertObj['message'] === "twitch-oauth-error") {
+		alertNotif.classList.style = "background-color: lightblue;"
+		alertTextBox.innerText = alertObj['text'];
+		alertLink = document.createElement('a');
+		alertLink.innerText = alertObj['url'];
+		alertLink.href = alertObj['url'];
+		alertTextBox.appendChild(alertLink);
+	} else if(alertObj['message'] === "warning") {
+		alertNotif.classList.style = "background-color: lightyellow;"
+		alertTextBox.innerText = alertObj['text'];
+	} else {
+		alertNotif.classList.style = "background-color: lightpink;"
+		alertTextBox.innerText = alertObj;
+	}
+	alertNotif.id = 'alert-notification-box-'+alertObj['message'];
+	alertNotif.appendChild(alertTitleBox);
+	alertNotif.appendChild(alertTextBox);
+	document.querySelector('#meeting-title').appendChild(alertNotif);
+	if(alertObj['message'] === "warning") {
+		setTimeout(function(){document.querySelector('#alert-notification-box-warning').remove();}, 8000);
+	}
+}
+
 
 function getQRCode(){
 	// send request to prepare the QR code

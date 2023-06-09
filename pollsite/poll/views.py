@@ -244,14 +244,17 @@ def twitch_auth(request,twitch_api_id):
 	scope = request.GET.get('scope','')
 	error = request.GET.get('error','')
 	error_description = request.GET.get('error_description','')
-	if(settings.DEBUG) : print(f'- code : {code}\n- state : {state}\n- scope : {scope}\n- error : {error}\n')
+	if(settings.DEBUG) : print(f'RECEIVED CALLBACK REQ\n  - code : {code}\n  - state : {state}\n  - scope : {scope}\n  - error : {error}')
 	if(error):
 		return HttpResponse(f'<b>Error : {error}</b><p>{error_description}</p>',status=403)
 	else:
+		twitch_api = get_object_or_404(TwitchAPI, pk=twitch_api_id)
+		twitch_api.auth_code = code
+		twitch_api.save()
 		# get meeting and twitch handler associated
 		# Problem : this is not secure, someone could use another user's twitch api (model : an attacker using the same instance)
 		send_callback_notification(twitch_api_id,code,state,scope)
-		return HttpResponse(f'ok',status=200)
+		return  render(request, 'poll/webhook.html', {})
 
 @csrf_exempt
 def twitch_webhook(request,webhook_id):

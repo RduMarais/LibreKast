@@ -125,11 +125,15 @@ class MeetingConsumer(WebsocketConsumer):
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
 
-		# Join group
-		async_to_sync(self.channel_layer.group_add)(
-			self.meeting_group_name,
-			self.channel_name
-		)
+		try:
+			# Join group
+			async_to_sync(self.channel_layer.group_add)(
+				self.meeting_group_name,
+				self.channel_name
+			)
+		except Exception as e :
+			print(_('Error : cache (Redis) fail'))
+			raise(e)
 		# join admin group if needed
 		if(self.is_user_authenticated()):
 			async_to_sync(self.channel_layer.group_add)(
@@ -157,7 +161,7 @@ class MeetingConsumer(WebsocketConsumer):
 			try:
 				new_attendee = Attendee.objects.get(name=self.scope['user'].username)
 				self.scope['session']['attendee_id'] = new_attendee.id
-				self.send(text_data=json.dumps({'message':'error','error':_('Warning : user is staff -> previous login with staff username used')}))
+				self.send(text_data=json.dumps({'message':'warning','text':_('Warning : user is staff -> previous login with staff username used')}))
 				if(settings.DEBUG): print('debug : use staff user as dashboard user.')
 				self.attendee = new_attendee
 			except Attendee.DoesNotExist:
