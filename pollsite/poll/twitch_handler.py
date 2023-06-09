@@ -4,8 +4,16 @@ import datetime
 import json
 import time
 import requests
+import pprint
 
-from twitchAPI.twitch import Twitch
+# For testing
+import asyncio
+
+from twitchAPI import Twitch
+from twitchAPI.oauth import UserAuthenticator
+from twitchAPI.types import AuthScope, ChatEvent
+from twitchAPI.helper import first
+from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand
 
 from django.utils import timezone
 from django.conf import settings
@@ -18,8 +26,85 @@ from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
+USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
+TEST_URL = 'http://localhost:8000/poll/twitch_auth/'
+TEST_URL = 'http://localhost:8000/poll/twitch_auth/1/?error=redirect_mismatch\u0026error_description=Parameter\u002bredirect_uri\u002bdoes\u002bnot\u002bmatch\u002bregistered\u002bURI\u0026state=385e7193-b84e-49dd-8740-e9fe885b8ea3";'
 
 ## Uses : https://github.com/PetterKraabol/Twitch-Python
+
+# no need for run start and stop bc the lib Twtich class itselfs extends the Thread class
+class NewTwitchHandler(threading.Thread):
+	meetingConsumer = None
+	TARGET_SCOPES = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS]
+
+	async def authenticate_callback(self,callback: dict):
+		# TODO  check 
+		if(callback['state'] == self.auth.state):
+			# TODO save code -> for new meetings
+			token, refresh_token = await self.auth.authenticate(user_token=callback['code'])
+			if(settings.DEBUG) : print(f'authenticate : {token} and refresh : {refresh_token}')
+			await self.twitch_new.set_user_authentication(token,self.TARGET_SCOPES,refresh_token)
+			if(settings.DEBUG) : print('debug new : starting twitch chat')
+			await self.start_chat()
+			if(settings.DEBUG) : print('debug new : twitch chat started')
+
+			await self.meetingConsumer.channel_layer.group_discard(
+				f'callback_{self.twitch_api.id}',
+				self.meetingConsumer.channel_name
+			)
+		else:
+			if(settings.DEBUG) : print('error : bad state (oauth request replay)')
+
+
+	def app_refresh(self,token: str):
+		print(f'my new app token is: {token}')
+
+	def user_refresh(self,token: str):
+		print(f'my new app token is: {token}')
+
+	# should be async
+	def __init__(self,channel,twitch_api,meetingConsumer):
+		self.meetingConsumer = meetingConsumer
+		self.twitch_api = twitch_api
+		asyncio.run(self.configure_ntwhandler(channel)) # ASYNC STARTS HERE for testing
+		# asyncio. wait for authentication
+
+	# @async_worker
+	async def configure_ntwhandler(self,channel):
+		self.twitch_new = await Twitch(self.twitch_api.client_id, self.twitch_api.client_secret)
+		self.twitch_new.app_auth_refresh_callback = self.app_refresh # not sure why this is needed but i guess its part of the app registration
+
+		self.user = await first(self.twitch_new.get_users(logins=channel)) 
+		if(settings.DEBUG) : print(f"user : {self.user.display_name} ({self.user.description})")
+		
+		# register a bunch of stuff
+
+		self.auth = UserAuthenticator(self.twitch_new, self.TARGET_SCOPES, force_verify=False, url=self.twitch_api.api_callback_url) # with callback
+		auth_url = self.auth.return_auth_url()
+		if(settings.DEBUG) : print('url to connect to : '+self.auth.return_auth_url())
+		await self.meetingConsumer.channel_layer.group_send(
+			self.meetingConsumer.meeting_group_name+'_admin',
+			{'type':"meeting_message",
+			'message': {'message':'admin-error','text':f'You need another Twitch API credential : {auth_url}'}},
+			)
+		if(settings.DEBUG) : print('debug new : before channel name listening')
+		await self.meetingConsumer.channel_layer.group_add(
+			f'callback_{self.twitch_api.id}',
+			self.meetingConsumer.channel_name
+		)
+		if(settings.DEBUG) : print('debug new : added channel name listening')
+
+	async def start_chat(self):
+		self.chat = await Chat(self.twitch_new) # miss user auth
+		self.chat.start()
+		print('NTW : started')
+
+
+	def terminate(self):
+		if(self.chat):
+			self.chat.stop()
+		print('NTW : stopped')
+
 
 class TwitchChatError(Exception):
 	def __init__(self,message):
@@ -198,7 +283,7 @@ class TwitchHandler(threading.Thread):
 			self.unsubscribe_webhooks()
 
 		self.chat.irc.active = False
-		self.chat.irc.socket.close()	
+		self.chat.irc.socket.close()
 		self.chat.dispose()
 
 	def run(self):

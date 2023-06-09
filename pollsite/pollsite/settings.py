@@ -34,7 +34,7 @@ ADMIN_URL = os.environ.get("ADMIN_URL",default='admin')
 # Add DONT_SHOW_ADMIN env variable to remove the admin button
 SHOW_ADMIN = not os.environ.get("DONT_SHOW_ADMIN",default=False)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Add this variable to your env vars (ex : 'librekast.pour-info.tech')
 if(os.environ.get("ALLOWED_HOSTS_LOCAL")):

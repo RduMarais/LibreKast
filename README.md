@@ -83,12 +83,13 @@ v0.4.1 :
 	 * [x] Twitch : Make bots independant from youtube polling
 	 * [x] back : bots ont une limite de chars trop petites
 	 * [x] back : bots admin intf en forme de texte, pas charset
-	 * [ ] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
-	 * [ ] back : envoyer les cmd bots à l'affichage
-	 * [ ] BUG : reg bots youtube never stop
+	 * [x] back : filtrer les messages coté server en fonction du texte sur les réponses aux bots classiques
+	 * [x] back : envoyer les cmd bots à l'affichage
+	 * [x] BUG : reg bots youtube never stop
 	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
  * Twitch animations
 	 * [ ] Twitch get follows with callback https://github.com/Teekeks/pyTwitchAPI ??
+	 	 * **ERROR**
 	 	 * [x] créer une API (url + une vue)
 	 	 * [x] créer un modèle webhook lié aux meeting
 	 	 * [x] vérifie le HMAC à la réception du webhook
@@ -97,7 +98,7 @@ v0.4.1 :
 	 	 * [x] unsubscribe le webhook à la terminaison du bot twitch
 	 	 * [x] déclencher une animation quand il y a un follow
 	 	 * [x] fetch l'imge de profil du follower
-	 	 * [ ] clean les subscriptions au lancement de la plateforme
+	 	 * [x] clean les subscriptions au lancement de la plateforme
 
 Next steps : 
 
@@ -125,6 +126,10 @@ Next steps :
 		 * [x] front : go back button in dashboard
 		 * [ ] back : go back button in dashboard
 	 * [ ] move Twitch code from [PetterKraabol/Twitch-Python](https://github.com/PetterKraabol/Twitch-Python) to [Teekeks/pyTwitchAPI](https://github.com/Teekeks/pyTwitchAPI)
+	 	 * [x] setup oauth
+	 	 * [x] setup oauth : callback group remove
+	 	 * [ ] setup code remembering
+	 	 * [ ] setup chat bots
 	 * [ ] Twitch : add attendee is subscriber attribute in dashboard
  * v0.4.4 : code quality, error handling and refactor
 	 * [ ] back : admin interface : Flags and votes show meetings
