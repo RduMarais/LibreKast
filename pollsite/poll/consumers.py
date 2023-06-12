@@ -94,6 +94,8 @@ class ChatConsumer(WebsocketConsumer):
 		self.send(text_data=json.dumps(message))
 
 
+
+
 ##############################################
 ##########       MAIN CLASS       ############
 ##############################################
@@ -699,7 +701,7 @@ class MeetingConsumer(WebsocketConsumer):
 				{
 					'type': 'admin_message', # is it though ?
 					'message': {
-						'message':'revolution-alert',
+						'message':'twitch-alert',
 						'alert':{'url':revolutionbot.alert.url,'text':revolutionbot.message},
 					}
 				}

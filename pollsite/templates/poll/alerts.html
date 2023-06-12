@@ -29,7 +29,7 @@
 		+ window.location.host
 		+ '/ws/'
 		+ meeting_id
-		+ '/'
+		+ '/chat/'
 	);
 
 	// main fuction : receive messages
@@ -49,6 +49,8 @@
 				'message': "chat-subscribe", 
 			}));
 		}else if(data['message']==='admin-error'){
+			alert(data['text']);
+		} else {
 			alert(data['text']);
 		}
 		

@@ -104,10 +104,10 @@ v0.4.1 :
 	 	 * [x] message bots
 	 	 * [ ] revolution bots
 	 	 	 * create buffers in self.XX on registering commands
-	 	 * [ ] follows
+	 	 * [x] follows
 	 	 * [ ] subs
 	 	 * [ ] other events
-	 	 * [ ] send message to admin/chat
+	 	 * [x] send message to admin/chat
 
 
 Next steps : 
