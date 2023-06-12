@@ -19,7 +19,7 @@ import hashlib
 import hmac
 from io import BytesIO
 
-from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchWebhook,TwitchAPI
+from .models import Choice,Question,Meeting,Attendee,Vote,Flag,FlagAttempt,TwitchAPI #TwitchWebhook
 from .forms import WordForm,LoginForm
 from .utils import validate_flag_attempt
 
@@ -258,26 +258,26 @@ def twitch_auth(request,twitch_api_id):
 		send_callback_notification(twitch_api_id,code,state,scope)
 		return  render(request, 'poll/webhook.html', {})
 
-@csrf_exempt
-def twitch_webhook(request,webhook_id):
-	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
-	if(request.method=='POST'):
-		data = json.loads(request.body)
-		if(settings.DEBUG): print(data)
-		if(settings.DEBUG): print(request.headers)
-		if(request.headers['Twitch-Eventsub-Message-Type']=='webhook_callback_verification'):
-			return HttpResponse(data['challenge'],status=200)
-		if(verify_twitch_webhook(tw_webhook,request)):
-			if(data["subscription"]["type"] == "channel.follow"):
-				follow_name = data["event"]["user_name"]
-				if(tw_webhook.meeting._is_running):
-					image_url = tw_webhook.meeting
-					send_channel_notification(tw_webhook,follow_name)
-					return HttpResponse(f'ok webhook {webhook_id}',status=202)
-				else:
-					return HttpResponse(f'Meeting not running for webhook {webhook_id}',status=201)
-			return HttpResponse(f'Bad webhook data {webhook_id}',status=405)
-		else:
-			return HttpResponse(f'Bad signature {webhook_id}',status=403)
-	else:
-		return HttpResponse(f'NOPE webhook GET {webhook_id}',status=400)
+# @csrf_exempt
+# def twitch_webhook(request,webhook_id):
+# 	tw_webhook = get_object_or_404(TwitchWebhook, pk=webhook_id)
+# 	if(request.method=='POST'):
+# 		data = json.loads(request.body)
+# 		if(settings.DEBUG): print(data)
+# 		if(settings.DEBUG): print(request.headers)
+# 		if(request.headers['Twitch-Eventsub-Message-Type']=='webhook_callback_verification'):
+# 			return HttpResponse(data['challenge'],status=200)
+# 		if(verify_twitch_webhook(tw_webhook,request)):
+# 			if(data["subscription"]["type"] == "channel.follow"):
+# 				follow_name = data["event"]["user_name"]
+# 				if(tw_webhook.meeting._is_running):
+# 					image_url = tw_webhook.meeting
+# 					send_channel_notification(tw_webhook,follow_name)
+# 					return HttpResponse(f'ok webhook {webhook_id}',status=202)
+# 				else:
+# 					return HttpResponse(f'Meeting not running for webhook {webhook_id}',status=201)
+# 			return HttpResponse(f'Bad webhook data {webhook_id}',status=405)
+# 		else:
+# 			return HttpResponse(f'Bad signature {webhook_id}',status=403)
+# 	else:
+# 		return HttpResponse(f'NOPE webhook GET {webhook_id}',status=400)

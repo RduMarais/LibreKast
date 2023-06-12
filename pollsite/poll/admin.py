@@ -7,7 +7,7 @@ from django.conf import settings
 
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
-from .models import Question,Choice,Meeting,Attendee,Flag,FlagAttempt,TwitchWebhook
+from .models import Question,Choice,Meeting,Attendee,Flag,FlagAttempt
 from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot, Animation #,TwitchChannel,YoutubeDirect
 
 # administration of choices once in Question admin panel
@@ -187,6 +187,6 @@ admin.site.register(PeriodicBot,PeriodBotAdmin)
 admin.site.register(RevolutionBot,RevolutionBotAdmin)
 admin.site.register(Flag,FlagAdmin)
 admin.site.register(FlagAttempt,FlagAttemptAdmin)
-admin.site.register(TwitchWebhook)
+# admin.site.register(TwitchWebhook)
 admin.site.register(Animation)
 
