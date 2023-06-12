@@ -230,7 +230,7 @@ class NewTwitchHandler(threading.Thread):
 		# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
 		print('DEBUG NEW : startinng creation of event sub')
 		self.event_sub = EventSub("https://live.pour-info.tech:50443/", self.twitch_api.client_id, 8081, self.twitch_new) # test webhook
-		self.event_sub.host = '127.0.0.1' # not listening on every host, only on localhost:8081
+		self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
 		print('DEBUG NEW : created event sub')
 		await self.event_sub.unsubscribe_all()
 		print('DEBUG NEW : unsub')
