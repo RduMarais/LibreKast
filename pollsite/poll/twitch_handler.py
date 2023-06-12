@@ -229,7 +229,7 @@ class NewTwitchHandler(threading.Thread):
 		### Event Sub (à init dans une aute méthode)
 		# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
 		print('DEBUG NEW : startinng creation of event sub')
-		self.event_sub = EventSub("https://live.pour-info.tech:50443/", self.twitch_api.client_id, 8081, self.twitch_new) # test webhook
+		self.event_sub = EventSub("https://webhook.live.pour-info.tech/", self.twitch_api.client_id, 8081, self.twitch_new) # test webhook
 		self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
 		print('DEBUG NEW : created event sub')
 		await self.event_sub.unsubscribe_all()
@@ -239,6 +239,7 @@ class NewTwitchHandler(threading.Thread):
 		# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 		#  has to be user id -> use dedicated class
 		me_user = await first(self.twitch_new.get_users(logins='rom___101'))
+		print(self.event_sub)
 		await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
 		print('DEBUG NEW : subbed for follows')
 
