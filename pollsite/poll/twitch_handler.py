@@ -110,9 +110,10 @@ class NewTwitchHandler(threading.Thread):
 
 	async def on_follow(self, data: dict):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
-		# TODO Alert
-		if(self.twitch_api.animation_set.filter(event_type='F')):
-			animation = self.twitch_api.animation_set.filter(event_type='F')[0]
+		# TODO Alert`
+		animation_set = sync_to_async(self.twitch_api.animation_set.filter(event_type='F'))
+		if(animation_set):
+			animation = animation_set[0]
 			if(animation.alert):
 				self.send_bot_alert(animation)
 
