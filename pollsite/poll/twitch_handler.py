@@ -112,7 +112,7 @@ class NewTwitchHandler(threading.Thread):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert`
 		animation_set = await sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
-		if(len(await animation_set)> 0):
+		if(len(animation_set)> 0):
 			animation = animation_set[0]
 			if(animation.alert):
 				await self.meetingConsumer.send_bot_alert(animation)
