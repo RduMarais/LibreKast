@@ -25,8 +25,8 @@ function showAlert(alertObj){
 		alertNotif.style = "background-color: lightblue;";
 		alertTextBox.innerText = alertObj['text'];
 		alertLink = document.createElement('a');
-		alertLink.innerText = click here;
-		alertLink.classList.add('btn');
+		alertLink.innerText = "Click here !";
+		alertLink.classList.add('btn','bg-pour1nf0-pink-100','px-2','py-1','rounded','py');
 		alertLink.href = alertObj['url'];
 		alertTextBox.appendChild(alertLink);
 	} else if(alertObj['message'] === "warning") {
