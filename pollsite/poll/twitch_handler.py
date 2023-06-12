@@ -108,11 +108,11 @@ class NewTwitchHandler(threading.Thread):
 		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
 		# TODO Alert
 
-	async def on_follow(self, data: dict):
+	def on_follow(self, data: dict):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert`
-		animation_set = await sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
-		if(len(animation_set)> 0):
+		animation_set = self.twitch_api.animation_set.filter(event_type='F')
+		if(len(animation_set)> 0): # cant be async need to be in a sync to async or 
 			animation = animation_set[0]
 			if(animation.alert):
 				await self.meetingConsumer.send_bot_alert(animation)
