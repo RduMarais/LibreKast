@@ -111,7 +111,7 @@ class NewTwitchHandler(threading.Thread):
 	async def on_follow(self, data: dict):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert`
-		animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
+		animation_set = await sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
 		if(animation_set):
 			animation = animation_set[0]
 			if(animation.alert):
@@ -244,7 +244,7 @@ class NewTwitchHandler(threading.Thread):
 			if(settings.DEBUG) : print('DEBUG NEW : unsub')
 			self.event_sub.start()
 			if(settings.DEBUG) : print('DEBUG NEW : started event sub')
-			follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
+			follow_animation_set = await sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
 			if(follow_animation_set):
 				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 				#  has to be user id -> use dedicated class
