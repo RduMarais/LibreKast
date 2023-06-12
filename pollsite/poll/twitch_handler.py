@@ -238,7 +238,7 @@ class NewTwitchHandler(threading.Thread):
 		# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 		#  has to be user id -> use dedicated class
 		me_user = await first(self.twitch_new.get_users(logins='rom___101'))
-		await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
+		# await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
 		print('DEBUG NEW : subbed for follows')
 
 
