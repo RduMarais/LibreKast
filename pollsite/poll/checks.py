@@ -1,5 +1,5 @@
 import requests
-from .models import Meeting,TwitchWebhook
+from .models import Meeting
 
 
 def check_meetings_clean_stop():
