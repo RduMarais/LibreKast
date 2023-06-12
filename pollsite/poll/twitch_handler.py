@@ -86,8 +86,8 @@ class NewTwitchHandler(threading.Thread):
 
 	async def send_animation(self,animation):
 		if(settings.DEBUG): print(f'debug : sending alert {animation.name}')
-		await self.channel_layer.group_send(
-			self.meeting_group_name+'_chat',
+		await self.meetingConsumer.channel_layer.group_send(
+			self.meetingConsumer.meeting_group_name+'_chat',
 			{
 				'type': 'admin_message', # is it though ?
 				'message': {
