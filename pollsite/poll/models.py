@@ -49,8 +49,11 @@ def get_meeting_directory(instance, filename):
 def get_revbot_directory(instance, filename):
 	return 'bots/bot_revolution_{0}/{1}'.format(instance.command, filename)
 
-def get_alert_directory(instance, filename):
-	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
+def get_animation_directory(instance, filename):
+	return 'bots/alert_{0}_{1}/{2}'.format(instance.twitch_api.id, instance.event_type, filename)
+
+# def get_alert_directory(instance, filename):
+# 	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
 
 def get_default_buffer():
 	return {'triggers':[],'last_revolution':''}
@@ -217,7 +220,7 @@ class Animation(models.Model):
 	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
 	event_type = models.CharField(_('Type of event to sub'), max_length=2,choices=(('F','Follow'),('S','Sub')), default='F')
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_revbot_directory)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_animation_directory)
 
 	def __str__(self):
 		return self.name
@@ -229,17 +232,18 @@ class Animation(models.Model):
 			if(file_type not in authorized_formats):
 				raise ValidationError({'alert': _("This file format is not allowed")})
 
-class TwitchWebhook(models.Model):
-	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
-	event_type = models.CharField(_('Type of event'),choices=(('F','Follow'),('S','Sub')),max_length=50,default='Follow')
-	secret = models.CharField(_('Secret to sign hooks'), max_length=50,default='Pour1nf0_bJc`CP2oRSNfV;7?-^OT!J@X')
-	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
-	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
-	helix_id = models.CharField(_('ID received from Helix API'), max_length=100,default='',blank=True)
+# TODO : remove
+# class TwitchWebhook(models.Model):
+# 	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
+# 	event_type = models.CharField(_('Type of event'),choices=(('F','Follow'),('S','Sub')),max_length=50,default='Follow')
+# 	secret = models.CharField(_('Secret to sign hooks'), max_length=50,default='Pour1nf0_bJc`CP2oRSNfV;7?-^OT!J@X')
+# 	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
+# 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
+# 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
+# 	helix_id = models.CharField(_('ID received from Helix API'), max_length=100,default='',blank=True)
 
-	def __str__(self):
-		return self.name
+# 	def __str__(self):
+# 		return self.name
 
 
 ##### IRL Meetings models
