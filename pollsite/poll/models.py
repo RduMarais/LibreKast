@@ -67,6 +67,7 @@ def get_default_buffer():
 # For security purposes, the twitch API is stored as an object
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
+	username = models.CharField(_('User name for the user to authenticate'),max_length=40,default='romain_pourinfo')
 	description = models.TextField(_('Description of the API key'),max_length=400)
 	# oauth = models.CharField(_('OAuth Token'),max_length=30) # will not be needed anymore
 	client_id = models.CharField(_('Client ID'),max_length=30)

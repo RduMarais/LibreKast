@@ -27,7 +27,7 @@ from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
-USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT]
+USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS] # last one is for follows
 TEST_URL = 'http://localhost:8000/poll/twitch_auth/'
 TEST_URL = 'http://localhost:8000/poll/twitch_auth/1/?error=redirect_mismatch\u0026error_description=Parameter\u002bredirect_uri\u002bdoes\u002bnot\u002bmatch\u002bregistered\u002bURI\u0026state=385e7193-b84e-49dd-8740-e9fe885b8ea3";'
 
@@ -262,8 +262,9 @@ class NewTwitchHandler(threading.Thread):
 			if(follow_animation_set):
 				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 				#  has to be user id -> use dedicated class
-				me_user = await first(self.twitch_new.get_users(logins='rom___101'))
-				await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
+				me_user = await first(self.twitch_new.get_users(logins=self.twitch_api.username))
+				if(settings.DEBUG): print(f'event sub with user {me_user}')
+				await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
 				if(settings.DEBUG) : print('DEBUG NEW : subbed for follows')
 
 
@@ -274,7 +275,8 @@ class NewTwitchHandler(threading.Thread):
 			self.chat.stop()
 		if(hasattr(self,'event_sub')):
 			self.event_sub.stop()
-		print('NTW : stopped')
+			if(settings.DEBUG) : print('debug : event sub stopped')
+		if(settings.DEBUG) : print('NTW : stopped')
 
 
 
