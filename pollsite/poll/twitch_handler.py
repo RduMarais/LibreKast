@@ -109,9 +109,12 @@ class NewTwitchHandler(threading.Thread):
 		# TODO Alert
 
 	async def on_follow(self, data: dict):
-		print('DEBUG new : FOLLOW data = '+str(data))
+		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert
-		self.send_bot_alert(self)))
+		if(self.twitch_api.animation_set.filter(event_type='F')):
+			animation = self.twitch_api.animation_set.filter(event_type='F')[0]
+			if(animation.alert):
+				self.send_bot_alert(animation)
 
 
 	# this will be called whenever the !reply command is issued
