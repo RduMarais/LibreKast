@@ -221,6 +221,7 @@ class Animation(models.Model):
 	event_type = models.CharField(_('Type of event to sub'), max_length=2,choices=(('F','Follow'),('S','Sub')), default='F')
 	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_animation_directory)
+	message = models.CharField(_('Additionnal message'), max_length=200,default=' just joined in !')
 
 	def __str__(self):
 		return self.name
