@@ -188,4 +188,5 @@ admin.site.register(RevolutionBot,RevolutionBotAdmin)
 admin.site.register(Flag,FlagAdmin)
 admin.site.register(FlagAttempt,FlagAttemptAdmin)
 admin.site.register(TwitchWebhook)
+admin.site.register(Animation)
 
