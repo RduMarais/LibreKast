@@ -84,6 +84,19 @@ class NewTwitchHandler(threading.Thread):
 			}
 		)
 
+	async def send_animation(self,animation):
+		if(settings.DEBUG): print(f'debug : sending alert {animation.name}')
+		await self.channel_layer.group_send(
+			self.meeting_group_name+'_chat',
+			{
+				'type': 'admin_message', # is it though ?
+				'message': {
+					'message':'revolution-alert',
+					'alert':{'url':animation.alert.url,'text':animation.message},
+				}
+			}
+		)
+
 
 #### BOTS, ANIMATION AND METHODS #####
 
@@ -116,7 +129,7 @@ class NewTwitchHandler(threading.Thread):
 		if(l > 0): # cant be async need to be in a sync to async or 
 			animation = animation_set[0]
 			if(animation.alert):
-				await self.meetingConsumer.send_bot_alert(animation) # await
+				await self.send_animation(animation) # await
 
 
 	# this will be called whenever the !reply command is issued
