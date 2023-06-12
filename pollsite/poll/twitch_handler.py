@@ -111,7 +111,7 @@ class NewTwitchHandler(threading.Thread):
 	async def on_follow(self, data: dict):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert`
-		animation_set = await async_to_sync(self.twitch_api.animation_set.filter)(event_type='F')
+		animation_set = await self.twitch_api.animation_set.filter(event_type='F')
 		l =  await len(animation_set)
 		if(l > 0): # cant be async need to be in a sync to async or 
 			animation = await animation_set[0]
