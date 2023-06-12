@@ -52,8 +52,8 @@ def get_revbot_directory(instance, filename):
 def get_animation_directory(instance, filename):
 	return 'bots/alert_{0}_{1}/{2}'.format(instance.twitch_api.id, instance.event_type, filename)
 
-# def get_alert_directory(instance, filename):
-# 	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
+def get_alert_directory(instance, filename):
+	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
 
 def get_default_buffer():
 	return {'triggers':[],'last_revolution':''}
