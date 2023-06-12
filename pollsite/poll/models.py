@@ -65,11 +65,13 @@ def get_default_buffer():
 class TwitchAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
 	description = models.TextField(_('Description of the API key'),max_length=400)
-	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
-	oauth = models.CharField(_('OAuth Token'),max_length=30) # will not be needed anymore
+	# oauth = models.CharField(_('OAuth Token'),max_length=30) # will not be needed anymore
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 	auth_code = models.CharField(_('Secret Auth code to get access and refresh tokens'),max_length=100,default='')
+	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
+	eventsub_callback_url = models.URLField(_('URL for EventSub callback'),max_length=150,blank=True)
+	eventsub_callback_port = models.IntegerField(_('Port to expose via a web server for EventSub callback'),default=8080)
 
 	def __str__(self):
 		return self.name
