@@ -70,7 +70,7 @@ class TwitchAPI(models.Model):
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
 	auth_code = models.CharField(_('Secret Auth code to get access and refresh tokens'),max_length=100,default='')
 	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
-	eventsub_callback_url = models.URLField(_('URL for EventSub callback'),max_length=150,blank=True)
+	eventsub_callback_url = models.URLField(_('URL for EventSub callback (no trailing /, leave blank if no event sub)'),max_length=150,blank=True)
 	eventsub_callback_port = models.IntegerField(_('Port to expose via a web server for EventSub callback'),default=8080)
 
 	def __str__(self):
@@ -208,10 +208,26 @@ class RevolutionBot(models.Model):
 			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
 			authorized_formats = ['video/mp4','video/quicktime','video/webm']
 			if(file_type not in authorized_formats):
-				raise ValidationError({'alert': "This file format is not allowed"})
+				raise ValidationError({'alert': _("This file format is not allowed")})
 
 	def __str__(self):
 		return f'{self.meeting.title}:rev:{self.command}'
+
+class Animation(models.Model):
+	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
+	event_type = models.CharField(_('Type of event to sub'), max_length=2,choices=(('F','Follow'),('S','Sub')), default='F')
+	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
+	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_revbot_directory)
+
+	def __str__(self):
+		return self.name
+
+	def clean(self):
+		if(self.alert):
+			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
+			authorized_formats = ['video/mp4','video/quicktime','video/webm']
+			if(file_type not in authorized_formats):
+				raise ValidationError({'alert': _("This file format is not allowed")})
 
 class TwitchWebhook(models.Model):
 	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')

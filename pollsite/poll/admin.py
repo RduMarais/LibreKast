@@ -8,7 +8,7 @@ from django.conf import settings
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
 from .models import Question,Choice,Meeting,Attendee,Flag,FlagAttempt,TwitchWebhook
-from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot #,TwitchChannel,YoutubeDirect
+from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot, Animation #,TwitchChannel,YoutubeDirect
 
 # administration of choices once in Question admin panel
 class ChoiceInline(admin.TabularInline):

@@ -111,6 +111,7 @@ class NewTwitchHandler(threading.Thread):
 	async def on_follow(self, data: dict):
 		print('DEBUG new : FOLLOW data = '+str(data))
 		# TODO Alert
+		self.send_bot_alert(self)))
 
 
 	# this will be called whenever the !reply command is issued
@@ -226,23 +227,25 @@ class NewTwitchHandler(threading.Thread):
 			self.meetingConsumer.meeting_group_name+'_admin',
 			{'type':"meeting_message",'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'}},
 			)
+		
 		### Event Sub (à init dans une aute méthode)
-		# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
-		print('DEBUG NEW : startinng creation of event sub')
-		self.event_sub = EventSub(self.twitch_api.eventsub_callback_url, self.twitch_api.client_id, self.twitch_api.eventsub_callback_port, self.twitch_new) # test webhook
-		self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
-		print('DEBUG NEW : created event sub')
-		self.event_sub.logger.propagate = True
-		await self.event_sub.unsubscribe_all()
-		print('DEBUG NEW : unsub')
-		self.event_sub.start()
-		print('DEBUG NEW : started event sub')
-		# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
-		#  has to be user id -> use dedicated class
-		me_user = await first(self.twitch_new.get_users(logins='rom___101'))
-		print(self.event_sub)
-		await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
-		print('DEBUG NEW : subbed for follows')
+		if(self.twitch_api.eventsub_callback_url):
+			# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
+			if(settings.DEBUG) : print('DEBUG NEW : startinng creation of event sub')
+			self.event_sub = EventSub(self.twitch_api.eventsub_callback_url, self.twitch_api.client_id, self.twitch_api.eventsub_callback_port, self.twitch_new) # test webhook
+			self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
+			if(settings.DEBUG) : print('DEBUG NEW : created event sub')
+			self.event_sub.logger.propagate = True
+			await self.event_sub.unsubscribe_all()
+			if(settings.DEBUG) : print('DEBUG NEW : unsub')
+			self.event_sub.start()
+			if(settings.DEBUG) : print('DEBUG NEW : started event sub')
+			if(self.twitch_api.animation_set.filter(event_type='F')):
+				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
+				#  has to be user id -> use dedicated class
+				me_user = await first(self.twitch_new.get_users(logins='rom___101'))
+				await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) #timesout
+				if(settings.DEBUG) : print('DEBUG NEW : subbed for follows')
 
 
 #### FINISH ####
