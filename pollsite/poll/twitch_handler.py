@@ -115,7 +115,7 @@ class NewTwitchHandler(threading.Thread):
 		if(animation_set):
 			animation = animation_set[0]
 			if(animation.alert):
-				self.send_bot_alert(animation)
+				await self.meetingConsumer.send_bot_alert(animation)
 
 
 	# this will be called whenever the !reply command is issued
