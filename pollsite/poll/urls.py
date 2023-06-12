@@ -17,6 +17,6 @@ urlpatterns = [
     path('<int:meeting_id>/flag_create_qr/<slug:flag_code>/', views.qr_flag, name='qr_flag'),
     path('<int:meeting_id>/alerts/', views.alerts, name='alerts'),
     path('<int:question_id>/results/', views.results, name='results'),
-    path('webhook/<int:webhook_id>/', views.twitch_webhook, name='twitch_webhook'), # spécifier l'id du webhook dans l'URL
     path('twitch_auth/<int:twitch_api_id>/', views.twitch_auth, name='twitch_auth'),
+    # path('webhook/<int:webhook_id>/', views.twitch_webhook, name='twitch_webhook'), # spécifier l'id du webhook dans l'URL
 ]
