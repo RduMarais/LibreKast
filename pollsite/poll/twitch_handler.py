@@ -27,7 +27,7 @@ from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
-USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS] # last one is for follows
+USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS, AuthScope.CHANNEL_READ_SUBSCRIPTIONS] # 4th one is for follows, 5th one for subs
 TEST_URL = 'http://localhost:8000/poll/twitch_auth/'
 TEST_URL = 'http://localhost:8000/poll/twitch_auth/1/?error=redirect_mismatch\u0026error_description=Parameter\u002bredirect_uri\u002bdoes\u002bnot\u002bmatch\u002bregistered\u002bURI\u0026state=385e7193-b84e-49dd-8740-e9fe885b8ea3";'
 
@@ -123,15 +123,17 @@ class NewTwitchHandler(threading.Thread):
 		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
 
 	# this will be called whenever someone subscribes to a channel
-	async def on_sub(self, sub: ChatSub):
-		print(f'New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
-		await self.print_message({'author':settings.TWITCH_NICKNAME,'text':sub.sub_message,'source':'t','sub':True})
+	async def on_chat_sub(self, sub: ChatSub):
+		if(settings.DEBUG) : print(f'debug : CHATSUB New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
+		await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'sub message : {sub.sub_message} // system message : {sub.system_message}','source':'t','sub':True})
 		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
 		# TODO Alert
+	
+	async def on_eventsub_sub(self, data: dict):
+		if(settings.DEBUG) : print(f'debug : EVENTSUB New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
 
 	async def on_follow(self, data: dict):
 		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
-		# TODO Alert`
 		animation_set = self.twitch_api.animation_set.filter(event_type='F') #await ? 
 		l =  await sync_to_async(len)(animation_set)
 		if(l > 0): # cant be async need to be in a sync to async or 
@@ -235,7 +237,7 @@ class NewTwitchHandler(threading.Thread):
 		# https://github.com/Teekeks/pyTwitchAPI
 
 		# listen to channel subscriptions
-		self.chat.register_event(ChatEvent.SUB, self.on_sub)
+		self.chat.register_event(ChatEvent.SUB, self.on_chat_sub)
 		# there are more events, you can view them all in this documentation
 		# await event_sub.listen_channel_follow_v2(user.id, user.id, on_follow)
 
@@ -266,13 +268,18 @@ class NewTwitchHandler(threading.Thread):
 				await self.send_error(message_dict={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})
 			if(settings.DEBUG) : print('DEBUG NEW : started event sub')
 			follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
+			sub_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='S')
+			me_user = await first(self.twitch_new.get_users(logins=self.twitch_api.username))
 			if(follow_animation_set):
 				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 				#  has to be user id -> use dedicated class
-				me_user = await first(self.twitch_new.get_users(logins=self.twitch_api.username))
-				if(settings.DEBUG): print(f'event sub with user {me_user}')
+				if(settings.DEBUG): print(f'event sub follow with user {me_user}')
 				await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
 				if(settings.DEBUG) : print('DEBUG NEW : subbed for follows')
+			if(sub_animation_set):
+				if(settings.DEBUG): print(f'event sub subscribe')
+				await self.event_sub.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
+				if(settings.DEBUG) : print('DEBUG NEW : subbed for subs')
 
 
 #### FINISH ####

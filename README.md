@@ -106,7 +106,7 @@ v0.4.1 :
 	 	 	 * create buffers in self.XX on registering commands
 	 	 * [x] follows
 	 	 * [ ] subs
-	 	 * [ ] other events
+	 	 * [x] sub icon
 	 	 * [x] send message to admin/chat
 
 
