@@ -24,6 +24,10 @@ function playAlert(alert){
 }
 
 function addChatLog(chatMessage){
+	if(isFirstMessage){
+		document.querySelector('#librekast-chatlog-init').remove();
+		isFirstMessage = false;
+	}
 	// let chatLogSize = {{ meeting.chat_log_size }} -1;
 	let chatlog = document.querySelector('#chatlog-content');
 	if(chatlog.childElementCount>=chatLogSize){
