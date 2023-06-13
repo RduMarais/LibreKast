@@ -27,16 +27,14 @@ from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
 TWITCH_MSG_PERIOD = 5
-USER_SCOPE = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS, AuthScope.CHANNEL_READ_SUBSCRIPTIONS] # 4th one is for follows, 5th one for subs
-TEST_URL = 'http://localhost:8000/poll/twitch_auth/'
-TEST_URL = 'http://localhost:8000/poll/twitch_auth/1/?error=redirect_mismatch\u0026error_description=Parameter\u002bredirect_uri\u002bdoes\u002bnot\u002bmatch\u002bregistered\u002bURI\u0026state=385e7193-b84e-49dd-8740-e9fe885b8ea3";'
 
 ## Uses : https://github.com/PetterKraabol/Twitch-Python
 
 # no need for run start and stop bc the lib Twtich class itselfs extends the Thread class
 class NewTwitchHandler(threading.Thread):
 	meetingConsumer = None
-	TARGET_SCOPES = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS]
+	# 4th one is for follows, 5th one for subs
+	TARGET_SCOPES = [AuthScope.CHAT_READ, AuthScope.CHAT_EDIT,AuthScope.MODERATOR_READ_FOLLOWERS, AuthScope.CHANNEL_READ_SUBSCRIPTIONS]
 
 
 #### GENERAL METHODS #####
