@@ -33,6 +33,9 @@ function showAlert(alertObj){
 		alertNotif.style = "background-color: lightyellow;"
 		alertTextBox.innerText = alertObj['text'];
 		alertTextBox.classList.add('italic');
+	} else if(alertObj['message'] === "error") {
+		alertNotif.classList.style = "background-color: lightpink;"
+		alertTextBox.innerText = alertObj['text'];
 	} else {
 		alertNotif.classList.style = "background-color: lightpink;"
 		alertTextBox.innerText = alertObj;

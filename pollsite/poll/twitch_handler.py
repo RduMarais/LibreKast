@@ -97,6 +97,14 @@ class NewTwitchHandler(threading.Thread):
 			}
 		)
 
+	async def send_error(self,message_dict):
+		await self.meetingConsumer.channel_layer.group_send(
+				self.meetingConsumer.meeting_group_name+'_admin',
+				{'type':"meeting_message",
+				'message': message_dict,
+				},
+			)
+
 
 #### BOTS, ANIMATION AND METHODS #####
 
@@ -187,12 +195,8 @@ class NewTwitchHandler(threading.Thread):
 			if(settings.DEBUG) : print('[1] url to connect to : '+self.auth.return_auth_url())
 
 			# Send URL for oAuth
-			await self.meetingConsumer.channel_layer.group_send(
-				self.meetingConsumer.meeting_group_name+'_admin',
-				{'type':"meeting_message",
-				'message': {'message':'twitch-oauth-error','text':f'You need another Twitch API credential :','url':auth_url },
-				},
-				)
+			await self.send_error(message={'message':'twitch-oauth-error','text':f'You need another Twitch API credential :','url':auth_url })
+
 			if(settings.DEBUG) : print('[1] debug new : before channel name listening')
 			# await self.meetingConsumer.channel_layer.group_discard(
 			await self.meetingConsumer.channel_layer.group_add(
@@ -256,7 +260,10 @@ class NewTwitchHandler(threading.Thread):
 			self.event_sub.logger.propagate = True
 			await self.event_sub.unsubscribe_all()
 			if(settings.DEBUG) : print('DEBUG NEW : unsub')
-			self.event_sub.start()
+			try : 
+				self.event_sub.start()
+			except Exception as e : 
+				await self.send_error(message={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})
 			if(settings.DEBUG) : print('DEBUG NEW : started event sub')
 			follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
 			if(follow_animation_set):
