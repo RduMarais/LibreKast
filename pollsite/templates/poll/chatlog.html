@@ -1,4 +1,3 @@
-{% extends "base_layout.html" %}
 {% load i18n %}
 {% load static %}
 
@@ -31,9 +30,9 @@
 {% block javascript %}
 <script src="{% static 'poll/js/chat.js' %}"></script>
 <script>
-	var meetingPlatform = '{{meeting.platform}}' ; 
+	const meetingPlatform = '{{meeting.platform}}' ; 
 	var botMsgPrefix = '{{ bot_msg_prefix }}' ; 
-	var isFirstMessage = true ; 
+	// var isFirstMessage = true ; 
 
 	{% if meeting.platform != 'IRL' %}
 
@@ -47,8 +46,7 @@
 	);
 
 	const chatLogSize = {{ meeting.obs_chat_log_size }} +1;
-	const meetingPlatform = '{{meeting.platform}}' ;
-	
+
 	const twitch_icon_url = "{% static 'twitch-icon.png' %}";
 	const sub_icon_url = "{% static 'sub-icon.png' %}";
 	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
