@@ -53,10 +53,16 @@ function addChatLog(chatMessage){
 		u.classList.remove('text-blue-700');
 		u.classList.add("librekast-twitch-username","text-purple-700","dark:text-purple-500");
 		if(meetingPlatform == 'MX'){
-		let twitchIcon = document.createElement('img');
-		twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
-		twitchIcon.src = twitch_icon_url;
-		l.appendChild(twitchIcon);
+			let twitchIcon = document.createElement('img');
+			twitchIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			twitchIcon.src = twitch_icon_url;
+			l.appendChild(twitchIcon);
+		}
+		if(chatMessage['sub']){
+			let subIcon = document.createElement('img');
+			subIcon.classList.add("w-4","mr-1","inline","librekast-chatlog-platform");
+			subIcon.src = sub_icon_url;
+			l.appendChild(subIcon);
 		}
 	}
 	if(chatMessage['source']=='b'){
