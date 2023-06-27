@@ -18,7 +18,7 @@ from google.auth.exceptions import RefreshError
 from .models import Choice, Question, Meeting,Attendee,Vote
 from .views import get_previous_user_answers
 from .youtube_handler import YoutubeHandler,YoutubeOAuthError,YoutubeChatError
-from .twitch_handler import TwitchHandler, TwitchChatError, NewTwitchHandler
+from .twitch_handler import TwitchChatError, NewTwitchHandler
 from .utils import validate_flag_attempt
 
 

@@ -46,6 +46,7 @@ from pprint import pprint
 
 DB_TEST = "../../refonte_pour_info_no_sync/pourinfo/db.sqlite3"
 DB_PROD = "../../pour-info.tech/pourinfo/db.sqlite3"
+BOT_TEXT_LIMIT = 600
 
 CATEGORIES = [
 	{'nom':'La UNE',								'cmd':'une',			'bot':'la UNE de cette semaine'				},
@@ -108,7 +109,8 @@ class Command(BaseCommand):
 				print(bots_candidates)
 				bot_text = categorie['bot'] + ' : '
 				for a in h.news_list:
-					bot_text += a.text+' // '
+					if(len(bot_text)+len(a.text) >= BOT_TEXT_LIMIT):
+						bot_text += a.text+' // '
 				for bot in bots_candidates:
 					if (self.verbosity > 1):
 						print('- bot found')

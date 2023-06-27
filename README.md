@@ -88,8 +88,7 @@ v0.4.1 :
 	 * [x] BUG : reg bots youtube never stop
 	 * [ ] BUG : identify with counters, reproduce & solve error making YT consumer stop
  * Twitch animations
-	 * [-] Twitch get follows with callback
-	 	 * **ERROR**
+	 * [x] Twitch get follows with callback
 	 	 * [x] créer une API (url + une vue)
 	 	 * [x] créer un modèle webhook lié aux meeting
 	 	 * [x] vérifie le HMAC à la réception du webhook
@@ -105,7 +104,7 @@ v0.4.1 :
 	 	 * [ ] revolution bots
 	 	 	 * create buffers in self.XX on registering commands
 	 	 * [x] follows
-	 	 * [ ] subs
+	 	 * [x] subs
 	 	 * [x] sub icon
 	 	 * [x] send message to admin/chat
 
@@ -125,6 +124,8 @@ Next steps :
 		 * [ ] move JS in a specific file
 		 * [ ] Back : run tests with meetingConsumer
 		 * [ ] Back : test periodic bots
+	 * Setup stream title with a command
+	 	 * [requires User authentication](https://pytwitchapi.readthedocs.io/en/stable/modules/twitchAPI.twitch.html#twitchAPI.twitch.Twitch.modify_channel_information)
  * v0.4.3 : Stateful meeting, ChatGPT & bots
 	 * stateful meeting
 		 * [x] back : current question state
