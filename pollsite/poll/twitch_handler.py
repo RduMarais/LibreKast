@@ -276,8 +276,8 @@ class NewTwitchHandler(threading.Thread):
 	def terminate(self):
 		if(hasattr(self,'event_sub')):
 			try:
-				self.event_sub.unsubscribe_all()
-				self.event_sub.stop()
+				await self.event_sub.unsubscribe_all()
+				await self.event_sub.stop()
 				if(settings.DEBUG) : print('debug : event sub stopped')
 			except Exception as e:
 				if(settings.DEBUG) : print('debug : error stopping event sub')
