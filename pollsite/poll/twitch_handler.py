@@ -103,6 +103,13 @@ class NewTwitchHandler(threading.Thread):
 				},
 			)
 
+	async def stop_event_sub(self):
+		try:
+			await self.event_sub.unsubscribe_all()
+			await self.event_sub.stop()
+			if(settings.DEBUG) : print('debug : event sub stopped')
+		except Exception as e:
+			if(settings.DEBUG) : print('debug : error stopping event sub')
 
 #### BOTS, ANIMATION AND METHODS #####
 
@@ -275,12 +282,7 @@ class NewTwitchHandler(threading.Thread):
 
 	def terminate(self):
 		if(hasattr(self,'event_sub')):
-			try:
-				await self.event_sub.unsubscribe_all()
-				await self.event_sub.stop()
-				if(settings.DEBUG) : print('debug : event sub stopped')
-			except Exception as e:
-				if(settings.DEBUG) : print('debug : error stopping event sub')
+			asyncio.run(self.stop_event_sub())
 		if(hasattr(self,'chat')):
 			self.chat.stop()
 		if(settings.DEBUG) : print('NTW : stopped')
