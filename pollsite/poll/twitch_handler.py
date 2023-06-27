@@ -282,10 +282,8 @@ class NewTwitchHandler(threading.Thread):
 
 	def terminate(self):
 		if(hasattr(self,'event_sub')):
-			loop = asyncio.get_event_loop()
-			loop.run_until_complete(asyncio.wait([asyncio.async(self.stop_event_sub())]))
-			loop.close()
-			# asyncio.run(self.stop_event_sub())
+			a = asyncio.run(self.stop_event_sub())
+			print(a)
 		if(hasattr(self,'chat')):
 			self.chat.stop()
 		if(settings.DEBUG) : print('NTW : stopped')
