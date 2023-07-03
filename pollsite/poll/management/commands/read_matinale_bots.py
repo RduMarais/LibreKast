@@ -47,6 +47,7 @@ from pprint import pprint
 DB_TEST = "../../refonte_pour_info_no_sync/pourinfo/db.sqlite3"
 DB_PROD = "../../pour-info.tech/pourinfo/db.sqlite3"
 BOT_TEXT_LIMIT = 600
+BLOG_URL = "https://pour-info.tech/blog/"
 
 CATEGORIES = [
 	{'nom':'La UNE',								'cmd':'une',			'bot':'la UNE de cette semaine'				},
@@ -94,7 +95,8 @@ class Command(BaseCommand):
 		if(self.verbosity > 2):
 			print(a)
 			print(type(a))
-			# print(type(a[0]))
+			print(type(a[0]))
+			print(type(a[1]))
 			print(type(rows))
 		return a
 
@@ -127,10 +129,11 @@ class Command(BaseCommand):
 		print(f'- defining date :{slug}')
 		if(meeting.messagebot_set.filter(command='sources')):
 			bot_src = meeting.messagebot_set.filter(command='sources')[0]
-			bot_src.message = slug
+			bot_src.message = f'les sources de la matinale : {BLOG_URL}{slug}/'
 			bot_src.save()
 		if(meeting.periodicbot_set.filter(name='sources')):
 			bot_src = meeting.periodicbot_set.filter(name='sources')[0]
+			bot_src.message = f'les sources de la matinale : {BLOG_URL}{slug}/'
 			bot_src.save()
 
 	def define_dates(self,meeting):
@@ -168,7 +171,7 @@ class Command(BaseCommand):
 			else:
 				return
 		if(self.verbosity>1): print('- source markdown fetched')
-		# print(source_markdown)
+		if(self.verbosity >2): print(source_markdown)
 		if(self.verbosity >2): print(type(source_markdown[0]))
 		debug = self.verbosity>2
 		actus = MarkdownParsing(debug=debug)
