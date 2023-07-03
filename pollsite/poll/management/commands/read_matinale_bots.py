@@ -112,12 +112,14 @@ class Command(BaseCommand):
 				print(bots_candidates)
 				bot_text = categorie['bot'] + ' : '
 				for a in h.news_list:
-					if(len(bot_text)+len(a.text) >= BOT_TEXT_LIMIT):
+					if(len(bot_text)+len(a.text) <= BOT_TEXT_LIMIT):
 						bot_text += a.text+' // '
+						if (self.verbosity > 2):
+							print(('- actu added'))
 				for bot in bots_candidates:
 					if (self.verbosity > 1):
 						print('- bot found and set up')
-					bot.message = bot_text[:-4]
+					bot.message = bot_text
 				bot.save()
 				if (self.verbosity > 1):
 					print(f'- bot {bot} saved ')
