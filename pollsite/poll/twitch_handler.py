@@ -257,7 +257,7 @@ class NewTwitchHandler(threading.Thread):
 			await self.event_sub.unsubscribe_all()
 			if(settings.DEBUG) : print('DEBUG NEW : unsub')
 			try : 
-				self.event_sub.start()
+				await self.event_sub.start()
 				print(self)
 			except Exception as e : 
 				await self.send_error(message_dict={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})

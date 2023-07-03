@@ -113,11 +113,24 @@ class Command(BaseCommand):
 						bot_text += a.text+' // '
 				for bot in bots_candidates:
 					if (self.verbosity > 1):
-						print('- bot found')
+						print('- bot found and set up')
 					bot.message = bot_text[:-4]
 				bot.save()
+				if (self.verbosity > 1):
+					print(f'- bot {bot} saved ')
 			else:
 				print(f'### {h.title} (NOT found)')
+	
+	# A TESTER
+	def define_sources(self,meeting,slug):
+		print(f'- defining date :{slug}')
+		if(meeting.messagebot_set.filter(command='sources')):
+			bot_src = meeting.messagebot_set.filter(command='sources')[0]
+			bot_src.message = slug
+			bot_src.save()
+		if(meeting.periodicbot_set.filter(name='sources')):
+			bot_src = meeting.periodicbot_set.filter(name='sources')[0]
+			bot_src.save()
 
 	def define_dates(self,meeting):
 		if(self.verbosity>1): print('- time reset')
@@ -173,6 +186,7 @@ class Command(BaseCommand):
 			return
 		self.define_dates(meetings[0])
 		self.define_bots(meetings[0],actus)
+		self.define_sources(meetings[0],source_markdown[1])
 		self.stdout.write(self.style.SUCCESS('Successfully executed'))
 
 # fetch_source_markdown(DB_TEST,'2022-02-26')
