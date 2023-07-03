@@ -92,8 +92,9 @@ class Command(BaseCommand):
 		# 		print(f'row : {row}')
 		a = rows.fetchone()
 		if(self.verbosity > 2):
+			print(a)
 			print(type(a))
-			print(type(a[0]))
+			# print(type(a[0]))
 			print(type(rows))
 		return a
 
