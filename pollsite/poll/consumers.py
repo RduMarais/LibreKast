@@ -127,15 +127,15 @@ class MeetingConsumer(WebsocketConsumer):
 		self.meeting = Meeting.objects.get(pk=meeting_id)
 		self.meeting_group_name = 'meeting_'+str(self.meeting.id)
 
-		try:
-			# Join group
-			async_to_sync(self.channel_layer.group_add)(
-				self.meeting_group_name,
-				self.channel_name
-			)
-		except Exception as e :
-			print(_('Error : cache (Redis) fail'))
-			raise(e)
+		# try:
+		# Join group
+		async_to_sync(self.channel_layer.group_add)(
+			self.meeting_group_name,
+			self.channel_name
+		)
+		# except Exception as e :
+		# 	print(_('Error : cache (Redis) fail'))
+		# 	raise(e)
 		# join admin group if needed
 		if(self.is_user_authenticated()):
 			async_to_sync(self.channel_layer.group_add)(

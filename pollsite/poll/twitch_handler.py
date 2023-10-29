@@ -11,10 +11,12 @@ import asyncio
 
 from twitchAPI.twitch import Twitch
 from twitchAPI.oauth import UserAuthenticator
-from twitchAPI.types import AuthScope, ChatEvent, TwitchAPIException
+from twitchAPI.type import AuthScope, ChatEvent, TwitchAPIException
 from twitchAPI.helper import first
+from twitchAPI.object.eventsub import ChannelFollowEvent
 from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand
-from twitchAPI.eventsub import EventSub # à changer
+# from twitchAPI.eventsub import EventSub # à changer
+from twitchAPI.eventsub.websocket import EventSubWebsocket
 
 from django.utils import timezone
 from django.conf import settings
@@ -105,8 +107,10 @@ class NewTwitchHandler(threading.Thread):
 
 	async def stop_event_sub(self):
 		try:
-			await self.event_sub.unsubscribe_all()
-			await self.event_sub.stop()
+			# await self.event_sub.unsubscribe_all()
+			await self.event_sub_new.unsubscribe_all()
+			# await self.event_sub.stop()
+			await self.event_sub_new.stop()
 			if(settings.DEBUG) : print('debug : event sub stopped')
 		except Exception as e:
 			if(settings.DEBUG) : print('debug : error stopping event sub')
@@ -124,7 +128,8 @@ class NewTwitchHandler(threading.Thread):
 	# this will be called whenever a message in a channel was send by either the bot OR another user
 	async def on_message(self, msg: ChatMessage):
 		print(f'debug new : {msg.user.name} dit "{msg.text}" ({msg.room.name})')
-		print(f'debug new : {self.event_sub}')
+		# print(f'debug new : {self.event_sub}')
+		# print(f'debug new : {self.event_sub_new}')
 		# user is ChatUser -> msg.user.vip, msg.user.subscriber, msg.user.mod, msg.user.badge_info aussi msg.bits
 		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
 
@@ -138,14 +143,19 @@ class NewTwitchHandler(threading.Thread):
 	async def on_eventsub_sub(self, data: dict):
 		if(settings.DEBUG) : print(f'debug : EVENTSUB New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
 
-	async def on_follow(self, data: dict):
-		if(settings.DEBUG) : print('DEBUG new : FOLLOW data = '+str(data))
+	async def on_follow(self, data: ChannelFollowEvent):
+		if(settings.DEBUG) : print('debug notifs : FOLLOW data = '+str(data))
 		animation_set = self.twitch_api.animation_set.filter(event_type='F') #await ? 
 		l =  await sync_to_async(len)(animation_set)
 		if(l > 0): # cant be async need to be in a sync to async or 
+			if(settings.DEBUG) : print('debug notifs : animation will start')
 			animation = animation_set[0]
 			if(animation.alert):
 				await self.send_animation(animation) # await
+			else:
+				if(settings.DEBUG) : print('debug notifs : no animation file')
+		else:
+			if(settings.DEBUG) : print('debug notifs : no animation set')
 
 
 	# this will be called whenever the !reply command is issued
@@ -247,21 +257,26 @@ class NewTwitchHandler(threading.Thread):
 			)
 		
 		### Event Sub (à init dans une aute méthode)
-		if(self.twitch_api.eventsub_callback_url):
+		if(self.twitch_api.eventsub_callback_url or True):
 			# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
-			if(settings.DEBUG) : print('DEBUG NEW : startinng creation of event sub')
-			self.event_sub = EventSub(self.twitch_api.eventsub_callback_url, self.twitch_api.client_id, self.twitch_api.eventsub_callback_port, self.twitch_new) # test webhook
-			self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
-			if(settings.DEBUG) : print('DEBUG NEW : created event sub')
-			self.event_sub.logger.propagate = True
-			await self.event_sub.unsubscribe_all()
-			if(settings.DEBUG) : print('DEBUG NEW : unsub')
-			try : 
-				self.event_sub.start()
-				print(self)
-			except Exception as e : 
-				await self.send_error(message_dict={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})
-			if(settings.DEBUG) : print('DEBUG NEW : started event sub')
+			if(settings.DEBUG) : print('debug notifs : startinng creation of event sub')
+			self.event_sub_new = EventSubWebsocket(self.twitch_new)
+			# self.event_sub = EventSub(self.twitch_api.eventsub_callback_url, self.twitch_api.client_id, self.twitch_api.eventsub_callback_port, self.twitch_new) # test webhook
+			# self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
+			if(settings.DEBUG) : print('debug notifs: created event sub')
+			# self.event_sub.logger.propagate = True
+			self.event_sub_new.logger.propagate = True
+			# await self.event_sub.unsubscribe_all()
+			await self.event_sub_new.unsubscribe_all()
+			if(settings.DEBUG) : print('debug notifs : unsub')
+			# try : 
+				# self.event_sub.start()
+			self.event_sub_new.start()
+			# print(self)
+			# except Exception as e : 
+			# 	raise e
+				# await self.send_error(message_dict={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})
+			if(settings.DEBUG) : print('debug notifs : started event sub')
 			follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
 			sub_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='S')
 			me_user = await first(self.twitch_new.get_users(logins=self.twitch_api.username))
@@ -269,19 +284,22 @@ class NewTwitchHandler(threading.Thread):
 				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
 				#  has to be user id -> use dedicated class
 				if(settings.DEBUG): print(f'event sub follow with user {me_user.id}')
-				await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
-				if(settings.DEBUG) : print('DEBUG NEW : subbed for follows')
+				# await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
+				await self.event_sub_new.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
+				if(settings.DEBUG) : print('debug notifs : subbed for follows')
 			if(sub_animation_set):
 				if(settings.DEBUG): print(f'event sub subscribe')
-				await self.event_sub.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
-				if(settings.DEBUG) : print('DEBUG NEW : subbed for subs')
-				print(self.event_sub)
+				# await self.event_sub.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
+				await self.event_sub_new.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
+				if(settings.DEBUG) : print('debug notifs : subbed for subs')
+				# print(self.event_sub)
+				print(self.event_sub_new)
 
 
 #### FINISH ####
 
 	def terminate(self):
-		if(hasattr(self,'event_sub')):
+		if(hasattr(self,'event_sub_new') or hasattr(self,'event_sub')):
 			async_to_sync(self.stop_event_sub)()
 		if(hasattr(self,'chat')):
 			self.chat.stop()
