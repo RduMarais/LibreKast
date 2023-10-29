@@ -28,7 +28,7 @@ pytchat==0.5.5
 
 # For Twitch API
 # twitch-python==0.0.20
-git+https://github.com/RduMarais/Twitch-Python@main
+# git+https://github.com/RduMarais/Twitch-Python@main
 twitchAPI
 
 # For Youtube API

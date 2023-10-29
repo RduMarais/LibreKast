@@ -163,15 +163,15 @@ class YTAPIAdmin(admin.ModelAdmin):
 
 class MsgBotAdmin(admin.ModelAdmin):
 	list_display =('command','is_active','meeting')
-	list_editable = ('is_active',)
+	list_editable = ('is_active','meeting')
 
 class PeriodBotAdmin(admin.ModelAdmin):
 	list_display =('name','is_active','meeting')
-	list_editable = ('is_active',)
+	list_editable = ('is_active','meeting')
 
 class RevolutionBotAdmin(admin.ModelAdmin):
 	list_display =('command','is_active','meeting')
-	list_editable = ('is_active',)
+	list_editable = ('is_active','meeting')
 	exclude = ('buffer',)
 
 admin.site.register(Question, QuestionAdmin)

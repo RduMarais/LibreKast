@@ -113,6 +113,7 @@ Next steps :
 
  * v0.4.2 : Code Quality & Improvements on existing features
 	 * Stream questions
+	 	 * [ ] CHECK if user is live -> for HTB
 		 * [ ] BUG : reproduce & solve error in transition from YT WC to YT poll in prod throwing an exception
 		 * [ ] BUG : reproduce & solve error in transition from IRL WC to keep WC going
 		 * [ ] make special OBS screen for Polls
