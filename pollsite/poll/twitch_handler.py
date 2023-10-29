@@ -107,9 +107,7 @@ class NewTwitchHandler(threading.Thread):
 
 	async def stop_event_sub(self):
 		try:
-			# await self.event_sub.unsubscribe_all()
 			await self.event_sub_new.unsubscribe_all()
-			# await self.event_sub.stop()
 			await self.event_sub_new.stop()
 			if(settings.DEBUG) : print('debug : event sub stopped')
 		except Exception as e:
@@ -306,8 +304,8 @@ class NewTwitchHandler(threading.Thread):
 		if(settings.DEBUG) : print('NTW : stopped')
 
 
-# TODO not used anymore
-class TwitchChatError(Exception):
-	def __init__(self,message):
-		self.message = message
-		super().__init__(message)
+# # TODO not used anymore
+# class TwitchChatError(Exception):
+# 	def __init__(self,message):
+# 		self.message = message
+# 		super().__init__(message)
