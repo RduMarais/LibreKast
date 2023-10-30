@@ -214,7 +214,7 @@ REVOLUTION_AUTPLAY_HEADER = "Feature-Policy: autoplay 'self'"
 # If you expect N people to show up in the stream, I recommend something like : 60*(4+100/N) seconds
 PERIODIC_BOT_DELAY = 800
 
-TWITCH_NICKNAME = 'LibreKast_Bot'
+TWITCH_NICKNAME = 'LibreKast_Bot' #unused
 
 YOUTUBE_REDIRECT_URIS = ["http://localhost", "urn:ietf:wg:oauth:2.0:oob"]
 YOUTUBE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
@@ -222,7 +222,7 @@ YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 # YOUTUBE_TOKEN_URI='https://accounts.google.com/o/oauth2/token'
 YTAPI_SCOPES = ["https://www.googleapis.com/auth/youtube.readonly","https://www.googleapis.com/auth/youtube.force-ssl"]
 
-CHATGPT_BOT_COMMAND= "chatgpt"
+CHATGPT_BOT_COMMAND= "chatgpt" #unused
 
 #### SECURITY SETTINGS
 

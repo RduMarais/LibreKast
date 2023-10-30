@@ -33,7 +33,7 @@ function showAlert(alertObj){
 		alertNotif.style = "background-color: lightyellow;"
 		alertTextBox.innerText = alertObj['text'];
 		alertTextBox.classList.add('italic');
-	} else if(alertObj['message'] === "error") {
+	} else if(alertObj['message'] === "error" || alertObj['message'] === "admin-error") {
 		alertNotif.classList.style = "background-color: lightpink;"
 		alertTextBox.innerText = alertObj['text'];
 	} else {

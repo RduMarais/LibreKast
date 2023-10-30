@@ -48,10 +48,10 @@
 
 	const chatLogSize = {{ meeting.obs_chat_log_size }} +1;
 
-	const twitch_icon_url = "{% static 'twitch-icon.png' %}";
-	const sub_icon_url = "{% static 'sub-icon.png' %}";
-	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
-	const bot_icon_url = "{% static 'bot-icon.png' %}";
+	const twitch_icon_url = "{% static 'poll/icons/twitch-icon.png' %}";
+	const sub_icon_url = "{% static 'poll/icons/sub-icon.png' %}";
+	const youtube_icon_url = "{% static 'poll/icons/youtube-icon.png' %}";
+	const bot_icon_url = "{% static 'poll/icons/bot-icon.png' %}";
 
 	function showWait(){
 		questionTitle.innerText = "{% trans "Next Activity is about to start..." %}";

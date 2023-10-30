@@ -141,13 +141,13 @@
 			  {% if meeting.platform != 'IRL' %}
 			  <td>
 			  	{% if attendee.is_youtube %}
-			  	<img class="w-4" src="{% static 'youtube-icon.png' %}">
+			  	<img class="w-4" src="{% static 'poll/icons/youtube-icon.png' %}">
 			  	{% endif %}
 				{% if attendee.is_twitch %}
-				<img class="w-4" src="{% static 'twitch-icon.png' %}">
+				<img class="w-4" src="{% static 'poll/icons/twitch-icon.png' %}">
 				{% endif %}
 			  	{% if attendee.is_subscriber %}
-			  	<img class="w-4" src="{% static 'sub-icon.png' %}">
+			  	<img class="w-4" src="{% static 'poll/icons/sub-icon.png' %}">
 				{% endif %}
 			  </td>
 			  {% endif %}
@@ -197,10 +197,10 @@
 	const chatLogSize = {{ meeting.chat_log_size }} -1;
 	
 	const meeting_qr_url = "{% url 'poll:qr_meeting' meeting.id %}";
-	const twitch_icon_url = "{% static 'twitch-icon.png' %}";
-	const sub_icon_url = "{% static 'sub-icon.png' %}";
-	const youtube_icon_url = "{% static 'youtube-icon.png' %}";
-	const bot_icon_url = "{% static 'bot-icon.png' %}";
+	const twitch_icon_url = "{% static 'poll/icons/twitch-icon.png' %}";
+	const sub_icon_url = "{% static 'poll/icons/sub-icon.png' %}";
+	const youtube_icon_url = "{% static 'poll/icons/youtube-icon.png' %}";
+	const bot_icon_url = "{% static 'poll/icons/bot-icon.png' %}";
 
 	const trans_copied_clipboard = '{% trans " copied in the clipboard" %}';
 

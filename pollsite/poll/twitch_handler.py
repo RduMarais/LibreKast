@@ -255,7 +255,7 @@ class NewTwitchHandler(threading.Thread):
 			)
 		
 		### Event Sub (à init dans une aute méthode)
-		if(self.twitch_api.eventsub_callback_url or True):
+		if(self.twitch_api.eventsub_callback_url or True): # TODO clean ça
 			# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
 			if(settings.DEBUG) : print('debug notifs : startinng creation of event sub')
 			self.event_sub_new = EventSubWebsocket(self.twitch_new)
@@ -305,7 +305,7 @@ class NewTwitchHandler(threading.Thread):
 
 
 # # TODO not used anymore
-# class TwitchChatError(Exception):
-# 	def __init__(self,message):
-# 		self.message = message
-# 		super().__init__(message)
+class TwitchChatError(Exception):
+	def __init__(self,message):
+		self.message = message
+		super().__init__(message)
