@@ -212,7 +212,7 @@ REVOLUTION_AUTPLAY_HEADER = "Feature-Policy: autoplay 'self'"
 
 # How many seconds between the automated messages 
 # If you expect N people to show up in the stream, I recommend something like : 60*(4+100/N) seconds
-PERIODIC_BOT_DELAY = 800
+PERIODIC_BOT_DELAY = 10
 
 TWITCH_NICKNAME = 'LibreKast_Bot' #unused
 

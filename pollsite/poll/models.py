@@ -146,7 +146,7 @@ class Meeting(models.Model):
 	qrcode = models.ImageField(_('internal QR code'),null = True,blank=True,upload_to=get_meeting_directory)
 	show_flags = models.BooleanField(_('Display the text inputs for flag bonus points'),default=False)
 	flags_prefix = models.CharField(_('prefix for flags'),default='LibreKast',max_length=20,blank=True)
-	periodic_bot_delay = models.IntegerField(_('Delay between regular bots'),default=settings.PERIODIC_BOT_DELAY)
+	periodic_bot_delay = models.IntegerField(_('Send a periodic bot message every X message received'),default=settings.PERIODIC_BOT_DELAY)
 
 	class Meta:
 		verbose_name = _('Meeting')
