@@ -810,12 +810,12 @@ class MeetingConsumer(WebsocketConsumer):
 				if(settings.DEBUG): print('debug : added last to buffer')
 			revolution_bot.save()
 
-	# returns the message corresponding to the bot with index periodic_bot_iterator
-	def get_periodic_bot(self,periodic_bot_iterator):
-		if(self.meeting.periodicbot_set.filter(is_active=True)):
-			return settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[periodic_bot_iterator].message
-		else:
-			return False
+	# # returns the message corresponding to the bot with index periodic_bot_iterator
+	# def get_periodic_bot(self,periodic_bot_iterator):
+	# 	if(self.meeting.periodicbot_set.filter(is_active=True)):
+	# 		return settings.BOT_MSG_PREFIX+self.meeting.periodicbot_set.filter(is_active=True)[periodic_bot_iterator].message
+	# 	else:
+	# 		return False
 
 
 

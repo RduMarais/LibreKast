@@ -42,7 +42,8 @@ class YoutubeHandler(threading.Thread):
 		self._polling = False # is the handler listening for answers to LibreKast questions
 		self.listener = pytchat.create(video_id=yt_id,interruptable=False)
 		# for bots 
-		self.time_iterator = 0
+		self.periodic_bots = [] 
+		self.msg_iterator = 0
 		self.periodic_bot_iterator = 0
 
 		if(youtube_api):
@@ -203,7 +204,7 @@ class YoutubeHandler(threading.Thread):
 		if(chat_msg.author.isChatSponsor):
 			self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'ys'})
 		elif(chat_msg.message.startswith(settings.BOT_MSG_PREFIX) or chat_msg.message.startswith(settings.BOT_MSG_PREFIX_YOUTUBE_ENCODED)):
-			print('debug : message sent by a bot, so not re-showing it in the librekast chat')
+			if(settings.DEBUG): print('debug : message sent by a bot, so not re-showing it in the librekast chat')
 			print(str(chat_msg.message) +' : '+ str(chat_msg.author.name))
 			# self.meetingConsumer.notify_chat({'author':chat_msg.author.name,'text':chat_msg.message,'source':'y'})
 		else:
@@ -237,17 +238,40 @@ class YoutubeHandler(threading.Thread):
 		except:
 			print("Error posting message on youtube live chat")
 
-	def regulary_send_periodic_bot(self):
-		self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
-		if(self.time_iterator % self.meetingConsumer.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
-			self.send_message(self.meetingConsumer.get_periodic_bot(self.periodic_bot_iterator))
-			# iterate over the periodic bots
-			self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True))
+
+	def iterate_periodic_bot(self,chat_msg):
+		self.msg_iterator += 1
+		# iterate a local counter and send a message every "periodic_bot_delay" message
+		if(self.msg_iterator % self.meetingConsumer.meeting.periodic_bot_delay == 0):
+			# send a specific message
+			message_text = self.periodic_bots[self.periodic_bot_iterator].message
+			if(settings.DEBUG) : print(f'debug : sending periodic bot message : {message_text}')
+			self.send_message(f'{settings.BOT_MSG_PREFIX} {message_text}')
+			# await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'{settings.BOT_MSG_PREFIX} {message_text}','source':'b'})
+			self.meetingConsumer.notify_chat({'author':settings.TWITCH_NICKNAME,'text':message_text,'source':'b'})
+
+			# iterate through the messages to send
+			self.periodic_bot_iterator += 1
+
+			if(self.periodic_bot_iterator % len(self.periodic_bots) == 0):
+				# reset the periodic bot to send
+				self.periodic_bot_iterator = 0
+
+
+	# def regulary_send_periodic_bot(self):
+	# 	self.time_iterator = (self.time_iterator + 1) % 3600 # this is a counter
+	# 	if(self.time_iterator % self.meetingConsumer.meeting.periodic_bot_delay == 0): # every periodic_bot_delay seconds, do 
+	# 		self.send_message(self.meetingConsumer.get_periodic_bot(self.periodic_bot_iterator))
+	# 		# iterate over the periodic bots
+	# 		self.periodic_bot_iterator = (self.periodic_bot_iterator + 1) % len(self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True))
 
 
 	# Main function runningand syncrhonizing both PytChat Listener and OAuth messages
 	def run(self):
-		print('debug : YT chat : listening')
+		print('debug YT chat : init periodic bots')
+		for bot in self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True):
+			self.periodic_bots.append(bot)
+		print('debug YT chat : listening')
 		# this is basically one iteration per second
 		while(self._running and self.listener.is_alive()):
 			# code below fetches the outube api
@@ -255,6 +279,9 @@ class YoutubeHandler(threading.Thread):
 				# listen for answers to activities
 				if(c.message.startswith(settings.INTERACTION_CHAR) and self._polling):
 					self.parse_message(c)
+				# send periodic bot every X message received
+				if(self.periodic_bots and self.youtube_api_client):
+					self.iterate_periodic_bot(c)
 				# show mesages in dashboard
 				if(PRINT_MESSAGES):
 					self.print_message(c)
@@ -262,8 +289,9 @@ class YoutubeHandler(threading.Thread):
 				if(c.message.startswith('!') and self.youtube_api_client):
 					self.bot_listen(c)
 			# regularly sends a message in a set of predefined messages (requires OAuth)
-			if(self.youtube_api_client):
-				self.regulary_send_periodic_bot() # changes upcoming
+			# if(self.youtube_api_client):
+			# 	self.regulary_send_periodic_bot() # changes upcoming
+			time.sleep(1)
 			print('+',end='')
 		if(settings.DEBUG): print('debug : YT handler stopped')
 
