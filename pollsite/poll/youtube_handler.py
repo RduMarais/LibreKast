@@ -263,7 +263,7 @@ class YoutubeHandler(threading.Thread):
 					self.bot_listen(c)
 			# regularly sends a message in a set of predefined messages (requires OAuth)
 			if(self.youtube_api_client):
-				self.regulary_send_periodic_bot()
+				self.regulary_send_periodic_bot() # changes upcoming
 			print('+',end='')
 		if(settings.DEBUG): print('debug : YT handler stopped')
 

@@ -14,7 +14,7 @@ from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.type import AuthScope, ChatEvent, TwitchAPIException
 from twitchAPI.helper import first
 from twitchAPI.object.eventsub import ChannelFollowEvent
-from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand
+from twitchAPI.chat import Chat, EventData, ChatMessage, ChatSub, ChatCommand, ChatRoom
 # from twitchAPI.eventsub import EventSub # à changer
 from twitchAPI.eventsub.websocket import EventSubWebsocket
 
@@ -25,10 +25,10 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
 
 from .models import Choice, Question, Meeting,Attendee,Vote
-from .utils import TwitchBotPoller
+# from .utils import TwitchBotPoller
 
 PRINT_MESSAGES = False
-TWITCH_MSG_PERIOD = 5
+# TWITCH_MSG_PERIOD = 5
 
 ## Uses : https://github.com/PetterKraabol/Twitch-Python
 
@@ -113,7 +113,28 @@ class NewTwitchHandler(threading.Thread):
 		except Exception as e:
 			if(settings.DEBUG) : print('debug : error stopping event sub')
 
+
+
 #### BOTS, ANIMATION AND METHODS #####
+
+
+	async def iterate_periodic_bot(self,room: ChatRoom):
+		self.msg_iterator += 1
+		# iterate a local counter and send a message every "periodic_bot_delay" message
+		if(self.msg_iterator % self.meetingConsumer.meeting.periodic_bot_delay == 0):
+			# send a specific message
+			message_text = self.periodic_bots[self.periodic_bot_iterator].message
+			if(settings.DEBUG) : print(f'debug : sending periodic bot message : {message_text}')
+			await self.chat.send_message(room,message_text)
+			await self.print_message({'author':settings.TWITCH_NICKNAME,'text':f'{settings.BOT_MSG_PREFIX} {message_text}','source':'b'})
+
+			# iterate through the messages to send
+			self.periodic_bot_iterator += 1
+
+			if(self.periodic_bot_iterator % len(self.periodic_bots) == 0):
+				# reset the periodic bot to send
+				self.periodic_bot_iterator = 0
+
 
 	# this will be called when the event READY is triggered, which will be on bot start
 	async def on_ready(self,ready_event: EventData):
@@ -126,8 +147,9 @@ class NewTwitchHandler(threading.Thread):
 	# this will be called whenever a message in a channel was send by either the bot OR another user
 	async def on_message(self, msg: ChatMessage):
 		print(f'debug new : {msg.user.name} dit "{msg.text}" ({msg.room.name})')
-		# print(f'debug new : {self.event_sub}')
-		# print(f'debug new : {self.event_sub_new}')
+		# if there are some periodic bots, iterate through them to send a bot message every X message received
+		if(self.periodic_bots):
+			await self.iterate_periodic_bot(msg.room)
 		# user is ChatUser -> msg.user.vip, msg.user.subscriber, msg.user.mod, msg.user.badge_info aussi msg.bits
 		await self.print_message({'author':msg.user.name,'text':msg.text,'source':'t','sub':msg.user.subscriber, 'badges':msg.user.badge_info})
 
@@ -159,7 +181,7 @@ class NewTwitchHandler(threading.Thread):
 	# this will be called whenever the !reply command is issued
 	async def msg_command(self, cmd: ChatCommand):
 		print(f'[4] REPLY {cmd.user.name}')
-		msgBot = next(mb for mb in self.bots if mb.command == cmd.name)
+		msgBot = next(mb for mb in self.msg_bots if mb.command == cmd.name)
 		if(msgBot):
 			print(f'[4] command {msgBot.command}')
 			await cmd.reply(f'{settings.BOT_MSG_PREFIX}{msgBot.message}')
@@ -180,14 +202,17 @@ class NewTwitchHandler(threading.Thread):
 		self.twitch_api = twitch_api
 		self.channel = channel
 		# TODO : problème : je peux pas update le bot ?
-		self.bots = [] 
+		self.msg_bots = [] 
+		self.periodic_bots = []
+		self.msg_iterator = 0
+		self.periodic_bot_iterator = 0
 		self.event_sub = None
 		for bot in self.meetingConsumer.meeting.messagebot_set.filter(is_active=True): # because this is sync
-			self.bots.append(bot)
-		if(settings.DEBUG) : print('debug : message bots list = '+str(self.bots))
+			self.msg_bots.append(bot)
+		for bot in self.meetingConsumer.meeting.periodicbot_set.filter(is_active=True): # because this is sync
+			self.periodic_bots.append(bot)
+		if(settings.DEBUG) : print('debug : message bots list = '+str(self.msg_bots))
 		asyncio.run(self.configure_ntwhandler(channel)) # ASYNC STARTS HERE for testing
-		# asyncio. wait for authentication
-		# asyncio.run(self.wait_for_connection()) # ASYNC STARTS HERE for testing
 
 	
 	async def configure_ntwhandler(self,channel):
@@ -244,11 +269,12 @@ class NewTwitchHandler(threading.Thread):
 		# await event_sub.listen_channel_follow_v2(user.id, user.id, on_follow)
 
 		# you can directly register commands and their handlers, this will register the !reply command
-		for msg_bot in self.bots:
+		for msg_bot in self.msg_bots:
 			self.chat.register_command(msg_bot.command, self.msg_command)
 
 		# listen to chat messages
 		self.chat.register_event(ChatEvent.MESSAGE, self.on_message)
+		
 		await self.meetingConsumer.channel_layer.group_send(
 			self.meetingConsumer.meeting_group_name+'_admin',
 			{'type':"meeting_message",'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'}},
@@ -301,7 +327,7 @@ class NewTwitchHandler(threading.Thread):
 			async_to_sync(self.stop_event_sub)()
 		if(hasattr(self,'chat')):
 			self.chat.stop()
-		if(settings.DEBUG) : print('NTW : stopped')
+		if(settings.DEBUG) : print('debug Twitch Handler : stopped')
 
 
 # # TODO not used anymore

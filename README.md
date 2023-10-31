@@ -43,7 +43,7 @@ You can connect in the admin interface with user : `defaultsuperuser` and passwo
 
 There are several ways you can add bots in your meetings : 
 
- * **Periodic bots** : these will regularly send a message in the one you define in the administration interface. The duration between 2 messages is defined in the instance settings.
+ * **Periodic bots** : these will regularly send a message in the one you define in the administration interface. The duration between 2 messages is defined in the meeting settings.
  * **Message bots** : they will answer a message starting with "!" (or the character you define in the instance settings).
  * **Revolution bots** : They will keep track of the messages calling them (with the default character "!") and once the number of commands sent is more than a threshold, it sends a message, and starts an animation in the dashboard (the animation can be shown over OBS). The animation is a webm video (you may have to setup your proxy to allow certain file sizes).
 

@@ -25,7 +25,7 @@ function showAlert(alertObj){
 		alertNotif.style = "background-color: lightblue;";
 		alertTextBox.innerText = alertObj['text'];
 		alertLink = document.createElement('a');
-		alertLink.innerText = "Click here !";
+		alertLink.innerText = "Open a new tab here !";
 		alertLink.classList.add('btn','bg-pour1nf0-blue-100','mx-2','px-1','py-1','rounded','py');
 		alertLink.href = alertObj['url'];
 		alertTextBox.appendChild(alertLink);

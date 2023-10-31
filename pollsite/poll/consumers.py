@@ -228,7 +228,7 @@ class MeetingConsumer(WebsocketConsumer):
 		self.send(text_data=json.dumps(message))
 
 	def admin_message(self,event):
-		if(settings.DEBUG) : print('debug : admin message')
+		# if(settings.DEBUG) : print('debug : admin message')
 		message = event['message']
 		self.send(text_data=json.dumps(message))
 
