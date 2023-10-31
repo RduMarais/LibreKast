@@ -99,7 +99,7 @@ v0.4.1 :
 	 	 * [x] fetch l'imge de profil du follower
 	 	 * [x] clean les subscriptions au lancement de la plateforme
 	 * Migrate https://github.com/Teekeks/pyTwitchAPI ??
-	 	 * [ ] periodic bots
+	 	 * [x] periodic bots
 	 	 * [x] message bots
 	 	 * [ ] revolution bots
 	 	 	 * create buffers in self.XX on registering commands
