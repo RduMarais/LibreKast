@@ -84,18 +84,33 @@ class NewTwitchHandler(threading.Thread):
 			}
 		)
 
-	async def send_animation(self,animation):
-		if(settings.DEBUG): print(f'debug : sending alert {animation.name}')
+	# OLD send animation -> il y avait un objet animation avec des méta données -> simplifié
+	# async def send_animation(self,animation):
+	# 	if(settings.DEBUG): print(f'debug : sending alert {animation.name}')
+	# 	await self.meetingConsumer.channel_layer.group_send(
+	# 		self.meetingConsumer.meeting_group_name+'_chat',
+	# 		{
+	# 			'type': 'admin_message', # is it though ?
+	# 			'message': {
+	# 				'message':'revolution-alert',
+	# 				'alert':{'url':animation.alert.url,'text':animation.message},
+	# 			}
+	# 		}
+	# 	)
+
+	async def send_animation(self,animation,name):
+		if(settings.DEBUG): print(f'debug : sending alert {name}')
 		await self.meetingConsumer.channel_layer.group_send(
 			self.meetingConsumer.meeting_group_name+'_chat',
 			{
 				'type': 'admin_message', # is it though ?
 				'message': {
 					'message':'revolution-alert',
-					'alert':{'url':animation.alert.url,'text':animation.message},
+					'alert':{'url':animation.url,'text':f'Alert! {name}'},
 				}
 			}
 		)
+
 
 	async def send_error(self,message_dict):
 		await self.meetingConsumer.channel_layer.group_send(
@@ -160,22 +175,26 @@ class NewTwitchHandler(threading.Thread):
 		# sub_type: str, sub_message: str, sub_plan: str, sub_plan_name: str, system_message: str
 		# TODO Alert
 	
-	async def on_eventsub_sub(self, data: dict):
+	async def on_eventsub_sub(self, data: ChannelSubscribeEvent):
 		if(settings.DEBUG) : print(f'debug : EVENTSUB New subscription in {sub.room.name}: Type={sub.sub_plan} Message={sub.sub_message}')
+		if(self.twitch_api.sub_alert):
+			await self.send_animation(self.twitch_api.sub_alert,'sub')
+		else:
+			if(settings.DEBUG) : print('debug notifs : no sub animation file')
 
 	async def on_follow(self, data: ChannelFollowEvent):
 		if(settings.DEBUG) : print('debug notifs : FOLLOW data = '+str(data))
-		animation_set = self.twitch_api.animation_set.filter(event_type='F') #await ? 
-		l =  await sync_to_async(len)(animation_set)
-		if(l > 0): # cant be async need to be in a sync to async or 
-			if(settings.DEBUG) : print('debug notifs : animation will start')
-			animation = animation_set[0]
-			if(animation.alert):
-				await self.send_animation(animation) # await
-			else:
-				if(settings.DEBUG) : print('debug notifs : no animation file')
+		if(self.twitch_api.follow_alert):
+			await self.send_animation(self.twitch_api.follow_alert,'follow')
 		else:
-			if(settings.DEBUG) : print('debug notifs : no animation set')
+			if(settings.DEBUG) : print('debug notifs : no follow animation file')
+	
+	async def on_raid(self, data: ChannelRaidEvent):
+		if(settings.DEBUG) : print('debug notifs : RAID data = '+str(data))
+		if(self.twitch_api.raid_alert):
+			await self.send_animation(self.twitch_api.raid_alert,'raid')
+		else:
+			if(settings.DEBUG) : print('debug notifs : no raid animation file')
 
 
 	# this will be called whenever the !reply command is issued
@@ -280,44 +299,28 @@ class NewTwitchHandler(threading.Thread):
 			{'type':"meeting_message",'message': {'message':'twitch-oauth-ok','text': 'OAUTH done'}},
 			)
 		
-		### Event Sub (à init dans une aute méthode)
+		### Event Sub (à init dans une aute méthode probably)
 		if(self.twitch_api.eventsub_callback_url or True): # TODO clean ça
-			# est ce que ça lance un serveur ou ça écoute ? -> ça lance un serveur -> à déplacer dans l'API django
-			if(settings.DEBUG) : print('debug notifs : startinng creation of event sub')
+			if(settings.DEBUG) : print('debug notifs : starting creation of event sub')
 			self.event_sub_new = EventSubWebsocket(self.twitch_new)
-			# self.event_sub = EventSub(self.twitch_api.eventsub_callback_url, self.twitch_api.client_id, self.twitch_api.eventsub_callback_port, self.twitch_new) # test webhook
-			# self.event_sub._host = '127.0.0.1' # not listening on every host, only on localhost:8081
-			if(settings.DEBUG) : print('debug notifs: created event sub')
-			# self.event_sub.logger.propagate = True
 			self.event_sub_new.logger.propagate = True
-			# await self.event_sub.unsubscribe_all()
 			await self.event_sub_new.unsubscribe_all()
 			if(settings.DEBUG) : print('debug notifs : unsub')
-			# try : 
-				# self.event_sub.start()
 			self.event_sub_new.start()
-			# print(self)
-			# except Exception as e : 
-			# 	raise e
-				# await self.send_error(message_dict={'message':'error','text':f'The eventsub callback server could not start with URL {self.twitch_api.eventsub_callback_url} and port {self.twitch_api.eventsub_callback_port}'})
 			if(settings.DEBUG) : print('debug notifs : started event sub')
-			follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
-			sub_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='S')
+			# follow_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='F')
+			# sub_animation_set = sync_to_async(self.twitch_api.animation_set.filter)(event_type='S')
 			me_user = await first(self.twitch_new.get_users(logins=self.twitch_api.username))
-			if(follow_animation_set):
-				# listen_channel_follow_v2(broadcaster_user_id, moderator_user_id, callback)
-				#  has to be user id -> use dedicated class
-				if(settings.DEBUG): print(f'event sub follow with user {me_user.id}')
-				# await self.event_sub.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
-				await self.event_sub_new.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow) # TODO : use API for different channel
+			if(self.twitch_api.follow_alert):
+				# has to be user id -> use dedicated class
+				await self.event_sub_new.listen_channel_follow_v2(me_user.id, me_user.id, self.on_follow)
 				if(settings.DEBUG) : print('debug notifs : subbed for follows')
-			if(sub_animation_set):
-				if(settings.DEBUG): print(f'event sub subscribe')
-				# await self.event_sub.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
+			if(self.twitch_api.sub_alert):
 				await self.event_sub_new.listen_channel_subscribe(broadcaster_user_id=me_user.id, callback=self.on_eventsub_sub)
 				if(settings.DEBUG) : print('debug notifs : subbed for subs')
-				# print(self.event_sub)
-				print(self.event_sub_new)
+			if(self.twitch_api.raid_alert):
+				await self.event_sub_new.listen_channel_raid(callback=self.on_raid, to_broadcaster_user_id=me_user.id)
+				if(settings.DEBUG) : print('debug notifs : subbed for raids')
 
 
 #### FINISH ####

@@ -49,11 +49,14 @@ def get_meeting_directory(instance, filename):
 def get_revbot_directory(instance, filename):
 	return 'bots/bot_revolution_{0}/{1}'.format(instance.command, filename)
 
-def get_animation_directory(instance, filename):
-	return 'bots/alert_{0}_{1}/{2}'.format(instance.twitch_api.id, instance.event_type, filename)
+def get_follow_animation_directory(instance, filename):
+	return 'bots/alert_{0}/follows/{1}'.format(instance.id, filename)
 
-def get_alert_directory(instance, filename):
-	return 'bots/alert_{0}_{1}/{2}'.format(instance.event_type,instance.id, filename)
+def get_sub_animation_directory(instance, filename):
+	return 'bots/alert_{0}/subs/{1}'.format(instance.id, filename)
+
+def get_raid_animation_directory(instance, filename):
+	return 'bots/alert_{0}/raids/{1}'.format(instance.id, filename)
 
 def get_default_buffer():
 	return {'triggers':[],'last_revolution':''}
@@ -72,13 +75,34 @@ class TwitchAPI(models.Model):
 	# oauth = models.CharField(_('OAuth Token'),max_length=30) # will not be needed anymore
 	client_id = models.CharField(_('Client ID'),max_length=30)
 	client_secret = models.CharField(_('Client Secret'),max_length=30)
-	auth_code = models.CharField(_('Secret Auth code to get access and refresh tokens'),max_length=100,default='')
+	auth_code = models.CharField(_('Secret Auth code to get access and refresh tokens'),max_length=100,default='',blank=True) # blank=True is needed for migrations
 	api_callback_url = models.URLField(_('URL for OAuth callback'),max_length=150,blank=True)
 	eventsub_callback_url = models.URLField(_('URL for EventSub callback (no trailing /, leave blank if no event sub)'),max_length=150,blank=True)
 	eventsub_callback_port = models.IntegerField(_('Port to expose via a web server for EventSub callback'),default=8080)
+	# animations
+	follow_alert = models.FileField(_('Alert video to be displayed on follows'),null=True,blank=True,upload_to=get_follow_animation_directory)
+	sub_alert = models.FileField(_('Alert video to be displayed on subs'),null=True,blank=True,upload_to=get_sub_animation_directory)
+	raid_alert = models.FileField(_('Alert video to be displayed on raids'),null=True,blank=True,upload_to=get_raid_animation_directory)
 
 	def __str__(self):
 		return self.name
+
+	def has_follow_alert(self):
+		return not (not self.follow_alert)
+	
+	def has_sub_alert(self):
+		return not (not self.sub_alert)
+	
+	def has_raid_alert(self):
+		return not (not self.raid_alert)
+
+	def clean(self):
+		# browse all alerts types that have a file attached
+		for alert in [a for a in [self.sub_alert,self.follow_alert,self.raid_alert] if not (not a)]:
+			file_type = magic.from_buffer(alert.open("rb").read(2048),mime=True)
+			authorized_formats = ['video/mp4','video/quicktime','video/webm']
+			if(file_type not in authorized_formats):
+				raise ValidationError({'alert': _("This file format is not allowed")})
 
 	def save(self, *args, **kwargs):
 		host = settings.ALLOWED_HOSTS[-1]
@@ -91,6 +115,7 @@ class TwitchAPI(models.Model):
 		super().save(*args, **kwargs)
 		self.api_callback_url = f'http{encrypted}://{host}{port}/poll/twitch_auth/{self.pk}/'
 		super().save(*args, **kwargs)
+
 
 class YoutubeAPI(models.Model):
 	name = models.CharField(_('Name of the API key'),max_length=20)
@@ -217,35 +242,6 @@ class RevolutionBot(models.Model):
 	def __str__(self):
 		return f'{self.meeting.title}:rev:{self.command}'
 
-class Animation(models.Model):
-	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
-	event_type = models.CharField(_('Type of event to sub'), max_length=2,choices=(('F','Follow'),('S','Sub')), default='F')
-	twitch_api = models.ForeignKey(TwitchAPI,on_delete=models.SET_NULL,null=True,blank=True)
-	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_animation_directory)
-	message = models.CharField(_('Additionnal message'), max_length=200,default=' just joined in !')
-
-	def __str__(self):
-		return self.name
-
-	def clean(self):
-		if(self.alert):
-			file_type = magic.from_buffer(self.alert.open("rb").read(2048),mime=True)
-			authorized_formats = ['video/mp4','video/quicktime','video/webm']
-			if(file_type not in authorized_formats):
-				raise ValidationError({'alert': _("This file format is not allowed")})
-
-# TODO : remove
-# class TwitchWebhook(models.Model):
-# 	name = models.CharField(_('Webhook name'), max_length=50,default='default webhook')
-# 	event_type = models.CharField(_('Type of event'),choices=(('F','Follow'),('S','Sub')),max_length=50,default='Follow')
-# 	secret = models.CharField(_('Secret to sign hooks'), max_length=50,default='Pour1nf0_bJc`CP2oRSNfV;7?-^OT!J@X')
-# 	message = models.CharField(_('Message to print upon the event'), max_length=50,default='User just followed !')
-# 	meeting = models.ForeignKey(Meeting,on_delete=models.SET_NULL,null=True)
-# 	alert = models.FileField(_('Alert video to be displayed'),null=True,blank=True,upload_to=get_alert_directory)
-# 	helix_id = models.CharField(_('ID received from Helix API'), max_length=100,default='',blank=True)
-
-# 	def __str__(self):
-# 		return self.name
 
 
 ##### IRL Meetings models

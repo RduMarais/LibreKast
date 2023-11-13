@@ -292,7 +292,7 @@ class YoutubeHandler(threading.Thread):
 			# if(self.youtube_api_client):
 			# 	self.regulary_send_periodic_bot() # changes upcoming
 			time.sleep(1)
-			print('+',end='')
+			# print('+',end='')
 		if(settings.DEBUG): print('debug : YT handler stopped')
 
 

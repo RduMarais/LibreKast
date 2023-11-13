@@ -8,7 +8,7 @@ from django.conf import settings
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline
 
 from .models import Question,Choice,Meeting,Attendee,Flag,FlagAttempt
-from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot, Animation #,TwitchChannel,YoutubeDirect
+from .models import Vote,TwitchAPI,MessageBot,YoutubeAPI,PeriodicBot,RevolutionBot #, Animation,TwitchChannel,YoutubeDirect
 
 # administration of choices once in Question admin panel
 class ChoiceInline(admin.TabularInline):
@@ -153,7 +153,7 @@ class FlagAttemptAdmin(admin.ModelAdmin):
 
 
 class TwitchAPIAdmin(admin.ModelAdmin):
-	list_display = ('name','username','description')
+	list_display = ('name','username','description','has_follow_alert', 'has_sub_alert', 'has_raid_alert')
 	readonly_fields =['api_callback_url']
 
 class YTAPIAdmin(admin.ModelAdmin):
@@ -188,5 +188,5 @@ admin.site.register(RevolutionBot,RevolutionBotAdmin)
 admin.site.register(Flag,FlagAdmin)
 admin.site.register(FlagAttempt,FlagAttemptAdmin)
 # admin.site.register(TwitchWebhook)
-admin.site.register(Animation)
+# admin.site.register(Animation)
 
